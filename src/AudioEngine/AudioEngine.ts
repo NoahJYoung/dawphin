@@ -1,18 +1,22 @@
 import { Track } from './Track';
 import { action, makeObservable, observable } from 'mobx';
-import { v4 as uuidv4 } from 'uuid';
 import * as Tone from 'tone';
+import { Clip } from './Track/Clip';
 
 export class AudioEngine {
-  samplesPerTick: number = Tone.context.sampleRate / Tone.Transport.PPQ;
-  zoomLevels: number[] = [512, 1024, 2048, 4092];
-  zoomIndex: number = 0;
+  samplesPerTick: number = Tone.getContext().sampleRate / Tone.getTransport().PPQ;
+  zoomLevels: number[] = [64, 128, 256, 512, 1024, 2048, 4092];
+  zoomIndex: number = 3;
   samplesPerPixel: number = this.zoomLevels[this.zoomIndex];
   state: string = 'stopped';
+  bpm: number = Tone.getTransport().bpm.value;
+  timeSignature = Tone.getTransport().timeSignature;
+  currentTrackId = 1;
+  totalMeasures: number = 200;
+  selectedClips: Clip[] = []
 
   constructor(
-    public transport = Tone.getTransport(),
-    public tracks: Track[] = [],
+    public tracks: Track[] = observable.array([]),
     public selectedTracks: Track[] = [],
     public cursorPosition: number = 0,
     public audioCtx = Tone.getContext(),
@@ -20,11 +24,18 @@ export class AudioEngine {
     makeObservable(this, {
       tracks: observable,
       samplesPerPixel: observable,
+      bpm: observable,
+      setBpm: action.bound,
+      timeSignature: observable,
+      setTimeSignature: action.bound,
       setZoom: action.bound,
       createTrack: action.bound,
       getSelectedTracks: action.bound,
       deleteSelectedTracks: action.bound,
+      getSelectedClips: action.bound,
+      moveSelectedClips: action.bound,
     });
+    this.createTrack();
   }
 
   setZoom(direction: 'zoomIn' | 'zoomOut') {
@@ -36,17 +47,20 @@ export class AudioEngine {
     this.samplesPerPixel = this.zoomLevels[this.zoomIndex];
   }
 
-  setBpm(value: number) {
-    this.transport.bpm.value = value
+  setBpm(bpm: number) {
+    Tone.getTransport().bpm.value = bpm;
+    this.bpm = Tone.getTransport().bpm.value;
   }
 
   setTimeSignature(value: number | number[]) {
-    this.transport.timeSignature = value;
+    Tone.getTransport().timeSignature = value;
+    this.timeSignature = Tone.getTransport().timeSignature;
   }
 
   createTrack() {
-    const newTrack = new Track(uuidv4(), `Track ${this.tracks.length + 1}`);
+    const newTrack = new Track(this.currentTrackId, `Track ${this.tracks.length + 1}`);
     this.tracks.push(newTrack);
+    this.currentTrackId += 1;
   }
 
   getSelectedTracks() {
@@ -61,33 +75,65 @@ export class AudioEngine {
     this.selectedTracks = []
   }
 
-  setPosition = (ticks: number, redraw: () => void) => {
+  getSelectedClips() {
+    const selectedClips: Clip[] = [];
+    this.tracks.forEach(track => {
+      track.clips.forEach((clip) => {
+        if (clip.isSelected) {
+          selectedClips.push(clip);
+        }
+      });
+    });
+
+    this.selectedClips = selectedClips;
+  }
+
+  moveSelectedClips(samples: number, direction: 'right' | 'left') {
+    this.getSelectedClips();
+    if (direction === 'right') {
+      this.selectedClips.forEach(clip => clip.setPosition(clip.start.toSamples() + samples))
+    } else {
+      if (!this.selectedClips.find(clip => clip.start.toSamples() === 0)) {
+        this.selectedClips.forEach(clip => clip.setPosition(clip.start.toSamples() - samples))
+      }
+    }
+  }
+
+  deselectClips() {
+    this.getSelectedClips();
+    this.selectedClips.forEach(clip => clip.setSelect(false))
+    this.selectedClips = [];
+  }
+
+  setPosition = (time: Tone.TimeClass, redraw: () => void) => {
+    const transport = Tone.getTransport();
     if (this.state === 'playing') {
-      this.transport.ticks = ticks;
+      this.pause();
+      transport.ticks = time.toTicks();
       redraw();
       this.play();
     } else {
-      this.transport.ticks = ticks;
+      transport.ticks = time.toTicks();
       redraw();
     }
   }
 
   play = () => {
     this.state = 'playing';
-    this.transport.start();
+    Tone.getTransport().start();
     this.tracks.forEach(track => track.play())
   }
 
   stop = () => {
     this.state = 'stopped';
-    this.transport.stop();
+    Tone.getTransport().stop();
     this.tracks.forEach(track => track.stop())
   }
 
   pause = () => {
     this.state = 'paused';
-    this.transport.pause();
     this.tracks.forEach(track => track.stop())
+    Tone.getTransport().pause();
   }
 
   startTone = () => {
