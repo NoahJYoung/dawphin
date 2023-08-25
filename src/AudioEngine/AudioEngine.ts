@@ -2,29 +2,35 @@ import { Track } from './Track';
 import { action, makeObservable, observable } from 'mobx';
 import * as Tone from 'tone';
 import { Clip } from './Track/Clip';
+import audioBufferToWav from 'audiobuffer-to-wav';
 
 export class AudioEngine {
-  samplesPerTick: number = Tone.getContext().sampleRate / Tone.getTransport().PPQ;
-  zoomLevels: number[] = [64, 128, 256, 512, 1024, 2048, 4092];
-  zoomIndex: number = 3;
+  zoomLevels: number[] = [32, 64, 128, 256, 512, 1024, 2048, 4092];
+  zoomIndex: number = 4;
   samplesPerPixel: number = this.zoomLevels[this.zoomIndex];
   state: string = 'stopped';
   bpm: number = Tone.getTransport().bpm.value;
   timeSignature = Tone.getTransport().timeSignature;
   currentTrackId = 1;
   totalMeasures: number = 200;
-  selectedClips: Clip[] = []
+  selectedClips: Clip[] = [];
+  scrollXOffsetPixels: number = 0;
+  selectedTracks: Track[] = observable.array([]);
+  metronomeActive: boolean = false;
+  metronome: Tone.PluckSynth | null = null;
 
   constructor(
     public tracks: Track[] = observable.array([]),
-    public selectedTracks: Track[] = [],
     public cursorPosition: number = 0,
     public audioCtx = Tone.getContext(),
   ) {
     makeObservable(this, {
+      metronomeActive: observable,
+      setMetronome: action.bound,
       tracks: observable,
       samplesPerPixel: observable,
       bpm: observable,
+      selectedTracks: observable,
       setBpm: action.bound,
       timeSignature: observable,
       setTimeSignature: action.bound,
@@ -34,8 +40,21 @@ export class AudioEngine {
       deleteSelectedTracks: action.bound,
       getSelectedClips: action.bound,
       moveSelectedClips: action.bound,
+      deleteSelectedClips: action.bound,
     });
+    // const baseContext = new AudioContext({ sampleRate: 44100, latencyHint: 'interactive' });
+    // const context = new Tone.Context(baseContext);
+    // Tone.setContext(context);
+    this.metronome = new Tone.PluckSynth().toDestination();
     this.createTrack();
+  }
+
+  setMetronome(value: boolean) {
+    this.metronomeActive = value;
+  };
+
+  toggleMetronome = () => {
+    this.setMetronome(!this.metronomeActive);
   }
 
   setZoom(direction: 'zoomIn' | 'zoomOut') {
@@ -64,14 +83,14 @@ export class AudioEngine {
   }
 
   getSelectedTracks() {
-    this.selectedTracks = [...this.tracks].filter(track => !track.selected);
+    this.selectedTracks = observable.array([...this.tracks].filter(track => !!track.selected));
   }
 
   deleteSelectedTracks() {
     this.getSelectedTracks();
     this.selectedTracks.forEach(track => track.channel.dispose())
     const selectedTrackIds = this.selectedTracks.map(track => track.id);
-    this.tracks = this.tracks.filter(track => selectedTrackIds.includes(track.id));
+    this.tracks = this.tracks.filter(track => !selectedTrackIds.includes(track.id));
     this.selectedTracks = []
   }
 
@@ -99,6 +118,31 @@ export class AudioEngine {
     }
   }
 
+  deleteSelectedClips() {
+    this.getSelectedClips();
+    const clipIds = this.selectedClips.map(clip => clip.id);
+    this.tracks.forEach(track => {
+      track.setClips(track.clips.filter((clip) => !clipIds.includes(clip.id)))
+    });
+    this.selectedClips.forEach(clip => clip.deleteClip());
+  }
+
+  splitSelectedClipsAtPlayhead = () => {
+    this.getSelectedClips();
+    this.selectedClips.forEach(clip => {
+      const currentTrack = this.tracks.find(track => track.id === clip.trackId);
+      const data = clip.split();
+      data && data.clips.forEach((clipData) => {
+        const buffer = clipData.buffer.get();
+        if (buffer) {
+          const blob = new Blob([audioBufferToWav(buffer)], { type: "audio/wav" });
+          currentTrack?.addClip(URL.createObjectURL(blob),  clipData.start.toSamples());
+        }
+      })
+      currentTrack?.setClips(currentTrack.clips.filter(clip => clip.id !== data?.oldId));   
+    })
+  }
+
   deselectClips() {
     this.getSelectedClips();
     this.selectedClips.forEach(clip => clip.setSelect(false))
@@ -119,6 +163,12 @@ export class AudioEngine {
   }
 
   play = () => {
+    if (this.metronomeActive) {
+      
+      Tone.Transport.scheduleRepeat(time => {
+        this.metronome?.triggerAttack('C5', Tone.now())
+      }, "4n");
+    }
     this.state = 'playing';
     Tone.getTransport().start();
     this.tracks.forEach(track => track.play())

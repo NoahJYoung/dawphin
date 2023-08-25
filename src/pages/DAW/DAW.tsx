@@ -1,17 +1,13 @@
 import { AudioEngine } from 'src/AudioEngine';
-import { observer } from 'mobx-react-lite';
-import { Track } from 'src/AudioEngine/Track';
 import { useState, useEffect, useRef } from 'react';
-import { Clip } from 'src/AudioEngine/Track/Clip';
 import { Timeline, TrackPanels, Tracks } from './components';
-import WaveSurfer from 'wavesurfer.js';
 
 const audioEngine = new AudioEngine();
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
-  const [container, setContainer] = useState<HTMLDivElement | null>(null)
-  const [audioEngineInstance, setAudioEngineInstance] = useState(audioEngine);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [audioEngineInstance] = useState(audioEngine);
   const trackPanelsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,15 +18,15 @@ export const DAW = () => {
   return (
     <>
       <div style={{display: 'flex'}}>
-        <TrackPanels trackPanelsRef={trackPanelsRef} audioEngine={audioEngineInstance} />
+        <TrackPanels containerRef={containerRef} timelineRect={timelineRect} trackPanelsRef={trackPanelsRef} audioEngine={audioEngineInstance} />
         <Timeline
           timelineRect={timelineRect}
           setTimelineRect={setTimelineRect}
-          setContainer={setContainer}
+          containerRef={containerRef}
           audioEngine={audioEngine}
           trackPanelsRef={trackPanelsRef}
         >
-          <Tracks container={container} timelineRect={timelineRect} audioEngine={audioEngineInstance} />
+          <Tracks containerRef={containerRef} timelineRect={timelineRect} audioEngine={audioEngineInstance} />
         </Timeline>
       </div>
     </>

@@ -4,14 +4,13 @@ import * as Tone from 'tone';
 import { observer } from 'mobx-react-lite';
 
 const CANVAS_HEIGHT = 2000;
-const CANVAS_WIDTH = 20000;
 const TOP_BAR_HEIGHT = 30;
-const WAVEFORM_HEIGHT = 120;
+const WAVEFORM_HEIGHT = 80;
 
 interface TimelineProps {
   audioEngine: AudioEngine
   setTimelineRect: Dispatch<SetStateAction<DOMRect | null>>
-  setContainer: Dispatch<SetStateAction<HTMLDivElement | null>>
+  containerRef: React.MutableRefObject<HTMLDivElement | null>
   timelineRect: DOMRect | null
   children: React.ReactNode
   trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>
@@ -50,8 +49,8 @@ const calculateGridlineValues = (audioEngine: AudioEngine) => {
 };
 
 
-export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, trackPanelsRef, children, setContainer }: TimelineProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, trackPanelsRef, children, containerRef }: TimelineProps) => {
+  
   const gridlineData = useMemo(() => calculateGridlineValues(audioEngine), [audioEngine.bpm, audioEngine.timeSignature, audioEngine.zoomIndex])
   const [playheadX, setPlayheadX] = useState(0);
   
@@ -134,12 +133,19 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
   
   const updatePlayhead = () => {
     const x = Math.round(((Tone.getTransport().seconds) * Tone.getContext().sampleRate) / audioEngine.samplesPerPixel);
+    const width = containerRef.current?.clientWidth || 0;
+    const multiplier = x / width;
+    const reachedScreenEnd = x % width >= width - 100;
+    const shouldAutoScroll = audioEngine.state !== 'stopped' && audioEngine.state !== 'paused'
+    if (shouldAutoScroll && reachedScreenEnd) {
+      containerRef.current!.scrollLeft! = width * Math.round(multiplier)
+    }
     setPlayheadX(x);
   };
 
   const moveCursor = (e: React.MouseEvent) => {
     if (gridRef.current && timelineRect) {
-      const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - timelineRect.x;
+      const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - 250;
       const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
       Tone.getTransport().seconds = time.toSeconds();
       updatePlayhead()
@@ -151,7 +157,7 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
     if (!!gridRef.current) {
       const rect = gridRef.current.getBoundingClientRect();
       setTimelineRect(rect);
-      setContainer(containerRef.current)
+      
       Tone.getTransport().scheduleRepeat(() => {
         updatePlayhead()
       }, 0.01)
@@ -176,6 +182,7 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
       onClick={moveCursor}
       onScroll={(e) => {
         const target = e.target as HTMLDivElement
+        audioEngine.scrollXOffsetPixels = target.scrollLeft;
         if (trackPanelsRef?.current) {
           trackPanelsRef.current.scrollTop = target.scrollTop
         }

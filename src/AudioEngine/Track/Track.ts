@@ -8,14 +8,16 @@ export class Track {
     public name: string,
     public clips: Clip[] = observable.array([]),
     public muted: boolean = false,
-    public color: string = 'grey',
+    public color: string = 'rgb(120, 120, 120)',
     public selected: boolean = false,
     public channel: Tone.Channel = new Tone.Channel(),
   ) {
     makeObservable(this, {
       name: observable,
       clips: observable.deep,
+      color: observable,
       addClip: action.bound,
+      setClips: action.bound,
       setName: action.bound,
       setColor: action.bound,
       selected: observable,
@@ -75,11 +77,13 @@ export class Track {
   }
 
   addClip(src: string, startSeconds: number) {
-    console.log(this.clips)
     const buffer = new Tone.ToneAudioBuffer(src)
     const clip = new Clip(this.id, src, buffer, Tone.Time(startSeconds, 's'));
     this.clips.push(clip);
-    console.log(this.clips)
+  }
+
+  setClips(clips: Clip[]) {
+    this.clips = clips;
   }
 
   stop() {

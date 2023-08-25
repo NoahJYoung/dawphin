@@ -82,4 +82,35 @@ export class Clip {
   setAudioBuffer(data: any) {
     this.audioBuffer = data
   }
+
+  deleteClip() {
+    URL.revokeObjectURL(this.audioSrc);
+    this.player.dispose();
+  }
+
+  split() {
+    const transportSeconds = Tone.getTransport().seconds;
+    const cursorIsOverClip = transportSeconds > this.start.toSeconds() && transportSeconds < (this.end?.toSeconds() || 0);
+    if (cursorIsOverClip && this.isSelected) {
+      const clipRelativeTransportseconds = transportSeconds - this.start.toSeconds();
+      const clipOneBuffer = this.audioBuffer.slice(0, clipRelativeTransportseconds);
+      const clipTwoBuffer = this.audioBuffer.slice(clipRelativeTransportseconds, this.duration?.toSeconds());
+      this.deleteClip();
+      return {
+        clips: [
+          {
+            start: Tone.Time(this.start.toSeconds() / Tone.getContext().sampleRate),
+            buffer: clipOneBuffer,
+          },
+          {
+            start: Tone.Time(transportSeconds / Tone.getContext().sampleRate),
+            buffer: clipTwoBuffer,
+          },
+        ],
+        oldId: this.id,
+      }
+    }
+
+    return null;
+  }
 }

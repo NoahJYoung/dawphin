@@ -3,15 +3,26 @@ import { useState, useRef, useEffect } from "react";
 import { AudioEngine } from "src/AudioEngine";
 import { Clip } from "src/AudioEngine/Track/Clip";
 import WaveSurfer from "wavesurfer.js";
+import { ClipContextMenu } from "./components";
 
 interface ClipViewProps {
   clip: Clip,
   audioEngine: AudioEngine
   timelineRect: DOMRect | null
   renderCtx: AudioContext
+  color: string
 }
 
-export const ClipView = observer(({ clip, audioEngine, timelineRect }: ClipViewProps) => {
+const convertRgbToRgba = (rgb: string, alpha: number) => {
+  const rgbValues = rgb.match(/\d+/g);
+  if (!rgbValues || rgbValues.length !== 3) {
+    throw new Error('Invalid RGB format');
+  }
+  const rgbaColor = `rgba(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]}, ${alpha})`;
+  return rgbaColor;
+}
+
+export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: ClipViewProps) => {
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
   const [peaks, setPeaks] = useState<number[][] | undefined>(undefined);
   const prevX = useRef(0);
@@ -22,7 +33,6 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect }: ClipViewP
   const audioRef = useRef(null);
 
   useEffect(() => {
-
     if (wavesurfer) {
       setPeaks(wavesurfer.exportPeaks())
     }
@@ -34,14 +44,14 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect }: ClipViewP
         interact: true,
         media: audioRef?.current || undefined,
         container: overviewRef.current,
-        waveColor: 'rgb(100, 0, 0)',
-        progressColor: 'rgb(100, 0, 0)',
+        waveColor: convertRgbToRgba(color, 0.55),
+        progressColor: convertRgbToRgba(color, 0.55),
         url: clip.audioSrc,
         height: 'auto',
         minPxPerSec: pixelsPerSecond,
         hideScrollbar: true,
         cursorWidth: 0,
-        normalize: true,
+        normalize: false,
         peaks,
       })
       setWavesurfer(wavesurfer);
@@ -49,14 +59,20 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect }: ClipViewP
     
   }, [clip.duration, peaks]);
 
+  useEffect(() => {
+    wavesurfer?.setOptions({ waveColor: convertRgbToRgba(color, 0.55), progressColor: convertRgbToRgba(color, 0.55) })
+  }, [color])
+
   
 
   const handleClick = (e: React.MouseEvent) => {
     if (!e.ctrlKey) {
+      const initialState= clip.isSelected;
       audioEngine.deselectClips();
+      clip.setSelect(!initialState);
+    } else {
+      clip.setSelect(true);
     }
-    clip.setSelect(true)
-    
   };
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -126,7 +142,7 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect }: ClipViewP
 
   const calculatePosition = () => {
     const left = Math.round(clip.start.toSamples() / audioEngine.samplesPerPixel);
-    const top = audioEngine.tracks.findIndex((track) => track.id === clip.trackId) * 120;
+    const top = audioEngine.tracks.findIndex((track) => track.id === clip.trackId) * 80;
 
     return { top, left };
   }
@@ -148,36 +164,40 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect }: ClipViewP
  
   const { top, left } = calculatePosition();
 
+  const backgroundAlpha = clip.isSelected ? 0.5 : 0.2;
+
   return (
     <>
-      <div
-        id={`wave-container${clip.id}`}
-        draggable
-        onDrag={handleDrag}
-        onDragStart={handleDragStart}
-        // onTouchStart={handleTouchStart}
-        // onTouchMove={handleTouchMove}
-        // onTouchEnd={handleTouchEnd}
-        onDragOver={e => e.preventDefault()}
-        onDragEnter={e => e.preventDefault()}
-        
-        style={{
-          left,
-          top,
-          position: 'absolute',
-          background: clip.isSelected ? 'rgba(255, 0, 0, 0.4)' : 'rgba(255, 0, 0, 0.2)',
-          opacity: clip.isSelected ? 1 : 0.75,
-          width: clipWidth >= 1 ? clipWidth : 1,
-          height: '118px',
-          borderRadius: '4px',
-          color: 'blue',
-          border: '1px solid red',
-          zIndex: 3,
-        }}
-        ref={overviewRef}
-        onClick={handleClick}
-      />
-      <audio src={clip.audioSrc} ref={audioRef} />
+      <ClipContextMenu audioEngine={audioEngine}>
+          <div
+            id={`wave-container${clip.id}`}
+            draggable
+            onDrag={handleDrag}
+            onDragStart={handleDragStart}
+            // onTouchStart={handleTouchStart}
+            // onTouchMove={handleTouchMove}
+            // onTouchEnd={handleTouchEnd}
+            onDragOver={e => e.preventDefault()}
+            onDragEnter={e => e.preventDefault()}
+            
+            style={{
+              left,
+              top,
+              position: 'absolute',
+              background: convertRgbToRgba(color, backgroundAlpha),
+              opacity: clip.isSelected ? 0.9 : 0.8,
+              width: clipWidth >= 1 ? clipWidth : 1,
+              height: '80px',
+              borderRadius: '10px',
+              color: 'blue',
+              border: `1px solid ${color}`,
+              zIndex: 3,
+            }}
+            ref={overviewRef}
+            onClick={handleClick}
+          />
+        </ClipContextMenu>
+        <audio src={clip.audioSrc} ref={audioRef} />
     </>
   )
 }) 
