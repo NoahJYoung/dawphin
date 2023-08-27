@@ -8,7 +8,7 @@ export class Clip {
   duration: Tone.TimeClass | null = null;
   samples: number = 0;
   waveformData: any;
-  // audioBuffer: Tone.ToneAudioBuffer | null = null;
+  normalized: boolean = false;
 
   constructor(
     public trackId: number,
@@ -16,7 +16,7 @@ export class Clip {
     public audioBuffer: Tone.ToneAudioBuffer,
     public start: Tone.TimeClass,
     public isSelected: boolean = false,
-    public player = new Tone.Player()
+    public player = new Tone.Player(),
   ) {
     makeObservable(this, {
       isSelected: observable,

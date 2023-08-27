@@ -147,7 +147,7 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
     if (gridRef.current && timelineRect) {
       const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - 250;
       const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
-      Tone.getTransport().seconds = time.toSeconds();
+      Tone.getTransport().seconds = audioEngine.snap ? Tone.Time(time.quantize('4n')).toSeconds() : time.toSeconds();
       updatePlayhead()
     }
   }
@@ -157,14 +157,17 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
     if (!!gridRef.current) {
       const rect = gridRef.current.getBoundingClientRect();
       setTimelineRect(rect);
-      
-      Tone.getTransport().scheduleRepeat(() => {
-        updatePlayhead()
-      }, 0.01)
       drawTopBar()
       updatePlayhead();
     };
   }, [audioEngine.timeSignature, playheadRef.current, audioEngine.bpm, audioEngine.tracks.length, audioEngine.zoomIndex, audioEngine.samplesPerPixel, containerRef.current]);
+
+  useEffect(() => {
+    Tone.getTransport().scheduleRepeat(() => {
+      updatePlayhead()
+    }, 0.01);
+    updatePlayhead();
+  }, [audioEngine.state])
 
   const canvasWidth = useMemo(() => {
     const beatsPerSecond = Tone.getTransport().bpm.value / 60;

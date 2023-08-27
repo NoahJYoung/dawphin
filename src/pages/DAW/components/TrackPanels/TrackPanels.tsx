@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { Button } from 'antd';
-import { ZoomInOutlined, ZoomOutOutlined, PlusOutlined, FileAddOutlined } from "@ant-design/icons"
+import { ZoomInOutlined, ZoomOutOutlined, PlusOutlined, FileAddOutlined, TableOutlined } from "@ant-design/icons"
 import { useMemo, useState } from "react";
 import { AudioEngine } from "src/AudioEngine";
 import * as Tone from 'tone';
 import { TrackPanel } from "./components";
-import { MetronomeIcon } from "../../icons/metronomeIcon";
+import { MetronomeIcon } from "src/pages/DAW/icons/MetronomeIcon";
 
 export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef }: { timelineRect: DOMRect | null, audioEngine: AudioEngine, trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>, containerRef: React.MutableRefObject<HTMLDivElement | null> }) => {
   const [bpm, setBpm] = useState(Tone.getTransport().bpm.value);
@@ -38,6 +38,12 @@ export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef
           type="text"
           onClick={audioEngine.toggleMetronome}
           icon={<MetronomeIcon color={audioEngine.metronomeActive ? 'blue' : 'black'} width="1rem" height="1rem" />}
+        />
+        <Button
+          type="text"
+          style={{ color: audioEngine.snap ? 'blue' : '#000' }}
+          icon={<TableOutlined />}
+          onClick={() => audioEngine.setSnap(!audioEngine.snap)}
         />
         <Button
           type="text"

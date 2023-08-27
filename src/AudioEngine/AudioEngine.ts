@@ -6,6 +6,7 @@ import audioBufferToWav from 'audiobuffer-to-wav';
 
 export class AudioEngine {
   zoomLevels: number[] = [32, 64, 128, 256, 512, 1024, 2048, 4092];
+  clipBoard: Blob[] = [];
   zoomIndex: number = 4;
   samplesPerPixel: number = this.zoomLevels[this.zoomIndex];
   state: string = 'stopped';
@@ -16,8 +17,10 @@ export class AudioEngine {
   selectedClips: Clip[] = [];
   scrollXOffsetPixels: number = 0;
   selectedTracks: Track[] = observable.array([]);
+  snap: boolean = false;
   metronomeActive: boolean = false;
   metronome: Tone.PluckSynth | null = null;
+  metronomeEventId: number | null = null;
 
   constructor(
     public tracks: Track[] = observable.array([]),
@@ -25,8 +28,12 @@ export class AudioEngine {
     public audioCtx = Tone.getContext(),
   ) {
     makeObservable(this, {
+      state: observable,
+      setState: action.bound,
       metronomeActive: observable,
       setMetronome: action.bound,
+      snap: observable,
+      setSnap: action.bound,
       tracks: observable,
       samplesPerPixel: observable,
       bpm: observable,
@@ -49,12 +56,20 @@ export class AudioEngine {
     this.createTrack();
   }
 
+  setState(newState: 'playing' | 'stopped' | 'paused' | 'recording') {
+    this.state = newState;
+  }
+
   setMetronome(value: boolean) {
     this.metronomeActive = value;
   };
 
   toggleMetronome = () => {
     this.setMetronome(!this.metronomeActive);
+  }
+
+  setSnap = (value: boolean) => {
+    this.snap = value;
   }
 
   setZoom(direction: 'zoomIn' | 'zoomOut') {
@@ -84,6 +99,10 @@ export class AudioEngine {
 
   getSelectedTracks() {
     this.selectedTracks = observable.array([...this.tracks].filter(track => !!track.selected));
+  }
+
+  deselectAllTracks = () => {
+    this.tracks.forEach(track => track.deselect())
   }
 
   deleteSelectedTracks() {
@@ -116,6 +135,13 @@ export class AudioEngine {
         this.selectedClips.forEach(clip => clip.setPosition(clip.start.toSamples() - samples))
       }
     }
+  }
+
+  quantizeSelectedClips() {
+    this.selectedClips.forEach(clip => {
+      const quantizedTime = Tone.Time(clip.start.quantize('4n')).toSamples();
+      clip.setPosition(quantizedTime)
+    })
   }
 
   deleteSelectedClips() {
@@ -164,24 +190,29 @@ export class AudioEngine {
 
   play = () => {
     if (this.metronomeActive) {
-      
-      Tone.Transport.scheduleRepeat(time => {
-        this.metronome?.triggerAttack('C5', Tone.now())
+      const metronomeEventId = Tone.Transport.scheduleRepeat(time => {
+        this.metronome?.triggerAttack('C5', time)
       }, "4n");
+      this.metronomeEventId = metronomeEventId
     }
-    this.state = 'playing';
+    this.setState('playing');
     Tone.getTransport().start();
-    this.tracks.forEach(track => track.play())
+    this.tracks.forEach(track => track.play());
   }
 
   stop = () => {
-    this.state = 'stopped';
+    Tone.getTransport().cancel();
+    this.setState('stopped')
     Tone.getTransport().stop();
     this.tracks.forEach(track => track.stop())
   }
 
   pause = () => {
-    this.state = 'paused';
+    Tone.getTransport().cancel();
+    if (this.metronomeEventId) {
+      Tone.getTransport().cancel(this.metronomeEventId);
+    }
+    this.setState('paused')
     this.tracks.forEach(track => track.stop())
     Tone.getTransport().pause();
   }

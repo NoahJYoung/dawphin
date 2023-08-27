@@ -13,7 +13,7 @@ interface ClipViewProps {
   color: string
 }
 
-const convertRgbToRgba = (rgb: string, alpha: number) => {
+export const convertRgbToRgba = (rgb: string, alpha: number) => {
   const rgbValues = rgb.match(/\d+/g);
   if (!rgbValues || rgbValues.length !== 3) {
     throw new Error('Invalid RGB format');
@@ -44,8 +44,8 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
         interact: true,
         media: audioRef?.current || undefined,
         container: overviewRef.current,
-        waveColor: convertRgbToRgba(color, 0.55),
-        progressColor: convertRgbToRgba(color, 0.55),
+        waveColor: convertRgbToRgba('rgb(0, 0, 0)', 0.5),
+        progressColor: convertRgbToRgba('rgb(0, 0, 0)', 0.5),
         url: clip.audioSrc,
         height: 'auto',
         minPxPerSec: pixelsPerSecond,
@@ -58,11 +58,6 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
     }
     
   }, [clip.duration, peaks]);
-
-  useEffect(() => {
-    wavesurfer?.setOptions({ waveColor: convertRgbToRgba(color, 0.55), progressColor: convertRgbToRgba(color, 0.55) })
-  }, [color])
-
   
 
   const handleClick = (e: React.MouseEvent) => {
@@ -83,12 +78,13 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
 
   const handleDrag = (e: React.DragEvent) => {
     const dragValue = 2.5
+    const movementValue = dragValue * audioEngine.samplesPerPixel
     if (overviewRef.current && timelineRect) {
       if (e.clientX !== prevX.current) {
         if (e.clientX > prevX.current) {
-          audioEngine.moveSelectedClips(dragValue * audioEngine.samplesPerPixel, 'right');
+          audioEngine.moveSelectedClips(movementValue, 'right');
         } else {
-          audioEngine.moveSelectedClips( dragValue * audioEngine.samplesPerPixel, 'left');
+          audioEngine.moveSelectedClips(movementValue, 'left');
         }
         prevX.current = e.clientX
       }
@@ -168,16 +164,23 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
 
   return (
     <>
-      <ClipContextMenu audioEngine={audioEngine}>
+      <ClipContextMenu clip={clip} audioEngine={audioEngine}>
           <div
             id={`wave-container${clip.id}`}
             draggable
             onDrag={handleDrag}
             onDragStart={handleDragStart}
+            onDragEnd={() => {
+              if (audioEngine.snap) {
+                console.log(clip.start.toSeconds())
+                audioEngine.quantizeSelectedClips();
+                console.log(clip.start.toSeconds())
+              }
+            }}
             // onTouchStart={handleTouchStart}
             // onTouchMove={handleTouchMove}
             // onTouchEnd={handleTouchEnd}
-            onDragOver={e => e.preventDefault()}
+            onDragOver={(e) => e.preventDefault()}
             onDragEnter={e => e.preventDefault()}
             
             style={{
