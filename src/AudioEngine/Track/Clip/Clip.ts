@@ -1,6 +1,7 @@
 import { action, makeObservable, observable } from 'mobx';
 import * as Tone from 'tone';
 import { v4 as uuidv4 } from 'uuid';
+import { Track } from '../Track';
 
 export class Clip {
   id: string;
@@ -11,7 +12,7 @@ export class Clip {
   normalized: boolean = false;
 
   constructor(
-    public trackId: number,
+    public track: Track,
     public audioSrc: string,
     public audioBuffer: Tone.ToneAudioBuffer,
     public start: Tone.TimeClass,
@@ -33,22 +34,22 @@ export class Clip {
     this.loadAudio();
   }
 
-  play = (time: any) => {
-    this.player.start(time);
+  play = (time: number, seekTime?: number) => {
+    this.player.start(time, seekTime);
+  }
+
+  stop = () => {
+    this.player.stop();
   }
 
   loadAudio = async () => {
     await this.player.load(this.audioSrc);
     this.setDuration(Tone.Time(this.player.buffer.duration, 's'));
-    this.setEnd(Tone.Time(this.start.toSeconds() + this.player.buffer.duration, 's'))
+    this.setEnd(Tone.Time(this.start.toSeconds() + this.player.buffer.duration, 's'));
   }
 
   setSamples(samples: number) {
     this.samples = samples;
-  }
-
-  seek(time: number) {
-    this.player.seek(time);
   }
 
   setPosition(samples: number) {

@@ -1,9 +1,11 @@
 import { Clip } from "./Clip";
 import * as Tone from 'tone';
 import { action, makeObservable, observable } from 'mobx';
+import { AudioEngine } from "..";
 
 export class Track {
   constructor(
+    public audioEngine: AudioEngine,
     public id: number,
     public name: string,
     public clips: Clip[] = observable.array([]),
@@ -29,23 +31,20 @@ export class Track {
 
   play() {
     const transport = Tone.getTransport();
-    const ticks = Tone.getTransport().ticks;
     this.clips.forEach(clip => {
-      if (
-        ticks >= clip.start.toTicks() &&
-        ticks < clip.end?.toTicks()!
-      ) {
-        const seekTime = (transport.seconds - clip.start.toSeconds());
-        clip.play(Tone.now());
-        clip.seek(seekTime);
+      const seekTime = (transport.seconds - clip.start.toSeconds());
+      if (seekTime > 0) {
+        clip.play(Tone.now(), seekTime)
       } else {
-        // transport.scheduleOnce(clip.play, clip.start.toSeconds());
-
-        transport.schedule((time) => {
+        transport.scheduleOnce((time) => {
           clip.play(time);
         }, clip.start.toSeconds());
       }
     });
+  }
+
+  stop() {
+    this.clips.forEach(clip => clip.stop())
   }
 
   setName(value: string) {
@@ -82,15 +81,11 @@ export class Track {
 
   addClip(src: string, startSeconds: number) {
     const buffer = new Tone.ToneAudioBuffer(src)
-    const clip = new Clip(this.id, src, buffer, Tone.Time(startSeconds, 's'));
+    const clip = new Clip(this, src, buffer, Tone.Time(startSeconds, 's'));
     this.clips.push(clip);
   }
 
   setClips(clips: Clip[]) {
     this.clips = clips;
-  }
-
-  stop() {
-    this.clips.forEach(clip => clip.player.stop())
   }
 }

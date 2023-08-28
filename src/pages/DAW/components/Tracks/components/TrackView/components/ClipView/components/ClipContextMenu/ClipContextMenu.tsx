@@ -19,7 +19,7 @@ export const ClipContextMenu = observer(({ children, audioEngine }: ClipContextM
   const canCopy = useMemo(() => {
     if (audioEngine.selectedClips.length > 0) {
       return audioEngine.selectedClips.every((selectedClip) => (
-        selectedClip.trackId === audioEngine.selectedClips[0].trackId
+        selectedClip.track.id === audioEngine.selectedClips[0].track.id
       ))
     }
     return false;

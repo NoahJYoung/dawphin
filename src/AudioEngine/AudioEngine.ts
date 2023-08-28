@@ -23,7 +23,7 @@ export class AudioEngine {
   scrollXOffsetPixels: number = 0;
   selectedTracks: Track[] = observable.array([]);
   snap: boolean = false;
-  metronomeActive: boolean = false;
+  metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
   metronomeEventId: number | null = null;
 
@@ -60,7 +60,7 @@ export class AudioEngine {
     // const context = new Tone.Context(baseContext);
     // Tone.setContext(context);
     this.metronome = new Tone.PluckSynth().toDestination();
-    this.createTrack();
+    this.setupMetronome();
   }
 
   setState(newState: 'playing' | 'stopped' | 'paused' | 'recording') {
@@ -71,9 +71,17 @@ export class AudioEngine {
     this.metronomeActive = value;
   };
 
+  setupMetronome = () => {
+    const metronomeEventId = Tone.getTransport().scheduleRepeat(time => {
+      this.metronome?.triggerAttack('C5', time)
+    }, "4n");
+    this.metronomeEventId = metronomeEventId;
+    this.createTrack();
+  }
+
   toggleMetronome = () => {
     this.setMetronome(!this.metronomeActive);
-    if (!this.metronomeActive && this.metronomeEventId) {
+    if (!this.metronomeActive) {
       this.metronome!.disconnect()
     } else {
       this.metronome!.toDestination()
@@ -104,7 +112,7 @@ export class AudioEngine {
   }
 
   createTrack() {
-    const newTrack = new Track(this.currentTrackId, `Track ${this.tracks.length + 1}`);
+    const newTrack = new Track(this, this.currentTrackId, `Track ${this.tracks.length + 1}`);
     this.tracks.push(newTrack);
     this.currentTrackId += 1;
   }
@@ -172,7 +180,7 @@ export class AudioEngine {
   splitSelectedClipsAtPlayhead = () => {
     this.getSelectedClips();
     this.selectedClips.forEach(clip => {
-      const currentTrack = this.tracks.find(track => track.id === clip.trackId);
+      const currentTrack = clip.track;
       const data = clip.split();
       data && data.clips.forEach((clipData) => {
         const buffer = clipData.buffer.get();
@@ -196,7 +204,7 @@ export class AudioEngine {
       const buffer = clip.audioBuffer.get();
       if (buffer) {
         return {
-          data: new Blob([audioBufferToWav(buffer)]),
+          data: new Blob([audioBufferToWav(buffer)], { type: "audio/wav" }),
           start: clip.start
         }
       }
@@ -233,33 +241,23 @@ export class AudioEngine {
   }
 
   play = () => {
-    
-      
-      const metronomeEventId = Tone.getTransport().scheduleRepeat(time => {
-        this.metronome?.triggerAttack('C5', Tone.getTransport().nextSubdivision('4n'))
-      }, "4n");
-      this.metronomeEventId = metronomeEventId
-    
-    this.setState('playing');
-    Tone.getTransport().start();
-    this.tracks.forEach(track => track.play());
+    if (this.state !== 'playing') {
+      this.setState('playing');
+      Tone.getTransport().start();
+      this.tracks.forEach(track => track.play());
+    }
   }
 
   stop = () => {
-    Tone.getTransport().cancel(0);
-    this.setState('stopped');
     Tone.getTransport().stop();
-    this.tracks.forEach(track => track.stop())
+    this.tracks.forEach(track => track.stop());
+    this.setState('stopped');
   }
 
   pause = () => {
-    Tone.getTransport().cancel(0);
-    if (this.metronomeEventId) {
-      Tone.getTransport().cancel(this.metronomeEventId);
-    }
-    this.setState('paused')
-    this.tracks.forEach(track => track.stop())
     Tone.getTransport().pause();
+    this.tracks.forEach(track => track.stop())
+    this.setState('paused')
   }
 
   startTone = () => {

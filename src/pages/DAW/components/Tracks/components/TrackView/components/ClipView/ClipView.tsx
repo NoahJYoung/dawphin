@@ -139,7 +139,7 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
 
   const calculatePosition = () => {
     const left = Math.round(clip.start.toSamples() / audioEngine.samplesPerPixel);
-    const top = audioEngine.tracks.findIndex((track) => track.id === clip.trackId) * 80;
+    const top = audioEngine.tracks.findIndex((track) => track.id === clip.track.id) * 80;
 
     return { top, left };
   }
