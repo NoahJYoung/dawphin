@@ -28,7 +28,7 @@ const getTimeSignature = (audioEngine: AudioEngine) => {
 
 const Playhead = ({ left, width, moveCursor }: { left: number, width: number, moveCursor: (e: React.MouseEvent) => void }) => (
   <svg onClick={moveCursor} style={{ zIndex: 5, position: 'absolute' }} width={width.toString()} height={CANVAS_HEIGHT.toString()}>
-    <rect x={left.toString()} y="0" width="1" height={CANVAS_HEIGHT} fill="blue" />
+    <rect x={(left - 1).toString()} y="0" width="2" height={CANVAS_HEIGHT} fill="blue" />
   </svg>
 );
 
