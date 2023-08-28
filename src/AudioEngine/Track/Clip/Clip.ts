@@ -33,8 +33,8 @@ export class Clip {
     this.loadAudio();
   }
 
-  play = () => {
-    this.player.start();
+  play = (time: any) => {
+    this.player.start(time);
   }
 
   loadAudio = async () => {

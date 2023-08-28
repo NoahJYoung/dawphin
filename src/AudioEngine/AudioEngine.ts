@@ -4,9 +4,14 @@ import * as Tone from 'tone';
 import { Clip } from './Track/Clip';
 import audioBufferToWav from 'audiobuffer-to-wav';
 
+interface ClipboardItem {
+  data: Blob
+  start: Tone.TimeClass
+}
+
 export class AudioEngine {
   zoomLevels: number[] = [32, 64, 128, 256, 512, 1024, 2048, 4092];
-  clipBoard: Blob[] = [];
+  clipboard: (ClipboardItem | null)[] = [];
   zoomIndex: number = 4;
   samplesPerPixel: number = this.zoomLevels[this.zoomIndex];
   state: string = 'stopped';
@@ -38,6 +43,7 @@ export class AudioEngine {
       samplesPerPixel: observable,
       bpm: observable,
       selectedTracks: observable,
+      selectedClips: observable,
       setBpm: action.bound,
       timeSignature: observable,
       setTimeSignature: action.bound,
@@ -46,6 +52,7 @@ export class AudioEngine {
       getSelectedTracks: action.bound,
       deleteSelectedTracks: action.bound,
       getSelectedClips: action.bound,
+      setSelectedClips: action.bound,
       moveSelectedClips: action.bound,
       deleteSelectedClips: action.bound,
     });
@@ -66,6 +73,11 @@ export class AudioEngine {
 
   toggleMetronome = () => {
     this.setMetronome(!this.metronomeActive);
+    if (!this.metronomeActive && this.metronomeEventId) {
+      this.metronome!.disconnect()
+    } else {
+      this.metronome!.toDestination()
+    }
   }
 
   setSnap = (value: boolean) => {
@@ -112,6 +124,10 @@ export class AudioEngine {
     this.tracks = this.tracks.filter(track => !selectedTrackIds.includes(track.id));
     this.selectedTracks = []
   }
+  
+  setSelectedClips(clips: Clip[]) {
+    this.selectedClips = observable.array(clips);
+  }
 
   getSelectedClips() {
     const selectedClips: Clip[] = [];
@@ -123,7 +139,7 @@ export class AudioEngine {
       });
     });
 
-    this.selectedClips = selectedClips;
+    this.setSelectedClips(selectedClips);
   }
 
   moveSelectedClips(samples: number, direction: 'right' | 'left') {
@@ -172,7 +188,35 @@ export class AudioEngine {
   deselectClips() {
     this.getSelectedClips();
     this.selectedClips.forEach(clip => clip.setSelect(false))
-    this.selectedClips = [];
+    this.setSelectedClips([])
+  }
+
+  copyClips = () => {
+    this.clipboard = this.selectedClips.map(clip => {
+      const buffer = clip.audioBuffer.get();
+      if (buffer) {
+        return {
+          data: new Blob([audioBufferToWav(buffer)]),
+          start: clip.start
+        }
+      }
+      return null;
+    })
+  };
+
+  pasteClips = () => {
+    if (this.selectedTracks.length > 0) {
+      this.clipboard.forEach((item, i) => {
+        if (item?.data) {
+          if (i > 0) {
+            const adjustedStart = item.start.toSeconds() + Tone.getTransport().seconds;
+            this.selectedTracks.forEach(track => track.addClip(URL.createObjectURL(item.data), adjustedStart));
+          } else {
+            this.selectedTracks.forEach(track => track.addClip(URL.createObjectURL(item.data), Tone.getTransport().seconds));
+          }
+        }
+      })
+    }
   }
 
   setPosition = (time: Tone.TimeClass, redraw: () => void) => {
@@ -189,26 +233,27 @@ export class AudioEngine {
   }
 
   play = () => {
-    if (this.metronomeActive) {
-      const metronomeEventId = Tone.Transport.scheduleRepeat(time => {
-        this.metronome?.triggerAttack('C5', time)
+    
+      
+      const metronomeEventId = Tone.getTransport().scheduleRepeat(time => {
+        this.metronome?.triggerAttack('C5', Tone.getTransport().nextSubdivision('4n'))
       }, "4n");
       this.metronomeEventId = metronomeEventId
-    }
+    
     this.setState('playing');
     Tone.getTransport().start();
     this.tracks.forEach(track => track.play());
   }
 
   stop = () => {
-    Tone.getTransport().cancel();
-    this.setState('stopped')
+    Tone.getTransport().cancel(0);
+    this.setState('stopped');
     Tone.getTransport().stop();
     this.tracks.forEach(track => track.stop())
   }
 
   pause = () => {
-    Tone.getTransport().cancel();
+    Tone.getTransport().cancel(0);
     if (this.metronomeEventId) {
       Tone.getTransport().cancel(this.metronomeEventId);
     }

@@ -62,12 +62,13 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
 
   const handleClick = (e: React.MouseEvent) => {
     if (!e.ctrlKey) {
-      const initialState= clip.isSelected;
+      const initialState = clip.isSelected;
       audioEngine.deselectClips();
       clip.setSelect(!initialState);
     } else {
       clip.setSelect(true);
     }
+    audioEngine.getSelectedClips()
   };
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -164,43 +165,39 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
 
   return (
     <>
-      <ClipContextMenu clip={clip} audioEngine={audioEngine}>
-          <div
-            id={`wave-container${clip.id}`}
-            draggable
-            onDrag={handleDrag}
-            onDragStart={handleDragStart}
-            onDragEnd={() => {
-              if (audioEngine.snap) {
-                console.log(clip.start.toSeconds())
-                audioEngine.quantizeSelectedClips();
-                console.log(clip.start.toSeconds())
-              }
-            }}
-            // onTouchStart={handleTouchStart}
-            // onTouchMove={handleTouchMove}
-            // onTouchEnd={handleTouchEnd}
-            onDragOver={(e) => e.preventDefault()}
-            onDragEnter={e => e.preventDefault()}
-            
-            style={{
-              left,
-              top,
-              position: 'absolute',
-              background: convertRgbToRgba(color, backgroundAlpha),
-              opacity: clip.isSelected ? 0.9 : 0.8,
-              width: clipWidth >= 1 ? clipWidth : 1,
-              height: '80px',
-              borderRadius: '10px',
-              color: 'blue',
-              border: `1px solid ${color}`,
-              zIndex: 3,
-            }}
-            ref={overviewRef}
-            onClick={handleClick}
-          />
-        </ClipContextMenu>
-        <audio src={clip.audioSrc} ref={audioRef} />
+      <div
+        id={`wave-container${clip.id}`}
+        draggable
+        onDrag={handleDrag}
+        onDragStart={handleDragStart}
+        onDragEnd={() => {
+          if (audioEngine.snap) {
+            audioEngine.quantizeSelectedClips();
+          }
+        }}
+        // onTouchStart={handleTouchStart}
+        // onTouchMove={handleTouchMove}
+        // onTouchEnd={handleTouchEnd}
+        onDragOver={(e) => e.preventDefault()}
+        onDragEnter={e => e.preventDefault()}
+        
+        style={{
+          left,
+          top,
+          position: 'absolute',
+          background: convertRgbToRgba(color, backgroundAlpha),
+          opacity: clip.isSelected ? 0.9 : 0.8,
+          width: clipWidth >= 1 ? clipWidth : 1,
+          height: '80px',
+          borderRadius: '10px',
+          color: 'blue',
+          border: `1px solid ${color}`,
+          zIndex: 3,
+        }}
+        ref={overviewRef}
+        onClick={handleClick}
+      />
+      <audio src={clip.audioSrc} ref={audioRef} />
     </>
   )
 }) 

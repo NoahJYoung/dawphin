@@ -36,10 +36,14 @@ export class Track {
         ticks < clip.end?.toTicks()!
       ) {
         const seekTime = (transport.seconds - clip.start.toSeconds());
-        clip.play();
+        clip.play(Tone.now());
         clip.seek(seekTime);
       } else {
-        transport.scheduleOnce(clip.play, clip.start.toSeconds());
+        // transport.scheduleOnce(clip.play, clip.start.toSeconds());
+
+        transport.schedule((time) => {
+          clip.play(time);
+        }, clip.start.toSeconds());
       }
     });
   }

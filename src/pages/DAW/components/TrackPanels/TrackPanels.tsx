@@ -31,7 +31,7 @@ export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef
           disabled={duplicateDisabled}
           type="text"
           icon={<FileAddOutlined />}
-          onClick={audioEngine.createTrack}
+          onClick={() => {}}
         />
         <Button
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}

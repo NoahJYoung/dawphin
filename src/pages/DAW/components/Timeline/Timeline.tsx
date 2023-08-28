@@ -2,6 +2,7 @@ import React, { useRef, useEffect, Dispatch, SetStateAction, useMemo, useState }
 import { AudioEngine } from 'src/AudioEngine';
 import * as Tone from 'tone';
 import { observer } from 'mobx-react-lite';
+import { TimelineContextMenu } from './components';
 
 const CANVAS_HEIGHT = 2000;
 const TOP_BAR_HEIGHT = 30;
@@ -151,7 +152,6 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
       updatePlayhead()
     }
   }
-  
 
   useEffect(() => {
     if (!!gridRef.current) {
@@ -180,55 +180,57 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
   }, [audioEngine.samplesPerPixel, audioEngine.totalMeasures]);
 
   return (
-    <div
-      ref={containerRef}
-      onClick={moveCursor}
-      onScroll={(e) => {
-        const target = e.target as HTMLDivElement
-        audioEngine.scrollXOffsetPixels = target.scrollLeft;
-        if (trackPanelsRef?.current) {
-          trackPanelsRef.current.scrollTop = target.scrollTop
-        }
-      }}
-      style={{
-        maxHeight: '60vh',
-        minHeight: '60vh',
-        position: 'relative',
-        overflowY: 'auto',
-        overflowX: 'scroll',
-      }}
-    >
-      <div onClick={moveCursor} style={{ zIndex: -1, pointerEvents: 'none' }}>
-        { drawSVGGrid() }
-      </div>
-      <div style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 4,
-        height: TOP_BAR_HEIGHT,
-        width: canvasWidth,
-        background: '#888',
-      }}>
-        { drawTopBar() }
-      </div>
-      <div >
-      { children }
-      </div>
+    <TimelineContextMenu audioEngine={audioEngine}>
       <div
+        ref={containerRef}
         onClick={moveCursor}
+        onScroll={(e) => {
+          const target = e.target as HTMLDivElement
+          audioEngine.scrollXOffsetPixels = target.scrollLeft;
+          if (trackPanelsRef?.current) {
+            trackPanelsRef.current.scrollTop = target.scrollTop
+          }
+        }}
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: canvasWidth,
-          height: CANVAS_HEIGHT,
-          pointerEvents: 'none',
-          zIndex: 5,
+          maxHeight: '60vh',
+          minHeight: '60vh',
+          position: 'relative',
+          overflowY: 'auto',
+          overflowX: 'scroll',
         }}
       >
-        <Playhead moveCursor={moveCursor} width={canvasWidth} left={playheadX} />
+        <div onClick={moveCursor} style={{ zIndex: -1, pointerEvents: 'none' }}>
+          { drawSVGGrid() }
+        </div>
+        <div style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 4,
+          height: TOP_BAR_HEIGHT,
+          width: canvasWidth,
+          background: '#888',
+        }}>
+          { drawTopBar() }
+        </div>
+        <div >
+        { children }
+        </div>
+        <div
+          onClick={moveCursor}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: canvasWidth,
+            height: CANVAS_HEIGHT,
+            pointerEvents: 'none',
+            zIndex: 5,
+          }}
+        >
+          <Playhead moveCursor={moveCursor} width={canvasWidth} left={playheadX} />
+        </div>
       </div>
-    </div>
+    </TimelineContextMenu>
   );
 })
 

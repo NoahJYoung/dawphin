@@ -9,12 +9,12 @@ import type { AudioEngine } from "src/AudioEngine";
 import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
 
-interface ClipContextMenuProps {
+interface TimelineContextMenuProps {
   children: React.ReactNode
   audioEngine: AudioEngine
 }
 
-export const ClipContextMenu = observer(({ children, audioEngine }: ClipContextMenuProps) => {
+export const TimelineContextMenu = observer(({ children, audioEngine }: TimelineContextMenuProps) => {
   
   const canCopy = useMemo(() => {
     if (audioEngine.selectedClips.length > 0) {
