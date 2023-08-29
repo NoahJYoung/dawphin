@@ -33,12 +33,10 @@ export class Track {
     const transport = Tone.getTransport();
     this.clips.forEach(clip => {
       const seekTime = (transport.seconds - clip.start.toSeconds());
-      if (seekTime > 0) {
+      if (clip.end && transport.seconds > clip.start.toSeconds() && transport.seconds < clip.end?.toSeconds()) {
         clip.play(Tone.now(), seekTime)
       } else {
-        transport.scheduleOnce((time) => {
-          clip.play(time);
-        }, clip.start.toSeconds());
+        clip.schedule();
       }
     });
   }

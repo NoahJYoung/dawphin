@@ -167,7 +167,7 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
       updatePlayhead()
     }, 0.01);
     updatePlayhead();
-  }, [audioEngine.state])
+  }, [])
 
   const canvasWidth = useMemo(() => {
     const beatsPerSecond = Tone.getTransport().bpm.value / 60;

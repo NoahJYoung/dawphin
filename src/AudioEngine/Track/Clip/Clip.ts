@@ -18,6 +18,8 @@ export class Clip {
     public start: Tone.TimeClass,
     public isSelected: boolean = false,
     public player = new Tone.Player(),
+    public startEventId: number | null = null,
+    public stopEventId: number | null = null,
   ) {
     makeObservable(this, {
       isSelected: observable,
@@ -38,6 +40,46 @@ export class Clip {
     this.player.start(time, seekTime);
   }
 
+  schedulePlay = () => {
+    const transport = Tone.getTransport();
+    const seekTime = (transport.seconds - this.start.toSeconds());
+    const playEventId = transport.scheduleOnce((time) => {
+      if (seekTime > 0) {
+        this.play(Tone.now(), seekTime)
+      } else {
+        this.play(time)
+      }
+    }, this.start.toSeconds())
+    this.startEventId = playEventId;
+  }
+
+  scheduleStop = () => {
+    const transport = Tone.getTransport();
+    if (this.end) {
+      const stopEventId = transport.scheduleOnce(() => {
+        this.stop()
+      }, this?.end.toSeconds())
+      this.stopEventId = stopEventId;
+    }
+  }
+
+  schedule = () => {
+    this.clearEvents();
+    this.schedulePlay();
+    this.scheduleStop();
+  }
+
+  clearEvents = () => {
+    const transport = Tone.getTransport();
+    if (this.startEventId) {
+      transport.clear(this.startEventId);
+    }
+
+    if (this.stopEventId) {
+      transport.clear(this.stopEventId);
+    }
+  }
+
   stop = () => {
     this.player.stop();
   }
@@ -46,6 +88,7 @@ export class Clip {
     await this.player.load(this.audioSrc);
     this.setDuration(Tone.Time(this.player.buffer.duration, 's'));
     this.setEnd(Tone.Time(this.start.toSeconds() + this.player.buffer.duration, 's'));
+    this.schedule();
   }
 
   setSamples(samples: number) {
@@ -61,6 +104,7 @@ export class Clip {
         this.setStart(Tone.Time(0, 'samples'))
         this.setEnd(Tone.Time(this.start.toSeconds() + this.duration.toSeconds(), 's'));
       }
+      this.schedule();
     }
   }
 
@@ -87,6 +131,7 @@ export class Clip {
   deleteClip() {
     URL.revokeObjectURL(this.audioSrc);
     this.player.dispose();
+    this.clearEvents();
   }
 
   split() {

@@ -25,7 +25,7 @@ export class AudioEngine {
   snap: boolean = false;
   metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
-  metronomeEventId: number | null = null;
+  // metronomeEventId: number | null = null;
 
   constructor(
     public tracks: Track[] = observable.array([]),
@@ -72,10 +72,10 @@ export class AudioEngine {
   };
 
   setupMetronome = () => {
-    const metronomeEventId = Tone.getTransport().scheduleRepeat(time => {
+    Tone.getTransport().scheduleRepeat(time => {
       this.metronome?.triggerAttack('C5', time)
     }, "4n");
-    this.metronomeEventId = metronomeEventId;
+    // this.metronomeEventId = metronomeEventId;
     this.createTrack();
   }
 
@@ -182,14 +182,14 @@ export class AudioEngine {
     this.selectedClips.forEach(clip => {
       const currentTrack = clip.track;
       const data = clip.split();
-      data && data.clips.forEach((clipData) => {
+      data && data.clips.forEach((clipData, i) => {
         const buffer = clipData.buffer.get();
         if (buffer) {
           const blob = new Blob([audioBufferToWav(buffer)], { type: "audio/wav" });
           currentTrack?.addClip(URL.createObjectURL(blob),  clipData.start.toSamples());
         }
       })
-      currentTrack?.setClips(currentTrack.clips.filter(clip => clip.id !== data?.oldId));   
+      currentTrack?.setClips(currentTrack.clips.filter(clip => clip.id !== data?.oldId));
     })
   }
 
@@ -230,9 +230,8 @@ export class AudioEngine {
   setPosition = (time: Tone.TimeClass, redraw: () => void) => {
     const transport = Tone.getTransport();
     if (this.state === 'playing') {
-      this.pause();
+      this.stop();
       transport.ticks = time.toTicks();
-      redraw();
       this.play();
     } else {
       transport.ticks = time.toTicks();
@@ -242,16 +241,17 @@ export class AudioEngine {
 
   play = () => {
     if (this.state !== 'playing') {
-      this.setState('playing');
-      Tone.getTransport().start();
+      // this.setState('playing');
+      // Tone.getTransport().start();
       this.tracks.forEach(track => track.play());
+      Tone.getTransport().start()
     }
   }
 
   stop = () => {
+    this.setState('stopped');
     Tone.getTransport().stop();
     this.tracks.forEach(track => track.stop());
-    this.setState('stopped');
   }
 
   pause = () => {
