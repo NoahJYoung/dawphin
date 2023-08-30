@@ -3,9 +3,10 @@ import { Button } from 'antd';
 import { ZoomInOutlined, ZoomOutOutlined, PlusOutlined, FileAddOutlined, TableOutlined } from "@ant-design/icons"
 import { useMemo, useState } from "react";
 import { AudioEngine } from "src/AudioEngine";
-import * as Tone from 'tone';
 import { TrackPanel } from "./components";
 import { MetronomeIcon } from "src/pages/DAW/icons/MetronomeIcon";
+import { SCROLLBAR_HEIGHT, MIN_GRID_HEIGHT, CLIP_HEIGHT, TOPBAR_HEIGHT } from "../../constants";
+import * as Tone from 'tone';
 
 export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef }: { timelineRect: DOMRect | null, audioEngine: AudioEngine, trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>, containerRef: React.MutableRefObject<HTMLDivElement | null> }) => {
   const [bpm, setBpm] = useState(Tone.getTransport().bpm.value);
@@ -20,15 +21,16 @@ export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef
     setBpm(Tone.getTransport().bpm.value)
   }
 
+  const sectionHeight = useMemo(() => {
+    const calculatedHeight = CLIP_HEIGHT * audioEngine.tracks.length + SCROLLBAR_HEIGHT;
+    return calculatedHeight > MIN_GRID_HEIGHT ? calculatedHeight : MIN_GRID_HEIGHT
+  }, [audioEngine.tracks.length]);
+
   const duplicateDisabled = useMemo(() => audioEngine.selectedTracks.length !== 1, [audioEngine.selectedTracks.length]);
-  
-  const sectionHeight = useMemo(() => (
-    (80 * audioEngine.tracks.length + 30) > 2000 ? (80 * audioEngine.tracks.length + 30) : 2000
-    ), [audioEngine.tracks.length]);
 
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
-      <div style={{ height: 30, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#555', border: '1px solid #333' }}>
+      <div style={{ height: TOPBAR_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#555', border: '1px solid #333' }}>
         <Button
           type="text"
           icon={<PlusOutlined />}

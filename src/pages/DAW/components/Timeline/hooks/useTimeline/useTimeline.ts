@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import type { AudioEngine } from "src/AudioEngine";
 import { getTimeSignature } from "../../helpers";
+import { CLIP_HEIGHT, MIN_GRID_HEIGHT, SCROLLBAR_HEIGHT } from "src/pages/DAW/constants";
 import * as Tone from 'tone';
 
 export const useTimeline = (audioEngine: AudioEngine) => {
@@ -19,9 +20,10 @@ export const useTimeline = (audioEngine: AudioEngine) => {
     return widthInPixels;
   }, [audioEngine.samplesPerPixel, audioEngine.totalMeasures]);
 
-  const sectionHeight = useMemo(() => (
-    80 * audioEngine.tracks.length + 30 > 2000 ? (80 * audioEngine.tracks.length + 30) : 2000
-    ), [audioEngine.tracks.length]);
+  const sectionHeight = useMemo(() => {
+    const calculatedHeight = CLIP_HEIGHT * audioEngine.tracks.length + SCROLLBAR_HEIGHT;
+    return calculatedHeight > MIN_GRID_HEIGHT ? calculatedHeight : MIN_GRID_HEIGHT
+  }, [audioEngine.tracks.length]);
 
   return {
     gridRef,

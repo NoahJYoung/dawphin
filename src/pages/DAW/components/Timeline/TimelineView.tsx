@@ -13,10 +13,7 @@ import type { AudioEngine } from 'src/AudioEngine';
 import { observer } from 'mobx-react-lite';
 import * as Tone from 'tone';
 import { useTimeline } from './hooks';
-
-//const GRID_HEIGHT = 80 * 30 + 30;
-const TOPBAR_HEIGHT = 30;
-const CLIP_HEIGHT = 80;
+import { CLIP_HEIGHT, TOPBAR_HEIGHT } from '../../constants';
 
 interface TimelineProps {
   audioEngine: AudioEngine
