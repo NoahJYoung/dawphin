@@ -25,9 +25,6 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
   const [peaks, setPeaks] = useState<number[][] | undefined>(undefined);
   const prevX = useRef(0);
-
-  const [touchTimeout, setTouchTimeout] = useState<number | null>(null);
-  const [isLongTouch, setIsLongTouch] = useState(false);
   const overviewRef = useRef(null);
   const audioRef = useRef(null);
 
@@ -91,44 +88,6 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
     }
   }
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsLongTouch(false);
-
-    setTouchTimeout(setTimeout(() => {
-      setIsLongTouch(true);
-      clip.setSelect(true);
-    }, 500));
-  };
-  
-  const handleTouchMove = (e: React.TouchEvent) => {
-    // if (touchTimeout) {
-    //   clearTimeout(touchTimeout);
-    //   setTouchTimeout(null)
-    // }
-  
-    // if (isLongTouch) {
-    //   if (overviewRef.current && timelineRect) {
-    //     const container = e.currentTarget.parentElement;
-    //     const x = (e.touches[0].clientX - timelineRect.left + (container?.scrollLeft || 0)) * 2;
-        
-    //     if (x > 0) {
-    //       clip.setPosition((x * audioEngine.samplesPerPixel) / 2)
-    //     } else {
-    //       clip.setPosition(0);
-    //     }
-    //   }
-    // }
-  };
-  
-  const handleTouchEnd = () => {
-    if (touchTimeout) {
-      clearTimeout(touchTimeout);
-      setTouchTimeout(null);
-    }
-    clip.setSelect(true);
-    setIsLongTouch(false)
-  };
-
   useEffect(() => {
     const sampleRate = 44100;
     const pixelsPerSample = audioEngine.samplesPerPixel;
@@ -174,9 +133,6 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
             audioEngine.quantizeSelectedClips();
           }
         }}
-        // onTouchStart={handleTouchStart}
-        // onTouchMove={handleTouchMove}
-        // onTouchEnd={handleTouchEnd}
         onDragOver={(e) => e.preventDefault()}
         onDragEnter={e => e.preventDefault()}
         

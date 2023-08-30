@@ -11,6 +11,7 @@ interface ClipboardItem {
 
 export class AudioEngine {
   zoomLevels: number[] = [32, 64, 128, 256, 512, 1024, 2048, 4092];
+  quantizationValues: string[] = ['16n', '16n', '8n', '8n', '4n', '4n', '1n', '1n']
   clipboard: (ClipboardItem | null)[] = [];
   zoomIndex: number = 4;
   samplesPerPixel: number = this.zoomLevels[this.zoomIndex];
@@ -25,7 +26,6 @@ export class AudioEngine {
   snap: boolean = false;
   metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
-  quantizationValues: string[] = ['16n', '16n', '8n', '8n', '4n', '4n', '1n', '1n']
 
   constructor(
     public tracks: Track[] = observable.array([]),
@@ -56,9 +56,6 @@ export class AudioEngine {
       moveSelectedClips: action.bound,
       deleteSelectedClips: action.bound,
     });
-    // const baseContext = new AudioContext({ sampleRate: 44100, latencyHint: 'interactive' });
-    // const context = new Tone.Context(baseContext);
-    // Tone.setContext(context);
     this.metronome = new Tone.PluckSynth().toDestination();
     this.setupMetronome();
   }
@@ -75,7 +72,6 @@ export class AudioEngine {
     Tone.getTransport().scheduleRepeat(time => {
       this.metronome?.triggerAttack('C5', time)
     }, "4n");
-    // this.metronomeEventId = metronomeEventId;
     this.createTrack();
   }
 
@@ -182,7 +178,7 @@ export class AudioEngine {
     this.selectedClips.forEach(clip => {
       const currentTrack = clip.track;
       const data = clip.split();
-      data && data.clips.forEach((clipData, i) => {
+      data && data.clips.forEach((clipData) => {
         const buffer = clipData.buffer.get();
         if (buffer) {
           const blob = new Blob([audioBufferToWav(buffer)], { type: "audio/wav" });
@@ -241,8 +237,6 @@ export class AudioEngine {
 
   play = () => {
     if (this.state !== 'playing') {
-      // this.setState('playing');
-      // Tone.getTransport().start();
       this.tracks.forEach(track => track.play());
       Tone.getTransport().start()
     }
