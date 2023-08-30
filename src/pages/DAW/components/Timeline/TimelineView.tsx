@@ -2,7 +2,6 @@ import React, {
   useEffect,
   type Dispatch,
   type SetStateAction,
-  useMemo,
 } from 'react';
 import {
   Playhead,

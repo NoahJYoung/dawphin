@@ -20,7 +20,7 @@ export const useTimeline = (audioEngine: AudioEngine) => {
   }, [audioEngine.samplesPerPixel, audioEngine.totalMeasures]);
 
   const sectionHeight = useMemo(() => (
-    (80 * audioEngine.tracks.length + 30) > 2000 ? (80 * audioEngine.tracks.length + 30) : 2000
+    80 * audioEngine.tracks.length + 30 > 2000 ? (80 * audioEngine.tracks.length + 30) : 2000
     ), [audioEngine.tracks.length]);
 
   return {
