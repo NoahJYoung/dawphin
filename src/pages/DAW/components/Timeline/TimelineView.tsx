@@ -1,10 +1,8 @@
 import React, {
-  useRef,
   useEffect,
   type Dispatch,
   type SetStateAction,
   useMemo,
-  useState,
 } from 'react';
 import {
   Playhead,
@@ -14,10 +12,10 @@ import {
 } from './components';
 import type { AudioEngine } from 'src/AudioEngine';
 import { observer } from 'mobx-react-lite';
-import { getTimeSignature } from './helpers';
 import * as Tone from 'tone';
+import { useTimeline } from './hooks';
 
-const GRID_HEIGHT = 2000;
+//const GRID_HEIGHT = 80 * 30 + 30;
 const TOPBAR_HEIGHT = 30;
 const CLIP_HEIGHT = 80;
 
@@ -25,16 +23,27 @@ interface TimelineProps {
   audioEngine: AudioEngine
   setTimelineRect: Dispatch<SetStateAction<DOMRect | null>>
   containerRef: React.MutableRefObject<HTMLDivElement | null>
-  timelineRect: DOMRect | null
   children: React.ReactNode
   trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>
 }
 
-export const TimelineView = observer(({ audioEngine, setTimelineRect, timelineRect, trackPanelsRef, children, containerRef }: TimelineProps) => {  
-  const [playheadX, setPlayheadX] = useState(0);
-  const gridRef = useRef<SVGSVGElement>(null);
-  const topbarRef = useRef<SVGSVGElement>(null);
-  const playheadRef = useRef<HTMLCanvasElement>(null);
+export const TimelineView = observer(({
+  audioEngine,
+  setTimelineRect,
+  trackPanelsRef,
+  children,
+  containerRef,
+}: TimelineProps) => {  
+
+  const {
+    playheadX,
+    setPlayheadX,
+    gridRef,
+    topbarRef,
+    playheadRef,
+    gridWidth,
+    sectionHeight
+  } = useTimeline(audioEngine)
   
   const updatePlayhead = () => {
     const x = Math.round(((Tone.getTransport().seconds) * Tone.getContext().sampleRate) / audioEngine.samplesPerPixel);
@@ -49,7 +58,7 @@ export const TimelineView = observer(({ audioEngine, setTimelineRect, timelineRe
   };
 
   const moveCursor = (e: React.MouseEvent) => {
-    if (gridRef.current && timelineRect) {
+    if (gridRef.current) {
       const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - 250;
       const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
       Tone.getTransport().seconds = audioEngine.snap ? Tone.Time(time.quantize(audioEngine.quantizationValues[audioEngine.zoomIndex])).toSeconds() : time.toSeconds();
@@ -77,17 +86,7 @@ export const TimelineView = observer(({ audioEngine, setTimelineRect, timelineRe
     Tone.getTransport().scheduleRepeat(() => {
       updatePlayhead()
     }, 0.01);
-  }, [])
-
-  const gridWidth = useMemo(() => {
-    const beatsPerSecond = Tone.getTransport().bpm.value / 60;
-    const samplesPerBeat = Tone.getContext().sampleRate / beatsPerSecond;
-    const samplesPerMeasure = samplesPerBeat * getTimeSignature(audioEngine);
-    const totalSamples = samplesPerMeasure * audioEngine.totalMeasures;
-    const widthInPixels = totalSamples / audioEngine.samplesPerPixel;
-
-    return widthInPixels;
-  }, [audioEngine.samplesPerPixel, audioEngine.totalMeasures]);
+  }, []);
 
   return (
     <TimelineContextMenu audioEngine={audioEngine}>
@@ -119,7 +118,7 @@ export const TimelineView = observer(({ audioEngine, setTimelineRect, timelineRe
             audioEngine={audioEngine}
             gridRef={gridRef}
             gridWidth={gridWidth}
-            gridHeight={GRID_HEIGHT}
+            gridHeight={sectionHeight}
             clipHeight={CLIP_HEIGHT}
             topbarHeight={TOPBAR_HEIGHT}
           />
@@ -149,16 +148,17 @@ export const TimelineView = observer(({ audioEngine, setTimelineRect, timelineRe
             top: 0,
             left: 0,
             width: gridWidth,
-            height: GRID_HEIGHT,
+            height: sectionHeight,
             pointerEvents: 'none',
             zIndex: 5,
           }}
         >
           <Playhead
+            playheadRef={playheadRef}
             moveCursor={moveCursor}
             width={gridWidth}
             left={playheadX}
-            gridHeight={GRID_HEIGHT}
+            gridHeight={sectionHeight}
           />
         </div>
       </div>

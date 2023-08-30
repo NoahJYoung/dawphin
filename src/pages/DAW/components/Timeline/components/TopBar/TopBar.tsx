@@ -23,7 +23,6 @@ export const TopBar = observer(({
   const { totalBeats, samplesPerBeat } = calculateGridlineValues(audioEngine);
   const beatsPerMeasure = getTimeSignature(audioEngine);    
   
-
   return (
     <svg ref={topbarRef} style={{ position: 'absolute', pointerEvents: 'none' }} width={gridWidth} height={topBarHeight}>
       {Array.from({ length: (totalBeats + 1) }).map((_, i) => {

@@ -25,7 +25,6 @@ export const DAW = () => {
           audioEngine={audioEngineInstance}
         />
         <TimelineView
-          timelineRect={timelineRect}
           setTimelineRect={setTimelineRect}
           containerRef={containerRef}
           audioEngine={audioEngine}

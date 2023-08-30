@@ -45,10 +45,16 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
         url: clip.audioSrc,
         height: 'auto',
         minPxPerSec: pixelsPerSecond,
+        
         hideScrollbar: true,
         cursorWidth: 0,
         normalize: false,
         peaks,
+
+        // bars
+        // barWidth: 3,
+        // barRadius: 5,
+        // barGap: 2
       })
       setWavesurfer(wavesurfer);
     }
@@ -148,6 +154,7 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
           color: 'blue',
           border: `1px solid ${color}`,
           zIndex: 3,
+          overflow: 'hidden'
         }}
         ref={overviewRef}
         onClick={handleClick}

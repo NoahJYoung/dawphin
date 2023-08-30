@@ -14,11 +14,18 @@ export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef
   const handleBpmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBpm(parseInt(e.target.value));
   }
+
   const handleBpmClick = () => {
     audioEngine.setBpm(bpm);
     setBpm(Tone.getTransport().bpm.value)
   }
+
   const duplicateDisabled = useMemo(() => audioEngine.selectedTracks.length !== 1, [audioEngine.selectedTracks.length]);
+  
+  const sectionHeight = useMemo(() => (
+    (80 * audioEngine.tracks.length + 30) > 2000 ? (80 * audioEngine.tracks.length + 30) : 2000
+    ), [audioEngine.tracks.length]);
+
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <div style={{ height: 30, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#555', border: '1px solid #333' }}>
@@ -73,7 +80,7 @@ export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef
           />
       </div>
       <div ref={trackPanelsRef} style={{zIndex: 2, minWidth: 250, height: 'calc(60vh - 30px)', overflow: 'hidden', background: '#111'}}>
-        <div style={{height: 2000}}>
+        <div style={{height: sectionHeight}}>
         {audioEngine.tracks.map((track, i) => (
             <TrackPanel audioEngine={audioEngine} trackNumber={i + 1} key={track.id} track={track} />
         ))}

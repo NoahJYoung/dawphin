@@ -5,15 +5,11 @@ export const calculateGridlineValues = (audioEngine: AudioEngine) => {
   const bpm = audioEngine.bpm;
   const secondsPerBeat = 60 / bpm;
   const samplesPerBeat = secondsPerBeat * Tone.getContext().sampleRate;
-  const pixelsPerBeat = Math.round(samplesPerBeat / audioEngine.samplesPerPixel);
   const beatsPerMeasure = Tone.getTransport().timeSignature as number;
-
-  
   const totalBeats = audioEngine.totalMeasures * beatsPerMeasure;
 
   return {
     totalBeats,
     samplesPerBeat,
-    pixelsPerBeat
   };
 };
