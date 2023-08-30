@@ -83,7 +83,7 @@ export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef
         <button onClick={audioEngine.deleteSelectedTracks}>Delete selected</button>
         <p>{`${timeSignature}/4`}</p>
         <button onClick={() => {
-          audioEngine.setTimeSignature(5)
+          audioEngine.setTimeSignature([7, 4])
           setTimeSignature(Tone.getTransport().timeSignature)
         }}>Raise time signature</button>
         <p>BPM:</p>

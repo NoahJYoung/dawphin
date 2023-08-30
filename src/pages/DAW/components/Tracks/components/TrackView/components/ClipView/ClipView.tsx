@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import { AudioEngine } from "src/AudioEngine";
 import { Clip } from "src/AudioEngine/Track/Clip";
 import WaveSurfer from "wavesurfer.js";
-import { ClipContextMenu } from "./components";
 
 interface ClipViewProps {
   clip: Clip,

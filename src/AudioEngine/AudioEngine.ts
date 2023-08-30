@@ -26,7 +26,6 @@ export class AudioEngine {
   metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
   quantizationValues: string[] = ['16n', '16n', '8n', '8n', '4n', '4n', '1n', '1n']
-  // metronomeEventId: number | null = null;
 
   constructor(
     public tracks: Track[] = observable.array([]),
