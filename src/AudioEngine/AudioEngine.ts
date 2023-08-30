@@ -25,6 +25,7 @@ export class AudioEngine {
   snap: boolean = false;
   metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
+  quantizationValues: string[] = ['16n', '16n', '8n', '8n', '4n', '4n', '1n', '1n']
   // metronomeEventId: number | null = null;
 
   constructor(
@@ -163,7 +164,7 @@ export class AudioEngine {
 
   quantizeSelectedClips() {
     this.selectedClips.forEach(clip => {
-      const quantizedTime = Tone.Time(clip.start.quantize('4n')).toSamples();
+      const quantizedTime = Tone.Time(clip.start.quantize(this.quantizationValues[this.zoomIndex])).toSamples();
       clip.setPosition(quantizedTime)
     })
   }

@@ -62,11 +62,23 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
   const drawSVGGrid = () => {
     const { totalGridLines, samplesPerGridLine } = gridlineData;
     const measuresOnly = audioEngine.samplesPerPixel >= 2048;
+
+    const zoomToGridlineMap: Record<number, any> = {
+      4092: { eighthNotes: false, sixteenthNotes: false},
+      2048: { eighthNotes: false, sixteenthNotes: false},
+      1024: { eighthNotes: false, sixteenthNotes: false},
+      512: { eighthNotes: false, sixteenthNotes: false},
+      256: { eighthNotes: true, sixteenthNotes: false},
+      128: { eighthNotes: true, sixteenthNotes: false},
+      64: { eighthNotes: true, sixteenthNotes: true},
+      32: { eighthNotes: true, sixteenthNotes: true},
+    }
+    
     
     return (
       <svg ref={gridRef} style={{ position: 'absolute', pointerEvents: 'none'}} width={canvasWidth} height={CANVAS_HEIGHT}>
         <rect x="0" y="0" width={canvasWidth} height={CANVAS_HEIGHT} fill="#333" />
-        {audioEngine.tracks.map((track, trackIndex) => {
+        {audioEngine.tracks.map((_, trackIndex) => {
           const trackY = (trackIndex + 1) * WAVEFORM_HEIGHT + TOP_BAR_HEIGHT;
           return (
             <line
@@ -81,17 +93,38 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
           const sample = i * samplesPerGridLine;
           let x = sample / audioEngine.samplesPerPixel;
   
+          
           if (measuresOnly) {
             x *= getTimeSignature(audioEngine);
           }
+          const eighthNotes = zoomToGridlineMap[audioEngine.samplesPerPixel].eighthNotes;
+          const sixteenthNotes = zoomToGridlineMap[audioEngine.samplesPerPixel].sixteenthNotes;
   
           return (
-            <line
-              key={i}
-              x1={x} y1="0"
-              x2={x} y2={CANVAS_HEIGHT}
-              stroke="#444"
-            />
+            <g key={i}>
+              <line
+                key={i}
+                x1={x} y1="0"
+                x2={x} y2={CANVAS_HEIGHT}
+                stroke="#444"
+              />
+
+              {eighthNotes && (
+                <line
+                  key={`${i}8th`}
+                  x1={x * 0.5} y1="0"
+                  x2={x * 0.5} y2={CANVAS_HEIGHT}
+                  stroke="#444"
+                />)}
+
+              {sixteenthNotes && (
+                <line
+                  key={`${i}16th`}
+                  x1={x * 0.25} y1="0"
+                  x2={x * 0.25} y2={CANVAS_HEIGHT}
+                  stroke="#444"
+                />)}
+            </g>
           );
         })}
       </svg>
@@ -103,18 +136,31 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
     const { samplesPerGridLine, totalGridLines } = gridlineData;
     const beatsPerMeasure = getTimeSignature(audioEngine);
     const isSmallScale = audioEngine.samplesPerPixel < 2048;
-  
+    
+    const zoomToGridlineMap: Record<number, any> = {
+      4092: { eighthNotes: false, sixteenthNotes: false},
+      2048: { eighthNotes: false, sixteenthNotes: false},
+      1024: { eighthNotes: false, sixteenthNotes: false},
+      512: { eighthNotes: false, sixteenthNotes: false},
+      256: { eighthNotes: true, sixteenthNotes: false},
+      128: { eighthNotes: true, sixteenthNotes: false},
+      64: { eighthNotes: true, sixteenthNotes: true},
+      32: { eighthNotes: true, sixteenthNotes: true},
+    }
+
     return (
       <svg ref={topbarRef} style={{ position: 'absolute', pointerEvents: 'none' }} width={canvasWidth} height={TOP_BAR_HEIGHT}>
         {Array.from({ length: totalGridLines + 1 }).map((_, i) => {
           const sample = (i * samplesPerGridLine) * beatsPerMeasure;
           const x = (sample / audioEngine.samplesPerPixel) / beatsPerMeasure;
           const isMeasure = i % beatsPerMeasure === 0;
+          const eighthNotes = zoomToGridlineMap[audioEngine.samplesPerPixel].eighthNotes;
+          const sixteenthNotes = zoomToGridlineMap[audioEngine.samplesPerPixel].sixteenthNotes;
   
           return (
             <g key={i}>
               {isMeasure && (
-                <line x1={x} y1="0" x2={x} y2={TOP_BAR_HEIGHT} stroke="#444" />
+                <line key={`${i}m`} x1={x} y1="0" x2={x} y2={TOP_BAR_HEIGHT} stroke="#444" />
               )}
               {isMeasure && (
                 <text x={x + 2} y="15" fill="#444" fontSize="12px" fontFamily="Arial">
@@ -122,7 +168,15 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
                 </text>
               )}
               {!isMeasure && isSmallScale && (
-                <line x1={x} y1={TOP_BAR_HEIGHT / 2} x2={x} y2={TOP_BAR_HEIGHT} stroke="#444" />
+                <line key={`${i}4n`} x1={x} y1={TOP_BAR_HEIGHT * 0.25} x2={x} y2={TOP_BAR_HEIGHT} stroke="#444" />
+              )}
+
+              {!isMeasure && eighthNotes && (
+                <line key={`${i}8n`} x1={(x * 0.5)} y1={TOP_BAR_HEIGHT * 0.5} x2={ x * 0.5} y2={TOP_BAR_HEIGHT} stroke="#444" />
+              )}
+
+              {!isMeasure && sixteenthNotes && (
+                <line key={`${i}16n`} x1={(x * 0.25)} y1={TOP_BAR_HEIGHT * 0.75} x2={x * 0.25} y2={TOP_BAR_HEIGHT} stroke="#444" />
               )}
             </g>
           );
@@ -148,7 +202,7 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
     if (gridRef.current && timelineRect) {
       const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - 250;
       const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
-      Tone.getTransport().seconds = audioEngine.snap ? Tone.Time(time.quantize('4n')).toSeconds() : time.toSeconds();
+      Tone.getTransport().seconds = audioEngine.snap ? Tone.Time(time.quantize(audioEngine.quantizationValues[audioEngine.zoomIndex])).toSeconds() : time.toSeconds();
       updatePlayhead()
     }
   }
@@ -165,7 +219,7 @@ export const Timeline = observer(({ audioEngine, setTimelineRect, timelineRect, 
   useEffect(() => {
     Tone.getTransport().scheduleRepeat(() => {
       updatePlayhead()
-    }, 0.01);
+    }, 0.001);
     updatePlayhead();
   }, [])
 
