@@ -52,9 +52,9 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
         peaks,
 
         // bars
-        // barWidth: 3,
-        // barRadius: 5,
-        // barGap: 2
+        barWidth: 3,
+        barRadius: 5,
+        barGap: 2
       })
       setWavesurfer(wavesurfer);
     }
