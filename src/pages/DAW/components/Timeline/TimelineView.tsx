@@ -13,7 +13,7 @@ import type { AudioEngine } from 'src/AudioEngine';
 import { observer } from 'mobx-react-lite';
 import * as Tone from 'tone';
 import { useTimeline } from './hooks';
-import { CLIP_HEIGHT, TOPBAR_HEIGHT } from '../../constants';
+import { CLIP_HEIGHT, TOPBAR_HEIGHT, TRACK_PANEL_FULL_WIDTH } from '../../constants';
 
 interface TimelineProps {
   audioEngine: AudioEngine
@@ -55,7 +55,7 @@ export const TimelineView = observer(({
 
   const moveCursor = (e: React.MouseEvent) => {
     if (gridRef.current) {
-      const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - 250;
+      const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - TRACK_PANEL_FULL_WIDTH;
       const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
       Tone.getTransport().seconds = audioEngine.snap ? Tone.Time(time.quantize(audioEngine.quantizationValues[audioEngine.zoomIndex])).toSeconds() : time.toSeconds();
       updatePlayhead()

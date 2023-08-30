@@ -4,9 +4,10 @@ import { Track } from "src/AudioEngine/Track";
 import { Button, ColorPicker } from 'antd';
 import { FolderOpenOutlined } from "@ant-design/icons";
 import { Input } from 'antd';
-import * as Tone from 'tone';
 import type { AudioEngine } from "src/AudioEngine";
 import { convertRgbToRgba } from "../../../Tracks/components/TrackView/components/ClipView/ClipView";
+import { CLIP_HEIGHT, TRACK_NUMBER_WIDTH, TRACK_PANEL_WIDTH } from "src/pages/DAW/constants";
+import * as Tone from 'tone';
 
 export const TrackPanel = observer(({ track, trackNumber, audioEngine }: { track: Track, trackNumber: number, audioEngine: AudioEngine }) => {
   const [muted, setMuted] = useState(track.channel.mute);
@@ -22,11 +23,11 @@ export const TrackPanel = observer(({ track, trackNumber, audioEngine }: { track
 
   return (
     <div style={{ width: '100%', display: 'flex', background: '#666' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 25, border: `1px solid #333`, borderTop: 'none', background: track.selected ? convertRgbToRgba(track.color, 0.6) : convertRgbToRgba(track.color, 0.3)}}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: TRACK_NUMBER_WIDTH, border: `1px solid #333`, borderTop: 'none', background: track.selected ? convertRgbToRgba(track.color, 0.6) : convertRgbToRgba(track.color, 0.3)}}>
         <p style={{ margin: '0', fontFamily: 'Arial', fontWeight: 'bold' }}>{ trackNumber }</p>
       </div>
       <div
-        style={{display: 'flex', width: 225, height: 80, background: track.selected ? convertRgbToRgba(track.color, 0.6) : convertRgbToRgba(track.color, 0.3), borderBottom: '1px solid #333'}}
+        style={{display: 'flex', width: TRACK_PANEL_WIDTH, height: CLIP_HEIGHT, background: track.selected ? convertRgbToRgba(track.color, 0.6) : convertRgbToRgba(track.color, 0.3), borderBottom: '1px solid #333'}}
         onClick={() => {
           track.toggleSelect();
           audioEngine.getSelectedTracks();

@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { AudioEngine } from "src/AudioEngine";
 import { TrackPanel } from "./components";
 import { MetronomeIcon } from "src/pages/DAW/icons/MetronomeIcon";
-import { SCROLLBAR_HEIGHT, MIN_GRID_HEIGHT, CLIP_HEIGHT, TOPBAR_HEIGHT } from "../../constants";
+import { SCROLLBAR_HEIGHT, MIN_GRID_HEIGHT, CLIP_HEIGHT, TOPBAR_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "../../constants";
 import * as Tone from 'tone';
 
 export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef }: { timelineRect: DOMRect | null, audioEngine: AudioEngine, trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>, containerRef: React.MutableRefObject<HTMLDivElement | null> }) => {
@@ -81,7 +81,7 @@ export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef
             }}
           />
       </div>
-      <div ref={trackPanelsRef} style={{zIndex: 2, minWidth: 250, height: 'calc(60vh - 30px)', overflow: 'hidden', background: '#111'}}>
+      <div ref={trackPanelsRef} style={{zIndex: 2, minWidth: TRACK_PANEL_FULL_WIDTH, height: 'calc(60vh - 30px)', overflow: 'hidden', background: '#111'}}>
         <div style={{height: sectionHeight}}>
         {audioEngine.tracks.map((track, i) => (
             <TrackPanel audioEngine={audioEngine} trackNumber={i + 1} key={track.id} track={track} />
