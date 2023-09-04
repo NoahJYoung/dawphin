@@ -8,6 +8,25 @@ export const PauseIcon = ({ width = 24, height = 24, color = 'black' }) => (
     height={height}
     fill={color}
   >
-    <path d="M6 5h3v14H6zM15 5h3v14h-3z" />
+    <path
+      d="M6 5h3v14h-3z"
+      style={{
+        stroke: color,
+        strokeWidth: '2px',
+        strokeLinejoin: 'round',
+        fill: color,
+        borderRadius: `${4}px`,
+      }}
+    />
+    <path
+      d="M14 5h3v14h-3z"
+      style={{
+        stroke: color,
+        strokeWidth: '2px',
+        strokeLinejoin: 'round',
+        fill: color,
+        borderRadius: `${4}px`,
+      }}
+    />
   </svg>
 );

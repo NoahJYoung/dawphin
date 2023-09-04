@@ -146,7 +146,7 @@ export const TimelineView = observer(({
           />
         </div>
         <div >
-        { children }
+          { children }
         </div>
         <div
           onClick={moveCursor}
