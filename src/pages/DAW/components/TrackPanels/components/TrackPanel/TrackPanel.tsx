@@ -21,15 +21,20 @@ export const TrackPanel = observer(({ track, trackNumber, audioEngine }: { track
     }
   };
 
+  const panelBackgroundColor = track.selected ? `radial-gradient(${convertRgbToRgba(track.color, 0.8)}, ${convertRgbToRgba(track.color, 0.6)})` : `radial-gradient(${convertRgbToRgba(track.color, 0.5)}, ${convertRgbToRgba(track.color, 0.3)})`;
+
   return (
-    <div style={{ width: '100%', display: 'flex', background: '#666' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: TRACK_NUMBER_WIDTH, border: `1px solid #333`, borderTop: 'none', background: track.selected ? convertRgbToRgba(track.color, 0.6) : convertRgbToRgba(track.color, 0.3)}}>
+    <div style={{ width: '100%', display: 'flex', background: 'transparent', borderRadius: '5px'}}>
+      <div style={{borderRadius: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center', width: TRACK_NUMBER_WIDTH, border: `1px solid #222`, borderTop: 'none', background: panelBackgroundColor}}>
         <p style={{ margin: '0', fontFamily: 'Arial', fontWeight: 'bold' }}>{ trackNumber }</p>
       </div>
       <div
-        style={{display: 'flex', width: TRACK_PANEL_WIDTH, height: CLIP_HEIGHT, background: track.selected ? convertRgbToRgba(track.color, 0.6) : convertRgbToRgba(track.color, 0.3), borderBottom: '1px solid #333'}}
-        onClick={() => {
-          track.toggleSelect();
+        style={{borderRadius: '5px', display: 'flex', width: TRACK_PANEL_WIDTH, height: CLIP_HEIGHT, background: panelBackgroundColor, borderBottom: '1px solid #333'}}
+        onClick={(e) => {
+          if (!e.ctrlKey) {
+            audioEngine.deselectAllTracks();
+          }
+          track.select();
           audioEngine.getSelectedTracks();
         }}
       >
@@ -43,7 +48,7 @@ export const TrackPanel = observer(({ track, trackNumber, audioEngine }: { track
             width: '8rem'
           }}
         />
-        <div style={{ width: 'fit-content', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: 'fit-content', display: 'flex', flexDirection: 'column', borderRadius: '5px' }}>
           <Button
             onClick={() => {
               track.toggleMute();

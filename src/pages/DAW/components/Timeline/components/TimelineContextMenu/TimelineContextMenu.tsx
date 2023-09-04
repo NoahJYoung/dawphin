@@ -25,6 +25,8 @@ export const TimelineContextMenu = observer(({ children, audioEngine }: Timeline
     return false;
   }, [audioEngine.selectedClips.length]);
 
+  const canPaste = audioEngine.selectedTracks.length > 0;
+
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -37,6 +39,7 @@ export const TimelineContextMenu = observer(({ children, audioEngine }: Timeline
       key: '2',
       onClick: audioEngine.pasteClips,
       label: 'Paste',
+      disabled: !canPaste,
       icon: <SnippetsOutlined />
     },
     { type: 'divider' },
@@ -52,7 +55,6 @@ export const TimelineContextMenu = observer(({ children, audioEngine }: Timeline
       label: 'Split selected',
       icon: <SplitCellsOutlined />
     },
-    { type: 'divider' },
   ];
 
   return (

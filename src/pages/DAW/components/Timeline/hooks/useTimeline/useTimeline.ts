@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { AudioEngine } from "src/AudioEngine";
 import { getTimeSignature } from "../../helpers";
 import { CLIP_HEIGHT, MIN_GRID_HEIGHT, SCROLLBAR_HEIGHT } from "src/pages/DAW/constants";

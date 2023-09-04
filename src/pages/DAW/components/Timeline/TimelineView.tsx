@@ -13,7 +13,7 @@ import type { AudioEngine } from 'src/AudioEngine';
 import { observer } from 'mobx-react-lite';
 import * as Tone from 'tone';
 import { useTimeline } from './hooks';
-import { CLIP_HEIGHT, TOPBAR_HEIGHT, TRACK_PANEL_FULL_WIDTH } from '../../constants';
+import { CLIP_HEIGHT, TOPBAR_HEIGHT, TRACK_PANEL_FULL_WIDTH, TRACK_PANEL_RIGHT_PADDING } from '../../constants';
 
 interface TimelineProps {
   audioEngine: AudioEngine
@@ -55,10 +55,14 @@ export const TimelineView = observer(({
 
   const moveCursor = (e: React.MouseEvent) => {
     if (gridRef.current) {
-      const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - TRACK_PANEL_FULL_WIDTH;
+      const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - TRACK_PANEL_FULL_WIDTH - TRACK_PANEL_RIGHT_PADDING;
       const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
-      Tone.getTransport().seconds = audioEngine.snap ? Tone.Time(time.quantize(audioEngine.quantizationValues[audioEngine.zoomIndex])).toSeconds() : time.toSeconds();
-      updatePlayhead()
+      if (audioEngine.snap) {
+        const quantizedTime = Tone.Time(time.quantize(audioEngine.quantizationValues[audioEngine.zoomIndex]));
+        audioEngine.setPosition(quantizedTime);
+      } else {
+        audioEngine.setPosition(time);
+      }
     }
   }
 
@@ -82,7 +86,12 @@ export const TimelineView = observer(({
     Tone.getTransport().scheduleRepeat(() => {
       updatePlayhead()
     }, 0.01);
+    audioEngine.updateTimelineUI = updatePlayhead;
   }, []);
+
+  useEffect(() => {
+    updatePlayhead();
+  }, [audioEngine.state])
 
   return (
     <TimelineContextMenu audioEngine={audioEngine}>
@@ -108,6 +117,7 @@ export const TimelineView = observer(({
           style={{
             zIndex: -1,
             pointerEvents: 'none',
+            borderRadius: '5px'
           }}
         >
           <TimelineGrid
@@ -126,6 +136,7 @@ export const TimelineView = observer(({
           height: TOPBAR_HEIGHT,
           width: gridWidth,
           background: '#888',
+          borderRadius: '5px'
         }}>
           <TopBar
             audioEngine={audioEngine}

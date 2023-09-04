@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { AudioEngine } from "src/AudioEngine";
 import { TrackPanel } from "./components";
 import { MetronomeIcon } from "src/pages/DAW/icons/MetronomeIcon";
-import { SCROLLBAR_HEIGHT, MIN_GRID_HEIGHT, CLIP_HEIGHT, TOPBAR_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "../../constants";
+import { SCROLLBAR_HEIGHT, MIN_GRID_HEIGHT, CLIP_HEIGHT, TOPBAR_HEIGHT, TRACK_PANEL_FULL_WIDTH, TRACK_PANEL_RIGHT_PADDING } from "../../constants";
 import * as Tone from 'tone';
 
 export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef }: { timelineRect: DOMRect | null, audioEngine: AudioEngine, trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>, containerRef: React.MutableRefObject<HTMLDivElement | null> }) => {
@@ -29,8 +29,8 @@ export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef
   const duplicateDisabled = useMemo(() => audioEngine.selectedTracks.length !== 1, [audioEngine.selectedTracks.length]);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column'}}>
-      <div style={{ height: TOPBAR_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#555', border: '1px solid #333' }}>
+    <div style={{display: 'flex', flexDirection: 'column', paddingRight: TRACK_PANEL_RIGHT_PADDING,}}>
+      <div style={{ height: TOPBAR_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#555', border: '1px solid #333', borderRadius: '5px' }}>
         <Button
           type="text"
           icon={<PlusOutlined />}
@@ -81,32 +81,11 @@ export const TrackPanels = observer(({ audioEngine, trackPanelsRef, containerRef
             }}
           />
       </div>
-      <div ref={trackPanelsRef} style={{zIndex: 2, minWidth: TRACK_PANEL_FULL_WIDTH, height: 'calc(60vh - 30px)', overflow: 'hidden', background: '#111'}}>
-        <div style={{height: sectionHeight}}>
+      <div ref={trackPanelsRef} style={{zIndex: 2, minWidth: TRACK_PANEL_FULL_WIDTH, height: 'calc(60vh - 30px)', overflow: 'hidden', borderRadius: '5px'}}>
+        <div style={{height: sectionHeight, borderRadius: '5px'}}>
         {audioEngine.tracks.map((track, i) => (
             <TrackPanel audioEngine={audioEngine} trackNumber={i + 1} key={track.id} track={track} />
         ))}
-        </div>
-      </div>
-      <div>
-        <button onClick={audioEngine.deleteSelectedTracks}>Delete selected</button>
-        <p>{`${timeSignature}/4`}</p>
-        <button onClick={() => {
-          audioEngine.setTimeSignature([7, 4])
-          setTimeSignature(Tone.getTransport().timeSignature)
-        }}>Raise time signature</button>
-        <p>BPM:</p>
-        <p>{Tone.getTransport().bpm.value}</p>
-        <input type="number" value={bpm} onChange={handleBpmChange}/>
-        <button onClick={handleBpmClick}>Set BPM</button>
-        <div style={{display: 'flex', flexDirection: 'column'}}>
-          <button
-            onClick={async () => Tone.start()}>
-              start tone
-            </button>
-          <button onClick={audioEngine.play}>play</button>
-          <button onClick={audioEngine.pause}>pause</button>
-          <button onClick={audioEngine.stop}>stop</button>
         </div>
       </div>
     </div>

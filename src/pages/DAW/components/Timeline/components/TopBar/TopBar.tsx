@@ -24,7 +24,7 @@ export const TopBar = observer(({
   const beatsPerMeasure = getTimeSignature(audioEngine);    
   
   return (
-    <svg ref={topbarRef} style={{ position: 'absolute', pointerEvents: 'none' }} width={gridWidth} height={topBarHeight}>
+    <svg ref={topbarRef} style={{ borderRadius: '5px', position: 'absolute', pointerEvents: 'none' }} width={gridWidth} height={topBarHeight}>
       {Array.from({ length: (totalBeats + 1) }).map((_, i) => {
         const sample = (i * samplesPerBeat) * beatsPerMeasure;
         const x = (sample / audioEngine.samplesPerPixel) / beatsPerMeasure;
