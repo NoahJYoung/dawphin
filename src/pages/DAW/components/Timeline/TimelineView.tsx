@@ -2,6 +2,7 @@ import React, {
   useEffect,
   type Dispatch,
   type SetStateAction,
+  useRef,
 } from 'react';
 import {
   Playhead,
@@ -39,7 +40,14 @@ export const TimelineView = observer(({
     playheadRef,
     gridWidth,
     sectionHeight
-  } = useTimeline(audioEngine)
+  } = useTimeline(audioEngine);
+
+  const mouseX = useRef(0);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const divRect = e.currentTarget.getBoundingClientRect();
+    mouseX.current = e.clientX - divRect.left;
+  };
   
   const updatePlayhead = () => {
     const x = Math.round(((Tone.getTransport().seconds) * Tone.getContext().sampleRate) / audioEngine.samplesPerPixel);
@@ -55,7 +63,7 @@ export const TimelineView = observer(({
 
   const moveCursor = (e: React.MouseEvent) => {
     if (gridRef.current) {
-      const pixels = e.clientX + (containerRef?.current?.scrollLeft || 0) - TRACK_PANEL_FULL_WIDTH - TRACK_PANEL_RIGHT_PADDING;
+      const pixels = mouseX.current + (containerRef?.current?.scrollLeft || 0);
       const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
       if (audioEngine.snap) {
         const quantizedTime = Tone.Time(time.quantize(audioEngine.quantizationValues[audioEngine.zoomIndex]));
@@ -98,6 +106,7 @@ export const TimelineView = observer(({
       <div
         ref={containerRef}
         onClick={moveCursor}
+        onMouseMove={handleMouseMove}
         onScroll={(e) => {
           const target = e.target as HTMLDivElement
           audioEngine.scrollXOffsetPixels = target.scrollLeft;
