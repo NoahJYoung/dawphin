@@ -1,12 +1,12 @@
 import { AudioEngine } from 'src/AudioEngine';
 import { useState, useEffect, useRef } from 'react';
-import { TimelineView, TrackPanels, Tracks, TransportControls } from './components';
+import { TimelineView, TrackPanels, Tracks, TransportView } from './components';
 
 const audioEngine = new AudioEngine();
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
-  const [audioEngineInstance, setAudioEngineInstance] = useState<AudioEngine>(audioEngine);
+  const [audioEngineInstance] = useState<AudioEngine>(audioEngine);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackPanelsRef = useRef<HTMLDivElement>(null);
@@ -38,7 +38,16 @@ export const DAW = () => {
           />
         </TimelineView>
       </div>
-      <TransportControls audioEngine={audioEngineInstance} />
+      <div
+        style={{
+          width: '100%',
+          height: '40vh',
+          background: '#222',
+          padding: '5px',
+        }}
+      >
+        <TransportView audioEngine={audioEngineInstance} />
+      </div>
     </div>
   )
 }
