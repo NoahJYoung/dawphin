@@ -16,6 +16,8 @@ import * as Tone from 'tone';
 import { useTimeline } from './hooks';
 import { CLIP_HEIGHT, TOPBAR_HEIGHT, TRACK_PANEL_FULL_WIDTH, TRACK_PANEL_RIGHT_PADDING } from '../../constants';
 
+import './TimelineView.css';
+
 interface TimelineProps {
   audioEngine: AudioEngine
   setTimelineRect: Dispatch<SetStateAction<DOMRect | null>>
@@ -61,7 +63,7 @@ export const TimelineView = observer(({
     setPlayheadX(x);
   };
 
-  const moveCursor = (e: React.MouseEvent) => {
+  const moveCursor = () => {
     if (gridRef.current) {
       const pixels = mouseX.current + (containerRef?.current?.scrollLeft || 0);
       const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
@@ -97,13 +99,10 @@ export const TimelineView = observer(({
     audioEngine.updateTimelineUI = updatePlayhead;
   }, []);
 
-  useEffect(() => {
-    updatePlayhead();
-  }, [audioEngine.state])
-
   return (
     <TimelineContextMenu audioEngine={audioEngine}>
       <div
+        className="timeline"
         ref={containerRef}
         onClick={moveCursor}
         onMouseMove={handleMouseMove}
@@ -115,6 +114,7 @@ export const TimelineView = observer(({
           }
         }}
         style={{
+          paddingRight: '1px',
           maxHeight: '60vh',
           minHeight: '60vh',
           position: 'relative',

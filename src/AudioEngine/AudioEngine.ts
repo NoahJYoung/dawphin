@@ -273,12 +273,12 @@ export class AudioEngine {
   }
 
   stop = () => {
-    if (this.state === 'stopped') {
-      this.setState('seeking');
-    }
     Tone.getTransport().stop();
     this.tracks.forEach(track => track.stop());
     this.setState('stopped');
+    if (this.updateTimelineUI) {
+      this.updateTimelineUI();
+    }
   }
 
   pause = () => {
