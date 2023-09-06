@@ -32,8 +32,8 @@ export class Clip {
       setSelect: action.bound,
     });
     this.id = uuidv4();
-    this.player.toDestination();
     this.loadAudio();
+    this.player.connect(this.track.channel.output)
   }
 
   play = (time: number, seekTime?: number) => {

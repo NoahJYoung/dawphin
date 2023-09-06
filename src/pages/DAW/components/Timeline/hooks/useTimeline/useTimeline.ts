@@ -18,7 +18,7 @@ export const useTimeline = (audioEngine: AudioEngine) => {
     const widthInPixels = totalSamples / audioEngine.samplesPerPixel;
 
     return widthInPixels;
-  }, [audioEngine.samplesPerPixel, audioEngine.totalMeasures]);
+  }, [audioEngine.samplesPerPixel, audioEngine.totalMeasures, audioEngine.bpm]);
 
   const sectionHeight = useMemo(() => {
     const calculatedHeight = CLIP_HEIGHT * audioEngine.tracks.length + SCROLLBAR_HEIGHT;

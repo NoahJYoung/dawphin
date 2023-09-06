@@ -1,12 +1,14 @@
 import { AudioEngine } from 'src/AudioEngine';
 import { useState, useEffect, useRef } from 'react';
 import { TimelineView, TrackPanels, Tracks, TransportView } from './components';
+import { Knob } from './UIKit';
 
 const audioEngine = new AudioEngine();
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
   const [audioEngineInstance] = useState<AudioEngine>(audioEngine);
+  const [knobValue, setKnobValue] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackPanelsRef = useRef<HTMLDivElement>(null);
@@ -47,6 +49,7 @@ export const DAW = () => {
         }}
       >
         <TransportView audioEngine={audioEngineInstance} />
+        <Knob value={knobValue} onChange={setKnobValue} />
       </div>
     </div>
   )

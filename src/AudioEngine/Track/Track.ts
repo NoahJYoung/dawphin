@@ -4,20 +4,29 @@ import { action, makeObservable, observable } from 'mobx';
 import { AudioEngine } from "..";
 
 export class Track {
+  public volume: number | null = null;
+  public pan: number | null = null;
+
   constructor(
     public audioEngine: AudioEngine,
     public id: number,
     public name: string,
     public clips: Clip[] = observable.array([]),
-    public muted: boolean = false,
     public color: string = 'rgb(150, 0, 255)',
     public selected: boolean = false,
     public channel: Tone.Channel = new Tone.Channel(),
+    public muted = channel.mute,
   ) {
     makeObservable(this, {
       name: observable,
-      clips: observable.deep,
+      volume: observable,
+      pan: observable,
+      clips: observable,
       color: observable,
+      muted: observable,
+      setMuted: action.bound,
+      setVolume: action.bound,
+      setPan: action.bound,
       addClip: action.bound,
       setClips: action.bound,
       setName: action.bound,
@@ -27,6 +36,10 @@ export class Track {
       deselect: action.bound,
       toggleSelect: action.bound,
     });
+
+    this.setVolume(-5);
+    this.setPan(0)
+    this.channel.toDestination();
   }
 
   play() {
@@ -39,6 +52,22 @@ export class Track {
         clip.schedule();
       }
     });
+  }
+
+
+  setVolume = (value: number) => {
+    this.channel.set({ volume: value });
+    this.volume = this.channel.volume.value;
+  }
+
+  setPan = (value: number) => {
+    this.channel.set({ pan: value / 100 });
+    this.pan = this.channel.pan.value * 100
+  }
+
+  setMuted = (state: boolean) => {
+    this.channel.set({ mute: state });
+    this.muted = this.channel.mute;
   }
 
   stop() {
@@ -75,6 +104,7 @@ export class Track {
 
   toggleMute() {
     this.channel.mute = !this.channel.mute;
+    this.muted = this.channel.mute;
   }
 
   addClip(src: string, startSeconds: number) {

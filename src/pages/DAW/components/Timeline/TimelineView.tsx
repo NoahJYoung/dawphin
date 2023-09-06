@@ -14,7 +14,7 @@ import type { AudioEngine } from 'src/AudioEngine';
 import { observer } from 'mobx-react-lite';
 import * as Tone from 'tone';
 import { useTimeline } from './hooks';
-import { CLIP_HEIGHT, TOPBAR_HEIGHT, TRACK_PANEL_FULL_WIDTH, TRACK_PANEL_RIGHT_PADDING } from '../../constants';
+import { CLIP_HEIGHT, TOPBAR_HEIGHT } from '../../constants';
 
 import './TimelineView.css';
 

@@ -10,7 +10,6 @@ import { CLIP_HEIGHT, TRACK_NUMBER_WIDTH, TRACK_PANEL_WIDTH } from "src/pages/DA
 import * as Tone from 'tone';
 
 export const TrackPanel = observer(({ track, trackNumber, audioEngine }: { track: Track, trackNumber: number, audioEngine: AudioEngine }) => {
-  const [muted, setMuted] = useState(track.channel.mute);
   const transport = Tone.getTransport();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +51,6 @@ export const TrackPanel = observer(({ track, trackNumber, audioEngine }: { track
           <Button
             onClick={() => {
               track.toggleMute();
-              setMuted(track.channel.mute)
             }}
             type="text"
             style={{
@@ -65,7 +63,7 @@ export const TrackPanel = observer(({ track, trackNumber, audioEngine }: { track
               padding: 0,
               fontSize: '0.75rem',
               fontWeight: 'bold',
-              background: `${muted ? 'red' : 'grey'}`
+              background: `${track.muted ? 'red' : 'grey'}`
             }}
           >
             M
