@@ -37,7 +37,6 @@ export class Track {
       toggleSelect: action.bound,
     });
 
-    this.setVolume(-5);
     this.setPan(0)
     this.channel.toDestination();
   }
@@ -56,8 +55,8 @@ export class Track {
 
 
   setVolume = (value: number) => {
-    this.channel.set({ volume: value });
-    this.volume = this.channel.volume.value;
+    this.channel.set({ volume: Math.round(value) });
+    this.volume = Math.round(this.channel.volume.value);
   }
 
   setPan = (value: number) => {

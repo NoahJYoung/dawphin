@@ -1,6 +1,6 @@
 import { AudioEngine } from 'src/AudioEngine';
 import { useState, useEffect, useRef } from 'react';
-import { TimelineView, TrackPanels, Tracks, TransportView } from './components';
+import { Mixer, TimelineView, TrackPanels, Tracks, TransportView } from './components';
 import { Knob } from './UIKit';
 
 const audioEngine = new AudioEngine();
@@ -42,14 +42,25 @@ export const DAW = () => {
       </div>
       <div
         style={{
+          display: 'flex',
+          flexDirection: 'column',
           width: '100%',
           height: '40vh',
           background: '#222',
           padding: '5px',
         }}
       >
-        <TransportView audioEngine={audioEngineInstance} />
-        <Knob value={knobValue} onChange={setKnobValue} />
+        <div style={{ height: '10vh' }}>
+          <TransportView audioEngine={audioEngineInstance} />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            height: '100%',
+          }}
+        >
+          <Mixer audioEngine={audioEngineInstance} />
+        </div>
       </div>
     </div>
   )

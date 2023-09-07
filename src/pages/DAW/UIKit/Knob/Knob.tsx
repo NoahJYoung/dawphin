@@ -1,98 +1,107 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface KnobProps {
   value: number;
-  onChange: (value: number) => void;
+  onChange: (newValue: number) => void;
+  size?: number;
+  min?: number;
+  max?: number;
+  numTicks?: number;
+  degrees?: number;
+  color?: boolean;
 }
 
-export const Knob: React.FC<KnobProps> = ({ value, onChange }) => {
-  const [dragging, setDragging] = useState(false);
-  const [startAngle, setStartAngle] = useState(0);
-  const [startValue, setStartValue] = useState(value);
-  const knobRef = useRef<any>(null);
+const convertRange = (oldMin: number, oldMax: number, newMin: number, newMax: number, oldValue: number) => {
+  return (oldValue - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
+};
 
-  const min = 0;
-  const max = 100;
+export const Knob = ({
+  value,
+  onChange,
+  size = 150,
+  min = -50,
+  max = 50,
+  degrees = 270,
+}: KnobProps) => {
+  const startAngle = (360 - degrees) / 2;
+  const endAngle = startAngle + degrees;
+  const margin = size * 0.15;
 
-  const radius = 20;
-  const centerX = 60;
-  const centerY = 60;
+  const [deg, setDeg] = useState(
+    Math.floor(
+      convertRange(min, max, startAngle, endAngle, value)
+    )
+  );
 
-  const getAngle = (x: number, y: number) => {
-    const dx = x - centerX;
-    const dy = y - centerY;
-    return (Math.atan2(dy, dx) * 180) / Math.PI;
-  };
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDragging(true);
-    const knobRect = knobRef.current?.getBoundingClientRect();
-    if (knobRect) {
-      const angle = getAngle(
-        e.clientX - knobRect.left,
-        e.clientY - knobRect.top
+  useEffect(() => {
+    if (onChange) {
+      const newValue = Math.floor(
+        ((deg - startAngle) * (max - min)) / (endAngle - startAngle) + min
       );
-      setStartAngle(angle);
-      setStartValue(value);
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (dragging) {
-      const angle = getAngle(e.clientX - centerX, e.clientY - centerY);
-      const deltaAngle = angle - startAngle;
-      const deltaValue = ((max - min) * (deltaAngle / 270)) | 0; // 270 degrees = full range
-      const newValue = Math.min(max, Math.max(min, startValue + deltaValue));
       onChange(newValue);
-  
-      // Calculate rotation angle based on the newValue (adjust scale as needed)
-      const rotationAngle = (newValue / max) * 270 - 135; // 270 degrees = full range, -135 to start from the top
-      if (knobRef.current) {
-        knobRef.current.style.transform = `rotate(${rotationAngle}deg)`;
-      }
     }
-  };
-  
+  }, [deg, min, max, startAngle, endAngle, onChange]);
 
-  const handleMouseUp = () => {
-    setDragging(false);
+  const startDrag = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const knob = e.currentTarget.getBoundingClientRect();
+    const pts = {
+      x: knob.left + knob.width / 2,
+      y: knob.top + knob.height / 2,
+    };
+
+    const moveHandler = (e: MouseEvent) => {
+      const currentDeg = getDeg(e.clientX, e.clientY, pts);
+      setDeg(currentDeg);
+    };
+
+    document.addEventListener('mousemove', moveHandler);
+    document.addEventListener('mouseup', () => {
+      document.removeEventListener('mousemove', moveHandler);
+    });
   };
+
+  const getDeg = (cX: number, cY: number, pts: { x: number; y: number }) => {
+    const x = cX - pts.x;
+    const y = cY - pts.y;
+    let deg = (Math.atan2(y, x) * 180) / Math.PI;
+    deg = (deg + 360) % 360;
+    let finalDeg = Math.min(Math.max(startAngle, deg), endAngle);
+    return finalDeg;
+  };
+
+  const handleResetValue = () => setDeg(180)
 
   return (
-    <div
-      // ref={knobRef}
-      className="knob"
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-    >
-      <svg width="120" height="120" ref={knobRef}>
-        <circle
-          cx={centerX}
-          cy={centerY}
-          r={radius}
-          fill="lightgray"
-          stroke="black"
-          strokeWidth="2"
-        />
-        <line
-          x1={centerX}
-          y1={centerY}
-          x2={centerX}
-          y2={centerY - radius}
-          stroke="black"
-          strokeWidth="2"
-        />
-        <rect
-          x={centerX - 2}
-          y={centerY - radius - 10}
-          width="4"
-          height="10"
-          fill="black"
-        />
-      </svg>
-      <div className="knob-value">{value}</div>
-    </div>
+    <>
+      <div onDoubleClick={handleResetValue} onMouseDown={startDrag}>
+        <svg
+          className="knob"
+          width={size}
+          height={size}
+          style={{
+            transform: `rotate(${deg - 180}deg)`,
+            backgroundImage: 'radial-gradient(100% 70%, #888 6%, #555 90%)',
+            borderRadius: '50%',
+          }}
+        >
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={size / 2 - margin}
+            fill="none"
+          />
+
+          <line
+            x1={size / 2}
+            y1={size / 2}
+            x2={size / 2}
+            y2={0}
+            stroke="black"
+            strokeWidth="2"
+          />
+        </svg>
+      </div>
+    </>
   );
 };
