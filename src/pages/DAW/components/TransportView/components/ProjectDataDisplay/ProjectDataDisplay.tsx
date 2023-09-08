@@ -22,7 +22,7 @@ export const ProjectDataDisplay = observer(({ audioEngine }: ProjectDataDisplayP
         fontSize: '20px',
         gap: '1rem',
         color: '#888',
-        height: '4rem',
+        height: '100%',
         borderRadius: '5px',
         border: '1px solid #888',
         width: '12rem',
@@ -34,7 +34,7 @@ export const ProjectDataDisplay = observer(({ audioEngine }: ProjectDataDisplayP
             <InputNumber
               value={audioEngine.bpm}
               type="number"
-              style={{ maxWidth: '3rem', maxHeight: '3rem', fontFamily: 'inherit', fontSize: 'inherit', color: 'inherit', border: 'none', outline: 'none' }}
+              style={{ maxWidth: '3rem', maxHeight: '100%', fontFamily: 'inherit', fontSize: 'inherit', color: 'inherit', border: 'none', outline: 'none' }}
               controls={false}
               onBlur={() => setIsBpmInputMode(false)}
               onPressEnter={() => setIsBpmInputMode(false)}

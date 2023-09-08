@@ -50,7 +50,7 @@ export const DAW = () => {
           padding: '5px',
         }}
       >
-        <div style={{ height: '10vh' }}>
+        <div>
           <TransportView audioEngine={audioEngineInstance} />
         </div>
         <div

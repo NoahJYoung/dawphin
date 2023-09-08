@@ -257,10 +257,11 @@ export class AudioEngine {
 
   toEnd = () => {
     if (this.updateTimelineUI) {
+      console.log(this.totalMeasures)
       this.pause();
       Tone.getTransport().position = `${this.totalMeasures}:0:0`;
       this.updateTimelineUI();
-      this.stop();
+      this.pause();
     }
   }
 

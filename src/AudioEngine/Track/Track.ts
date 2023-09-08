@@ -6,13 +6,15 @@ import { AudioEngine } from "..";
 export class Track {
   public volume: number | null = null;
   public pan: number | null = null;
+  public solo: boolean = false;
+  public active: boolean = false;
 
   constructor(
     public audioEngine: AudioEngine,
     public id: number,
     public name: string,
     public clips: Clip[] = observable.array([]),
-    public color: string = 'rgb(150, 0, 255)',
+    public color: string = 'rgb(175, 175, 175)',
     public selected: boolean = false,
     public channel: Tone.Channel = new Tone.Channel(),
     public muted = channel.mute,
@@ -24,6 +26,8 @@ export class Track {
       clips: observable,
       color: observable,
       muted: observable,
+      active: observable,
+      setActive: action.bound,
       setMuted: action.bound,
       setVolume: action.bound,
       setPan: action.bound,
@@ -67,6 +71,14 @@ export class Track {
   setMuted = (state: boolean) => {
     this.channel.set({ mute: state });
     this.muted = this.channel.mute;
+  }
+
+  setActive = (newState: boolean) => {
+    this.active = newState;
+  }
+
+  toggleActive = () => {
+    this.setActive(!this.active);
   }
 
   stop() {

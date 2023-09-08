@@ -13,15 +13,15 @@ export const TransportView = observer(({ audioEngine }: TransportViewProps) => {
       style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '10px',
-        background: '#333',
-        border: '1px solid #111',
+        padding: '5px',
+        height: '100%',
         borderRadius: '5px',
       }}
     >
       <div
         style={{
           display: 'flex',
+          height: '100%',
           gap: '1rem',
           alignItems: 'center',
         }}

@@ -4,28 +4,6 @@ import { observer } from "mobx-react-lite";
 import { AudioEngine } from "src/AudioEngine";
 import { PauseIcon, PlayIcon, RecordIcon, StopIcon } from "src/pages/DAW/icons";
 
-{/* <div style={{ background: 'white' }}>
-        <button onClick={audioEngine.deleteSelectedTracks}>Delete selected</button>
-        <p>{`${timeSignature}/4`}</p>
-        <button onClick={() => {
-          audioEngine.setTimeSignature([7, 4])
-          setTimeSignature(Tone.getTransport().timeSignature)
-        }}>Raise time signature</button>
-        <p>BPM:</p>
-        <p>{Tone.getTransport().bpm.value}</p>
-        <input type="number" value={bpm} onChange={handleBpmChange}/>
-        <button onClick={handleBpmClick}>Set BPM</button>
-        <div style={{display: 'flex', flexDirection: 'column'}}>
-          <button
-            onClick={async () => Tone.start()}>
-              start tone
-            </button>
-          <button onClick={audioEngine.play}>play</button>
-          <button onClick={audioEngine.pause}>pause</button>
-          <button onClick={audioEngine.stop}>stop</button>
-        </div>
-      </div> */}
-
 interface TransportControlsProps {
   audioEngine: AudioEngine;
 }
@@ -36,10 +14,6 @@ export const TransportControls = observer(({ audioEngine }: TransportControlsPro
       style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '10px',
-        background: '#333',
-        border: '1px solid #111',
-        borderRadius: '5px',
       }}
     >
       <div
