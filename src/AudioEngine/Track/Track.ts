@@ -1,7 +1,7 @@
 import { Clip } from "./Clip";
-import * as Tone from 'tone';
 import { action, makeObservable, observable } from 'mobx';
 import { AudioEngine } from "..";
+import * as Tone from 'tone';
 
 export class Track {
   public volume: number | null = null;
@@ -18,6 +18,9 @@ export class Track {
     public selected: boolean = false,
     public channel: Tone.Channel = new Tone.Channel(),
     public muted = channel.mute,
+    public leftMeter = new Tone.Meter(0.75),
+    public rightMeter = new Tone.Meter(0.75),
+    public splitter = new Tone.Split()
   ) {
     makeObservable(this, {
       name: observable,
@@ -41,7 +44,10 @@ export class Track {
       toggleSelect: action.bound,
     });
 
-    this.setPan(0)
+    this.setPan(0);
+    this.channel.connect(this.splitter);
+    this.splitter.connect(this.leftMeter, 0);
+    this.splitter.connect(this.rightMeter, 1);
     this.channel.toDestination();
   }
 

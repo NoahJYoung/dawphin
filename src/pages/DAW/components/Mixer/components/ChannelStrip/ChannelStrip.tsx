@@ -3,7 +3,9 @@ import { Button, Slider,  } from "antd";
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Knob } from "src/pages/DAW/UIKit";
+import { Meter } from "./components";
 import { RecordIcon } from "src/pages/DAW/icons";
+import { convertRgbToRgba } from "../../../Tracks/components/TrackView/components/ClipView/ClipView";
 
 interface ChannelStripProps {
   track: Track;
@@ -12,24 +14,35 @@ interface ChannelStripProps {
 
 export const ChannelStrip = observer(({ track, trackNumber }: ChannelStripProps) => {
 
+  const handleSelect = (e: React.MouseEvent) => {
+    const audioEngine = track.audioEngine;
+    if (!e.ctrlKey) {
+      audioEngine.deselectAllTracks();
+    }
+    track.select();
+  }
+
+  const panelBackgroundColor = track.selected ? 
+    `radial-gradient(${convertRgbToRgba(track.color, 0.8)}, ${convertRgbToRgba(track.color, 0.6)})` :
+    `radial-gradient(${convertRgbToRgba(track.color, 0.5)}, ${convertRgbToRgba(track.color, 0.3)})`;
   const activeOuterRgb = 'rgb(200, 0, 0)';
   const inactiveOuterRgb = 'rgb(150, 0, 0)';
   const activeInnerRgb = 'rgb(150, 0, 0)';
   const inactiveInnerRgb = 'rgb(100, 0, 0)';
   return (
     <div
+      onClick={handleSelect}
       style={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        width: '6rem',
         height: '100%',
       }}
     >
       <div
         style={{
           border: '1px solid #111',
-          background: track.color,
+          background: panelBackgroundColor,
           borderRadius: '5px',
           display: 'flex',
           flexDirection: 'column',
@@ -79,7 +92,7 @@ export const ChannelStrip = observer(({ track, trackNumber }: ChannelStripProps)
             height: '175px',
           }}
         >
-          <div style={{ width: '1rem', background: 'black', height: '175px', alignSelf: 'center' }} />
+          <Meter track={track} canvasHeight={175} canvasWidth={30} />
           <Slider
             min={-51}
             max={6}
@@ -92,6 +105,7 @@ export const ChannelStrip = observer(({ track, trackNumber }: ChannelStripProps)
               height: '40px',
               background: 'radial-gradient(#bbb, #777)',
               borderRadius: '5px',
+              border: '1px solid #111',
               position: 'absolute',
               left: '-5px',
               zIndex: '1000',
@@ -116,6 +130,7 @@ export const ChannelStrip = observer(({ track, trackNumber }: ChannelStripProps)
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              border: '1px solid #111',
               padding: 0,
               fontSize: '0.75rem',
               fontWeight: 'bold',
@@ -133,6 +148,7 @@ export const ChannelStrip = observer(({ track, trackNumber }: ChannelStripProps)
               borderRadius: '4px',
               display: 'flex',
               justifyContent: 'center',
+              border: '1px solid #111',
               alignItems: 'center',
               padding: 0,
               fontSize: '0.75rem',

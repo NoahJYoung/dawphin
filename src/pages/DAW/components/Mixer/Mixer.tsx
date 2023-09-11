@@ -10,7 +10,7 @@ interface MixerProps {
 export const Mixer = observer(({ audioEngine }: MixerProps) => {
 
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex' }}>
+    <div style={{ height: '100%', display: 'flex', gap: '10px' }}>
       {audioEngine.tracks.map((track, i)=> <ChannelStrip key={track.id} trackNumber={i + 1} track={track} />)}
     </div>
   )
