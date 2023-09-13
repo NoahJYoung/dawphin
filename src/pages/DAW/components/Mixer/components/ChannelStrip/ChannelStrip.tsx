@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Slider,  } from "antd";
+import { Button, Input, Slider,  } from "antd";
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Knob } from "src/pages/DAW/UIKit";
@@ -52,10 +52,19 @@ export const ChannelStrip = observer(({ track, trackNumber }: ChannelStripProps)
           padding: '0.25rem',
         }}
       >
+        <Input
+          value={track.name}
+          onChange={(e) => track.setName(e.target.value)}
+          style={{
+            maxWidth: '100px',
+            textAlign: 'center'
+          }}
+        />
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
+            justifyContent: 'space-evenly',
+            gap: '20px',
             alignItems: 'center',
             width: '100%'
           }}

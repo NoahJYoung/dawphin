@@ -14,6 +14,7 @@
     "@types/p5": "^1.6.2",
     "antd": "^5.8.4",
     "audiobuffer-to-wav": "^1.0.0",
+    "dto-library-example": "^1.0.3",
     "konva": "8.3.10",
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",

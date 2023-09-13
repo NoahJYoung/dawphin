@@ -1,14 +1,13 @@
 import { AudioEngine } from 'src/AudioEngine';
 import { useState, useEffect, useRef } from 'react';
 import { Mixer, TimelineView, TrackPanels, Tracks, TransportView } from './components';
-import { Knob } from './UIKit';
+import { TRACK_PANEL_FULL_WIDTH } from './constants';
 
 const audioEngine = new AudioEngine();
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
   const [audioEngineInstance] = useState<AudioEngine>(audioEngine);
-  const [knobValue, setKnobValue] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackPanelsRef = useRef<HTMLDivElement>(null);
@@ -57,9 +56,23 @@ export const DAW = () => {
           style={{
             display: 'flex',
             height: '100%',
+            color: '#aaa',
+            fontFamily: 'arial'
           }}
         >
-          <Mixer audioEngine={audioEngineInstance} />
+          <div
+            style={{
+              width: TRACK_PANEL_FULL_WIDTH,
+            }}
+          >
+            MASTER FADER
+          </div>
+          <div style={{
+            width: '90vw'
+          }}>
+            <Mixer audioEngine={audioEngineInstance} />
+          </div>
+          
         </div>
       </div>
     </div>
