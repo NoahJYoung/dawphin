@@ -1,21 +1,21 @@
-import { AudioEngine } from 'src/AudioEngine';
+import { audioEngineInstance } from 'src/AudioEngine';
+import { AudioEngine } from 'src/AudioEngine/AudioEngine';
 import { useState, useEffect, useRef } from 'react';
 import { Mixer, TimelineView, TrackPanels, Tracks, TransportView } from './components';
 import { TRACK_PANEL_FULL_WIDTH } from './constants';
-
-const audioEngine = new AudioEngine();
+import { MasterFader } from './components/MasterFader';
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
-  const [audioEngineInstance] = useState<AudioEngine>(audioEngine);
+  const [audioEngine] = useState<AudioEngine>(audioEngineInstance);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackPanelsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.addEventListener('click', audioEngineInstance.startTone);
-    return document.removeEventListener('click', audioEngineInstance.startTone);
-  }, [])
+    document.addEventListener('click', audioEngine.startTone);
+    return document.removeEventListener('click', audioEngine.startTone);
+  }, [audioEngine])
 
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -24,18 +24,18 @@ export const DAW = () => {
           containerRef={containerRef}
           timelineRect={timelineRect}
           trackPanelsRef={trackPanelsRef}
-          audioEngine={audioEngineInstance}
+          audioEngine={audioEngine}
         />
         <TimelineView
           setTimelineRect={setTimelineRect}
           containerRef={containerRef}
-          audioEngine={audioEngineInstance}
+          audioEngine={audioEngine}
           trackPanelsRef={trackPanelsRef}
         >
           <Tracks
             containerRef={containerRef}
             timelineRect={timelineRect}
-            audioEngine={audioEngineInstance}
+            audioEngine={audioEngine}
           />
         </TimelineView>
       </div>
@@ -63,12 +63,14 @@ export const DAW = () => {
           <div
             style={{
               width: TRACK_PANEL_FULL_WIDTH,
+              height: '100%',
             }}
           >
-            MASTER FADER
+            <MasterFader masterControl={audioEngine.masterControl} />
           </div>
           <div style={{
-            width: '90vw'
+            width: '85vw',
+            height: '90%',
           }}>
             <Mixer audioEngine={audioEngineInstance} />
           </div>

@@ -3,6 +3,7 @@ import { action, makeObservable, observable } from 'mobx';
 import * as Tone from 'tone';
 import { Clip } from './Track/Clip';
 import audioBufferToWav from 'audiobuffer-to-wav';
+import { MasterControl } from './MasterControl';
 
 interface ClipboardItem {
   data: Blob
@@ -29,6 +30,7 @@ export class AudioEngine {
   updateTimelineUI: (() => void )| null = null;
 
   constructor(
+    public masterControl: MasterControl,
     public tracks: Track[] = observable.array([]),
     public cursorPosition: number = 0,
     public audioCtx = Tone.getContext(),

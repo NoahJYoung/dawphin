@@ -2,6 +2,8 @@ import { observer } from "mobx-react-lite";
 import { useState, useRef, useEffect } from "react";
 import { AudioEngine } from "src/AudioEngine";
 import { Clip } from "src/AudioEngine/Track/Clip";
+import { convertRgbToRgba } from "src/pages/DAW/helpers";
+import * as Tone from 'tone';
 import WaveSurfer from "wavesurfer.js";
 
 interface ClipViewProps {
@@ -10,15 +12,6 @@ interface ClipViewProps {
   timelineRect: DOMRect | null
   renderCtx: AudioContext
   color: string
-}
-
-export const convertRgbToRgba = (rgb: string, alpha: number) => {
-  const rgbValues = rgb.match(/\d+/g);
-  if (!rgbValues || rgbValues.length !== 3) {
-    throw new Error('Invalid RGB format');
-  }
-  const rgbaColor = `rgba(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]}, ${alpha})`;
-  return rgbaColor;
 }
 
 export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: ClipViewProps) => {
@@ -95,7 +88,7 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
   }
 
   useEffect(() => {
-    const sampleRate = 44100;
+    const sampleRate = Tone.getContext().sampleRate
     const pixelsPerSample = audioEngine.samplesPerPixel;
     const pixelsPerSecond = Math.round(sampleRate / pixelsPerSample);
     wavesurfer?.zoom(pixelsPerSecond)

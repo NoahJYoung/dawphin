@@ -5,7 +5,7 @@ import { Track } from "src/AudioEngine/Track";
 import { Knob } from "src/pages/DAW/UIKit";
 import { Meter } from "./components";
 import { RecordIcon } from "src/pages/DAW/icons";
-import { convertRgbToRgba } from "../../../Tracks/components/TrackView/components/ClipView/ClipView";
+import { getTrackBackgroundColor } from "src/pages/DAW/helpers";
 
 interface ChannelStripProps {
   track: Track;
@@ -22,9 +22,8 @@ export const ChannelStrip = observer(({ track, trackNumber }: ChannelStripProps)
     track.select();
   }
 
-  const panelBackgroundColor = track.selected ? 
-    `radial-gradient(${convertRgbToRgba(track.color, 0.8)}, ${convertRgbToRgba(track.color, 0.6)})` :
-    `radial-gradient(${convertRgbToRgba(track.color, 0.5)}, ${convertRgbToRgba(track.color, 0.3)})`;
+  const trackBackgroundColor = getTrackBackgroundColor(track);
+
   const activeOuterRgb = 'rgb(200, 0, 0)';
   const inactiveOuterRgb = 'rgb(150, 0, 0)';
   const activeInnerRgb = 'rgb(150, 0, 0)';
@@ -42,7 +41,7 @@ export const ChannelStrip = observer(({ track, trackNumber }: ChannelStripProps)
       <div
         style={{
           border: '1px solid #111',
-          background: panelBackgroundColor,
+          background: trackBackgroundColor,
           borderRadius: '5px',
           display: 'flex',
           flexDirection: 'column',
