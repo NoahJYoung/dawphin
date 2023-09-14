@@ -24,6 +24,7 @@ export class AudioEngine {
   selectedClips: Clip[] = [];
   scrollXOffsetPixels: number = 0;
   selectedTracks: Track[] = observable.array([]);
+  activeTracks: Track[] = [];
   snap: boolean = false;
   metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
@@ -120,6 +121,10 @@ export class AudioEngine {
     this.selectedTracks = observable.array([...this.tracks].filter(track => !!track.selected));
   }
 
+  getActiveTracks = () => {
+    this.activeTracks = [...this.tracks].filter(track => !!track.active);
+  }
+
   deselectAllTracks = () => {
     this.tracks.forEach(track => track.deselect())
   }
@@ -211,6 +216,10 @@ export class AudioEngine {
     })
   };
 
+  setNormalized = (value: boolean) => {
+    this.selectedClips.forEach(clip => clip.setNormalized(value))
+  }
+
   pasteClips = () => {
     if (this.selectedTracks.length > 0) {
       this.clipboard.forEach((item, i) => {
@@ -259,11 +268,27 @@ export class AudioEngine {
 
   toEnd = () => {
     if (this.updateTimelineUI) {
-      console.log(this.totalMeasures)
       this.pause();
       Tone.getTransport().position = `${this.totalMeasures}:0:0`;
       this.updateTimelineUI();
       this.pause();
+    }
+  }
+
+  record = async () => {
+    if (this.state !== 'recording') {
+      this.getActiveTracks();
+      // Temporary logic to test mic input, replace with input logic eventually
+      const mic = new Tone.UserMedia();
+      await mic.open();
+      this.play();
+      this.setState('recording')
+      this.activeTracks.forEach(track => {
+        mic.connect(track.recorder)
+        track.record();
+      });
+    } else {
+      this.stop();
     }
   }
 

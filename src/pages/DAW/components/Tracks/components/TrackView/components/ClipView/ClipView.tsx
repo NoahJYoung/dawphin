@@ -45,23 +45,27 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
         peaks,
 
         // bars
-        barWidth: 3,
-        barRadius: 5,
-        barGap: 2
+        // barWidth: 3,
+        // barRadius: 5,
+        // barGap: 2
       })
       setWavesurfer(wavesurfer);
     }
     
   }, [clip.duration, peaks]);
+
+  useEffect(() => {
+    wavesurfer?.setOptions({ normalize: clip.normalized })
+  }, [clip.normalized])
   
 
   const handleClick = (e: React.MouseEvent) => {
+    const initialState = clip.isSelected;
     if (!e.ctrlKey) {
-      const initialState = clip.isSelected;
       audioEngine.deselectClips();
-      clip.setSelect(!initialState);
-    } else {
       clip.setSelect(true);
+    } else {
+      clip.setSelect(!initialState);
     }
     audioEngine.getSelectedClips()
   };

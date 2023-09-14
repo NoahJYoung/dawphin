@@ -106,7 +106,7 @@ export const TransportControls = observer(({ audioEngine }: TransportControlsPro
       </div>
       <Button
         icon={<RecordIcon width={40} height={40} color="rgb(200, 0, 0)" innerColor="rgb(150, 0, 0)" />}
-        onClick={() => audioEngine.setState('recording')}
+        onClick={audioEngine.record}
         style={{
           background: 'transparent',
           marginLeft: '5px',

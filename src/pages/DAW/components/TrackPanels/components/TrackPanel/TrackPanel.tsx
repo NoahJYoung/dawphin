@@ -32,6 +32,13 @@ export const TrackPanel = observer(({ track, trackNumber, audioEngine }: { track
     audioEngine.getSelectedTracks();
   }
 
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    if (!e.ctrlKey) {
+      audioEngine.deselectClips();
+    }
+    track.selectAllClips();
+  }
+
   const trackBackgroundColor = getTrackBackgroundColor(track);
   const activeOuterRgb = 'rgb(200, 0, 0)';
   const inactiveOuterRgb = 'rgb(150, 0, 0)';
@@ -53,6 +60,7 @@ export const TrackPanel = observer(({ track, trackNumber, audioEngine }: { track
       <div
         style={{borderRadius: '5px', display: 'flex', width: TRACK_PANEL_WIDTH, height: CLIP_HEIGHT, background: trackBackgroundColor, borderBottom: '1px solid #333'}}
         onClick={handleClick}
+        onDoubleClick={handleDoubleClick}
       >
         <div style={{ position: 'relative', width: '75%' }}>
           <Button

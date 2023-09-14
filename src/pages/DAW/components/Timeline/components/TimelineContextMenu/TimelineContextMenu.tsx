@@ -4,6 +4,8 @@ import {
   DeleteOutlined,
   CopyOutlined,
   SnippetsOutlined,
+  RiseOutlined,
+  FallOutlined,
 } from '@ant-design/icons';
 import type { AudioEngine } from "src/AudioEngine";
 import { observer } from "mobx-react-lite";
@@ -46,14 +48,27 @@ export const TimelineContextMenu = observer(({ children, audioEngine }: Timeline
     {
       key: '3',
       onClick: audioEngine.deleteSelectedClips,
-      label: 'Delete selected',
+      label: 'Delete',
       icon: <DeleteOutlined />
     },
     {
       key: '4',
       onClick: audioEngine.splitSelectedClipsAtPlayhead,
-      label: 'Split selected',
+      label: 'Split at playhead',
       icon: <SplitCellsOutlined />
+    },
+    { type: 'divider' },
+    {
+      key: '5',
+      onClick: () => audioEngine.setNormalized(true),
+      label: 'Normalize',
+      icon: <RiseOutlined />
+    },
+    {
+      key: '6',
+      onClick: () => audioEngine.setNormalized(false),
+      label: 'Denormalize',
+      icon: <FallOutlined />
     },
   ];
 

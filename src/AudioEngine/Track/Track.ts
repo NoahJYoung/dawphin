@@ -8,6 +8,10 @@ export class Track {
   public pan: number | null = null;
   public solo: boolean = false;
   public active: boolean = false;
+  public leftMeter = new Tone.Meter(0.75);
+  public rightMeter = new Tone.Meter(0.75);
+  public splitter = new Tone.Split();
+  public recorder = new Tone.Recorder();
 
   constructor(
     public audioEngine: AudioEngine,
@@ -18,9 +22,6 @@ export class Track {
     public selected: boolean = false,
     public channel: Tone.Channel = new Tone.Channel(),
     public muted = channel.mute,
-    public leftMeter = new Tone.Meter(0.75),
-    public rightMeter = new Tone.Meter(0.75),
-    public splitter = new Tone.Split()
   ) {
     makeObservable(this, {
       name: observable,
@@ -52,6 +53,9 @@ export class Track {
   }
 
   play() {
+    if (this.active && this.audioEngine.state === 'recording') {
+      return;
+    }
     const transport = Tone.getTransport();
     this.clips.forEach(clip => {
       const seekTime = (transport.seconds - clip.start.toSeconds());
@@ -63,6 +67,16 @@ export class Track {
     });
   }
 
+  record = async () => {
+    const startSeconds = Tone.getTransport().seconds;
+    this.recorder.start();
+    Tone.getTransport().once('stop', async () => {
+      const blob = await this.recorder.stop();
+      const url = URL.createObjectURL(blob);
+      this.addClip(url, startSeconds);
+    });
+  }
+  
 
   setVolume = (value: number) => {
     this.channel.set({ volume: Math.round(value) });
@@ -101,6 +115,10 @@ export class Track {
 
   select() {
     this.selected = true;
+  }
+
+  selectAllClips = () => {
+    this.clips.forEach(clip => clip.setSelect(true))
   }
 
   deselect() {

@@ -23,6 +23,8 @@ export class Clip {
   ) {
     makeObservable(this, {
       isSelected: observable,
+      normalized: observable,
+      setNormalized: action.bound,
       start: observable,
       end: observable,
       setEnd: action.bound,
@@ -78,6 +80,10 @@ export class Clip {
     if (this.stopEventId) {
       transport.clear(this.stopEventId);
     }
+  }
+
+  setNormalized = (value: boolean) => {
+    this.normalized = value;
   }
 
   stop = () => {
