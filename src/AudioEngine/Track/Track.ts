@@ -12,6 +12,7 @@ export class Track {
   public rightMeter = new Tone.Meter(0.75);
   public splitter = new Tone.Split();
   public recorder = new Tone.Recorder();
+  public placeholderClipStart: Tone.TimeClass | null = null; 
 
   constructor(
     public audioEngine: AudioEngine,
@@ -31,6 +32,8 @@ export class Track {
       color: observable,
       muted: observable,
       active: observable,
+      placeholderClipStart: observable,
+      setPlaceholderClipStart: action.bound,
       setActive: action.bound,
       setMuted: action.bound,
       setVolume: action.bound,
@@ -67,12 +70,18 @@ export class Track {
     });
   }
 
+  setPlaceholderClipStart = (time: Tone.TimeClass | null) => {
+    this.placeholderClipStart = time;
+  }
+
   record = async () => {
     const startSeconds = Tone.getTransport().seconds;
     this.recorder.start();
+    this.setPlaceholderClipStart(Tone.Time(startSeconds))
     Tone.getTransport().once('stop', async () => {
       const blob = await this.recorder.stop();
       const url = URL.createObjectURL(blob);
+      this.setPlaceholderClipStart(null)
       this.addClip(url, startSeconds);
     });
   }
