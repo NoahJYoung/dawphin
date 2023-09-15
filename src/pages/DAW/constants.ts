@@ -1,8 +1,9 @@
-export const TOPBAR_HEIGHT = 30;
+export const TOPBAR_HEIGHT = 40;
 export const CLIP_HEIGHT = 80;
+export const CLIP_TOP_PADDING = 4;
 export const MIN_GRID_HEIGHT = 640;
 export const SCROLLBAR_HEIGHT = 30;
 export const TRACK_PANEL_WIDTH = 200;
 export const TRACK_NUMBER_WIDTH = 25;
-export const TRACK_PANEL_RIGHT_PADDING = 2;
+export const TRACK_PANEL_X_PADDING = 5;
 export const TRACK_PANEL_FULL_WIDTH = TRACK_PANEL_WIDTH + TRACK_NUMBER_WIDTH;

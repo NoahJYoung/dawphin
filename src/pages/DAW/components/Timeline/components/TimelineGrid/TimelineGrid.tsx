@@ -5,6 +5,7 @@ import {
   getTimeSignature,
   zoomToGridlineMap,
 } from "../../helpers";
+import { CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 
 interface TimelineGridProps {
   audioEngine: AudioEngine
@@ -41,10 +42,10 @@ export const TimelineGrid = observer(({
         y="0"
         width={gridWidth}
         height={gridHeight}
-        fill="#333"
+        fill="transparent"
       />
       {audioEngine.tracks.map((_, trackIndex) => {
-        const trackY = (trackIndex + 1) * clipHeight + topbarHeight;
+        const trackY = (trackIndex + 1) * (clipHeight + CLIP_TOP_PADDING) + topbarHeight;
         return (
           <line
             key={`track-line-${trackIndex}`}
@@ -52,7 +53,8 @@ export const TimelineGrid = observer(({
             y1={trackY}
             x2={gridWidth}
             y2={trackY}
-            stroke="#444"
+            stroke="#555"
+            strokeWidth={0.5}
           />
         );
       })}

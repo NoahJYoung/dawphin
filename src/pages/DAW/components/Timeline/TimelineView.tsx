@@ -144,8 +144,9 @@ export const TimelineView = observer(({
           zIndex: 4,
           height: TOPBAR_HEIGHT,
           width: gridWidth,
-          background: '#888',
-          borderRadius: '5px'
+          background: '#191919',
+          borderBottom: '1px solid #444',
+          borderTop: '1px solid #444'
         }}>
           <TopBar
             audioEngine={audioEngine}

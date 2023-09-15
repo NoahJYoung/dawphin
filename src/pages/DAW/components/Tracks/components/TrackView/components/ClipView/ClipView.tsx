@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useState, useRef, useEffect } from "react";
 import { AudioEngine } from "src/AudioEngine";
 import { Clip } from "src/AudioEngine/Track/Clip";
+import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import * as Tone from 'tone';
 import WaveSurfer from "wavesurfer.js";
@@ -100,7 +101,7 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
 
   const calculatePosition = () => {
     const left = Math.round(clip.start.toSamples() / audioEngine.samplesPerPixel);
-    const top = audioEngine.tracks.findIndex((track) => track.id === clip.track.id) * 80;
+    const top = audioEngine.tracks.findIndex((track) => track.id === clip.track.id) * (CLIP_HEIGHT + CLIP_TOP_PADDING) + CLIP_TOP_PADDING / 2;
 
     return { top, left };
   }
@@ -147,7 +148,7 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
           opacity: clip.isSelected ? 0.9 : 0.8,
           width: clipWidth >= 1 ? clipWidth : 1,
           height: '80px',
-          borderRadius: '10px',
+          borderRadius: '6px',
           color: 'blue',
           border: `1px solid ${color}`,
           zIndex: 3,

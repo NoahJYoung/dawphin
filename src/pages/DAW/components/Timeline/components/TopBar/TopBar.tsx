@@ -50,7 +50,7 @@ export const TopBar = observer(({
               <text
                 x={x + 2}
                 y="15"
-                fill="#444"
+                fill="#888"
                 fontSize="12px"
                 fontFamily="Arial"
               >

@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { Track } from "src/AudioEngine/Track";
+import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import * as Tone from 'tone';
 
@@ -18,7 +19,7 @@ export const PlaceholderClip = observer(({ track }: PlaceholderClipProps) => {
 
   const calculatePosition = () => {
       const left = Math.round(track.placeholderClipStart!.toSamples() / audioEngine.samplesPerPixel);
-      const top = audioEngine.tracks.findIndex((audioEngineTrack) => audioEngineTrack.id === track.id) * 80;
+      const top = audioEngine.tracks.findIndex((audioEngineTrack) => audioEngineTrack.id === track.id) * (CLIP_HEIGHT + CLIP_TOP_PADDING) + CLIP_TOP_PADDING / 2;
 
       return { top, left };
     
