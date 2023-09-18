@@ -1,0 +1,29 @@
+@import 'src/styles/variables.scss';
+
+.sidebarWrapper {
+  display: flex;
+  flex-direction: column;
+  padding-right: $track-panel-x-padding;
+  padding-left: $track-panel-x-padding;
+  max-width: 235px;
+  width: 120px;
+
+  .trackPanelsWrapper {
+    height: calc(60vh - 40px);
+    overflow: hidden;
+    z-index: 2;
+    border-radius: $border-radius-med;
+    padding-top: calc($clip-top-padding / 2);
+  }
+
+  .trackPanels {
+    display:  flex;
+    flex-direction: column;
+    gap: $clip-top-padding;
+    border-radius: $border-radius-med;
+  }
+}
+
+.expanded {
+  width: 100%;
+}

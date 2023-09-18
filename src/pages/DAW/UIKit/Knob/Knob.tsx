@@ -8,7 +8,8 @@ interface KnobProps {
   max?: number;
   numTicks?: number;
   degrees?: number;
-  color?: boolean;
+  color?: string;
+  double?: boolean;
 }
 
 const convertRange = (oldMin: number, oldMax: number, newMin: number, newMax: number, oldValue: number) => {
@@ -22,6 +23,8 @@ export const Knob = ({
   min = -50,
   max = 50,
   degrees = 270,
+  color = 'blue',
+  double = false,
 }: KnobProps) => {
   const startAngle = (360 - degrees) / 2;
   const endAngle = startAngle + degrees;
@@ -72,61 +75,67 @@ export const Knob = ({
 
   const handleResetValue = () => setDeg(180);
 
-  const alphaValue = (value - min) / (max - min);
-  const negativeAlphaValue = 1 - alphaValue;
+  const calculateColorAngle = () => {
+    if (double) {
+      const colorAngle = value <= 0
+    ? 180 - convertRange(min, max, startAngle, endAngle, value)
+    : 360 - convertRange(min, max, startAngle - 180, endAngle -180, value);
+    
+      const negativeGradient =  `conic-gradient(${color} ${colorAngle}deg, #222 ${colorAngle}deg)`;
+      const positiveGradient =  `conic-gradient(#222 ${colorAngle}deg, ${color} ${colorAngle}deg)`;
+    
+      const background = value > 0 ? positiveGradient : negativeGradient
+
+      return background;
+    } else {
+      const colorAngle = 225 - convertRange(min, max, startAngle - 180, endAngle - 180, value);
+      const background = `conic-gradient(#222 ${colorAngle}deg, ${color} ${colorAngle}deg)`;
+
+      return background;
+    }
+  }
+
+  const background = calculateColorAngle();
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} onDoubleClick={handleResetValue} onMouseDown={startDrag}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }} onDoubleClick={handleResetValue} onMouseDown={startDrag}>
       <svg
         className="knob"
         width={size}
         height={size}
         style={{
           transform: `rotate(${deg - 180}deg)`,
-          backgroundImage: 'radial-gradient(100% 70%, #ddd 6%, #555 90%)',
+          background,
           borderRadius: '50%',
           boxShadow: '-1px -4px 5px rgba(25, 25, 25, 0.5)'
         }}
       >
+        
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={size / 2}
+          fill="none"
+        />
+
         <circle
           cx={size / 2}
           cy={size / 2}
           r={size / 2 - margin}
-          fill="none"
+          fill="#292929"
         />
 
         <line
           x1={size / 2}
-          y1={size / 2}
+          y1={0}
           x2={size / 2}
-          y2={margin}
-          stroke={`rgba(25, 25, 25, ${negativeAlphaValue})`}
+          y2={margin * 2}
+          stroke={color}
           strokeWidth="2"
-        />
-
-        <line
-          x1={size / 2}
-          y1={size / 2}
-          x2={size / 2}
-          y2={margin}
-          stroke={`rgba(0, 0, 255, ${alphaValue})`}
-          strokeWidth="2"
-        />
-
-        {/* <circle
-          cx={size / 2}
-          cy={margin}
-          r={size / 16}
-          fill={`rgba(72, 72, 72, ${negativeAlphaValue})`}
-        />
-
-        <circle
-          cx={size / 2}
-          cy={margin}
-          r={size / 16}
-          fill={`rgba(0, 0, 255, ${alphaValue})`}
-        /> */}
+        />     
       </svg>
+
+      <p style={{ position: 'absolute', margin: 0, fontSize: '0.65rem' }}>{Math.round(value)}</p>
     </div>
   );
 };

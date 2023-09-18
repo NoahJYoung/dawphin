@@ -1,0 +1,18 @@
+@import './variables.scss';
+@import './inter.scss';
+
+html, body {
+  margin: 0;
+  box-sizing: border-box;
+  background: $surface-0;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+.ant-slider-handle::before,
+.ant-slider-handle::after {
+  display: none;
+}

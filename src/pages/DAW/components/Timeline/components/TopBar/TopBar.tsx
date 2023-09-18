@@ -52,7 +52,7 @@ export const TopBar = observer(({
                 y="15"
                 fill="#888"
                 fontSize="12px"
-                fontFamily="Arial"
+                fontFamily="Inter"
               >
                 {i / beatsPerMeasure + 1}
               </text>

@@ -5,9 +5,8 @@ import { FolderOpenOutlined } from "@ant-design/icons";
 import { Input } from 'antd';
 import type { AudioEngine } from "src/AudioEngine";
 import { CLIP_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "src/pages/DAW/constants";
-import * as Tone from 'tone';
-import { getTrackBackgroundColor } from "src/pages/DAW/helpers";
 import { RecordIcon } from "src/pages/DAW/icons";
+import * as Tone from 'tone';
 
 import styles from './TrackPanel.module.scss';
 
@@ -51,7 +50,6 @@ export const TrackPanel = observer(({ track, audioEngine }: { track: Track, trac
         width: TRACK_PANEL_FULL_WIDTH,
         height: CLIP_HEIGHT,
         background: '#333',
-        borderBottom: '1px solid #333',
       }}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
@@ -75,7 +73,7 @@ export const TrackPanel = observer(({ track, audioEngine }: { track: Track, trac
           padding: '4px'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', height: 'fit-content' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 'fit-content' }}>
           <Button
             icon={(
               <RecordIcon
@@ -111,7 +109,27 @@ export const TrackPanel = observer(({ track, audioEngine }: { track: Track, trac
               alignItems: 'center',
               height: '1.5rem',
               width: '8rem',
-              padding: '0.25rem'
+              padding: '0.25rem',
+              fontFamily: 'Inter',
+              textOverflow: 'ellipsis',
+            }}
+          />
+
+          <ColorPicker
+            size={"small"}
+            format="rgb"
+            style={{
+              background: 'transparent',
+              border: 'none'
+            }}
+            disabledAlpha
+            value={track.color}
+            onChange={(e) => {
+              const r = e.toRgb().r
+              const g = e.toRgb().g
+              const b = e.toRgb().b
+              console.log(`rgb(${r},${g},${b})`)
+              track.setColor(`rgb(${r},${g},${b})`)
             }}
           />
         </div>
@@ -129,24 +147,9 @@ export const TrackPanel = observer(({ track, audioEngine }: { track: Track, trac
               htmlFor={`fileInput${track.id}`}
               className={`${styles.folderButton} custom-file-label`}
             >
-              <FolderOpenOutlined style={{ color: '#aaa', padding: '0.25rem', border: '1px solid #aaa', borderRadius: '6px' }} />
+              <FolderOpenOutlined style={{ color: '#aaa', padding: '0.25rem' }} />
             </label>
-            <ColorPicker
-              size={"small"}
-              format="rgb"
-              style={{
-                background: 'transparent',
-                border: 'none'
-              }}
-              disabledAlpha
-              value={track.color}
-              onChange={(e) => {
-                const r = e.toRgb().r
-                const g = e.toRgb().g
-                const b = e.toRgb().b
-                track.setColor(`rgb(${r},${g},${b})`)
-              }}
-            />
+            
           </div>
 
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center'}}>
@@ -164,8 +167,8 @@ export const TrackPanel = observer(({ track, audioEngine }: { track: Track, trac
                   alignItems: 'center',
                   border: `1px solid ${track.muted ? 'red' : '#aaa'}`,
                   color: track.muted ? 'red' : '#aaa',
-                  padding: 0.25,
-                  fontSize: '0.85rem',
+                  padding: 0,
+                  fontSize: '0.75rem',
                   fontWeight: 'bold',
                 }}
               >
@@ -183,8 +186,8 @@ export const TrackPanel = observer(({ track, audioEngine }: { track: Track, trac
                   alignItems: 'center',
                   border: `1px solid ${track.solo ? 'yellow' : '#aaa'}`,
                   color: track.solo ? 'yellow' : '#aaa',
-                  padding: 0.25,
-                  fontSize: '0.85rem',
+                  padding: 0,
+                  fontSize: '0.75rem',
                   fontWeight: 'bold',
                 }}
               >

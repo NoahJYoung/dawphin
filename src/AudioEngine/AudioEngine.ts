@@ -102,8 +102,8 @@ export class AudioEngine {
   }
 
   setBpm(bpm: number) {
-    Tone.getTransport().bpm.value = bpm;
-    this.bpm = Tone.getTransport().bpm.value;
+    Tone.getTransport().bpm.value = Math.round(bpm);
+    this.bpm = Math.round(Tone.getTransport().bpm.value);
   }
 
   setTimeSignature(value: number | number[]) {

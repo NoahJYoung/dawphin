@@ -21,7 +21,7 @@ export const useTimeline = (audioEngine: AudioEngine) => {
   }, [audioEngine.samplesPerPixel, audioEngine.totalMeasures, audioEngine.bpm]);
 
   const sectionHeight = useMemo(() => {
-    const calculatedHeight = (CLIP_HEIGHT + CLIP_TOP_PADDING) * audioEngine.tracks.length + SCROLLBAR_HEIGHT;
+    const calculatedHeight = (CLIP_HEIGHT + CLIP_TOP_PADDING) * audioEngine.tracks.length + (SCROLLBAR_HEIGHT + 10);
     return calculatedHeight > MIN_GRID_HEIGHT ? calculatedHeight : MIN_GRID_HEIGHT
   }, [audioEngine.tracks.length]);
 

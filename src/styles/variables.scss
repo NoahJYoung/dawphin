@@ -1,0 +1,22 @@
+$surface-0: #191919;
+$surface-1: #333333;
+
+$primary-purple: rgb(125, 0, 250);
+$primary-blue: rgb(0, 0, 200);
+$primary-orange: rgb(250, 125, 0);
+$primary-red: rgb(200, 0, 0);
+
+$text-light: #aaaaaa;
+$text-dark: #555555;
+
+$border-radius-med: 6px;
+
+$topbar-height: 40px;
+$clip-height: 80px;
+$clip-top-padding: 4px;
+$min-grid-height: 640px;
+$scrollbar-height: 30px;
+$track-panel-width: 200px;
+$track-number-width: 25px;
+$track-panel-x-padding: 5px;
+$track-panel-full-width: calc($track-panel-width + $track-number-width);

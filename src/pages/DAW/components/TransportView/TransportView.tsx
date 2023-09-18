@@ -8,27 +8,20 @@ interface TransportViewProps {
 }
 
 export const TransportView = observer(({ audioEngine }: TransportViewProps) => {
+  const screenWidth = window.innerWidth;
   return (
     <div
       style={{
         display: 'flex',
-        alignItems: 'center',
-        padding: '5px',
-        height: '100%',
-        borderRadius: '5px',
+        flexDirection: screenWidth < 769 ? 'column' : 'row',
+        height: '50px',
+        gap: '1rem',
+        alignItems: screenWidth < 769 ? undefined : 'center',
+        marginBottom: '5px'
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          height: '100%',
-          gap: '1rem',
-          alignItems: 'center',
-        }}
-      >
-        <TransportControls audioEngine={audioEngine} />
-        <ProjectDataDisplay audioEngine={audioEngine} />
-      </div>
+      <TransportControls audioEngine={audioEngine} />
+      <ProjectDataDisplay audioEngine={audioEngine} />
     </div>
   )
 })

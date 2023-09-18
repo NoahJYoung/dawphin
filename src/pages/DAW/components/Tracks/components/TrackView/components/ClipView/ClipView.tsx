@@ -4,8 +4,8 @@ import { AudioEngine } from "src/AudioEngine";
 import { Clip } from "src/AudioEngine/Track/Clip";
 import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
-import * as Tone from 'tone';
 import WaveSurfer from "wavesurfer.js";
+import * as Tone from 'tone';
 
 interface ClipViewProps {
   clip: Clip,
@@ -39,16 +39,10 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
         url: clip.audioSrc,
         height: 'auto',
         minPxPerSec: pixelsPerSecond,
-        
         hideScrollbar: true,
         cursorWidth: 0,
         normalize: false,
         peaks,
-
-        // bars
-        // barWidth: 3,
-        // barRadius: 5,
-        // barGap: 2
       })
       setWavesurfer(wavesurfer);
     }
@@ -156,7 +150,9 @@ export const ClipView = observer(({ clip, audioEngine, timelineRect, color }: Cl
         }}
         ref={overviewRef}
         onClick={handleClick}
-      />
+      >
+        <p style={{ margin: 0, color: convertRgbToRgba('rgb(0, 0, 0)', 0.5), position: 'absolute', fontWeight: 'bold', fontSize: '0.75rem' }}>{`${clip.track.name} | ${clip.start.toBarsBeatsSixteenths()}`}</p>
+      </div>
       <audio src={clip.audioSrc} ref={audioRef} />
     </>
   )

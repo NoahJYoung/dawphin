@@ -17,7 +17,7 @@ export const Mixer = observer(({ audioEngine }: MixerProps) => {
       overflow: 'auto',
       height: '300px',
       display: 'flex',
-      gap: '2px',
+      gap: '4px',
       }}
     >
       {audioEngine.tracks.map((track, i)=> <ChannelStrip key={track.id} trackNumber={i + 1} track={track} />)}

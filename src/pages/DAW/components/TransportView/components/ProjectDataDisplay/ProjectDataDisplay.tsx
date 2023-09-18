@@ -3,97 +3,84 @@ import { observer } from "mobx-react-lite";
 import { AudioEngine } from "src/AudioEngine";
 import { InputNumber } from "antd";
 
+import styles from './ProjectDataDisplay.module.scss';
+
 interface ProjectDataDisplayProps {
   audioEngine: AudioEngine
 }
 
 export const ProjectDataDisplay = observer(({ audioEngine }: ProjectDataDisplayProps) => {
-  const [isBpmInputMode, setIsBpmInputMode] = useState(false);
-  const [isTimeSignatureInputMode, setIsTimeSignatureInputMode] = useState(false);
 
   return (
     <div
+    className={styles.projectDataDisplayContainer}
       style={{
-        fontFamily: 'arial',
+        fontFamily: "Inter",
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        background: '#111',
         fontSize: '20px',
         gap: '1rem',
-        color: '#888',
         height: '100%',
         borderRadius: '5px',
-        border: '1px solid #888',
         width: '12rem',
       }}
     >
-      <div style={{ justifyContent: 'center', width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onClick={() => setIsBpmInputMode(true)}>
-        {isBpmInputMode ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', width: '100%', flexWrap: 'nowrap' }}>
-            <InputNumber
-              value={audioEngine.bpm}
-              type="number"
-              style={{ maxWidth: '3rem', maxHeight: '100%', fontFamily: 'inherit', fontSize: 'inherit', color: 'inherit', border: 'none', outline: 'none' }}
-              controls={false}
-              onBlur={() => setIsBpmInputMode(false)}
-              onPressEnter={() => setIsBpmInputMode(false)}
-              autoFocus
-              onChange={(e) => {
-                const value = e?.valueOf();
-                if (value && value > 40) {
-                  audioEngine.setBpm(value)
-                }
-              }}
-            />
-            <p>bpm</p>
-          </div>
-        ) : (
-          <div>
-            {`${audioEngine.bpm} bpm`}
-          </div>
-        )}
-      </div>
-      <div
-        style={{
-          justifyContent: 'center',
-          width: '100%',
-          borderLeft: '2px solid #888',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          flexWrap: 'nowrap'
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', width: '100%', flexWrap: 'nowrap' }}>
+        <InputNumber
+          value={audioEngine.bpm}
+          type="number"
+          className={styles.bpmInput}
+          style={{
+            width: '3.5rem',
+            maxHeight: '100%',
+            fontFamily: 'inherit',
+            fontSize: 'inherit',
+            border: 'none',
+            outline: 'none',
+            background: 'transparent'
           }}
-        onClick={() => setIsTimeSignatureInputMode(true)}
-      >
-        {isTimeSignatureInputMode ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', width: '100%', flexWrap: 'nowrap' }}>
-            <InputNumber
-              value={audioEngine.timeSignature as number}
-              style={{ maxWidth: '2rem', maxHeight: '3rem', fontFamily: 'inherit', fontSize: 'inherit', color: 'inherit', border: 'none', outline: 'none' }}
-              min={1}
-              max={7}
-              controls={false}
-              type="number"
-              size="small"
-              onChange={(e) => {
-                const input = e?.valueOf();
-                if (input && input > 0) {
-                  audioEngine.setTimeSignature(input)
-                }
-              }}
-              onBlur={() => setIsTimeSignatureInputMode(false)}
-              onPressEnter={() => setIsTimeSignatureInputMode(false)}
-              autoFocus
-            />
-            <p> / 4</p>
-          </div>
-        ) : (
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-            {`${audioEngine.timeSignature} / 4`}
-          </div>
-        )}
+          controls={false}
+          onChange={(e) => {
+            const value = e?.valueOf();
+            if (value && value > 40) {
+              audioEngine.setBpm(value)
+            }
+          }}
+        />
+        <p>bpm</p>
       </div>
+        
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', justifyContent: 'center', width: '100%',  }}>
+        <InputNumber
+          value={audioEngine.timeSignature as number}
+          className={styles.timeSignatureInput}
+          style={{
+            width: '2rem',
+            height: '28px',
+            fontFamily: 'Inter',
+            fontSize: '28px',
+            display: 'flex',
+            border: 'none',
+            outline: 'none',
+          }}
+          min={2}
+          max={12}
+          controls={false}
+          type="number"
+          size="small"
+          onChange={(e) => {
+            const input = e?.valueOf();
+            if (input && input > 0) {
+              audioEngine.setTimeSignature(input)
+            }
+          }}
+        />
+        <p style={{ fontSize: '28px', margin: 0,  }}>/</p>
+        <p style={{ fontSize: '28px', margin: 0,  }}>4</p>
+      </div>
+        
+    
     </div>
   )
 });

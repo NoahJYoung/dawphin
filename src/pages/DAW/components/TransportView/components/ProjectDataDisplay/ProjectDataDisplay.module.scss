@@ -1,0 +1,35 @@
+.projectDataDisplayContainer {
+  color: #555;
+
+  .bpmInput {
+    input {
+      color: #555 !important;
+      text-align: right;
+      padding: 0;
+      padding-right: 0.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+    }
+  }
+
+  .timeSignatureInput {
+    display: 'flex';
+    align-items: 'center';
+    background: transparent;
+    
+    input {
+      color: #555 !important;
+      text-align: right;
+      padding: 0;
+      padding-top: 0.2rem;
+      padding-right: 0.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+    }
+  }
+
+}

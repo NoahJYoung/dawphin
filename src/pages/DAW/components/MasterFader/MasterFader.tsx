@@ -1,8 +1,9 @@
 import { Slider, Typography} from "antd";
 import { observer } from "mobx-react-lite";
 import { MasterControl } from "src/AudioEngine/MasterControl";
-import { Knob } from "src/pages/DAW/UIKit";
 import { MasterMeter } from "./components";
+
+import styles from './MasterFader.module.scss';
 
 const { Text } = Typography;
 
@@ -13,16 +14,7 @@ interface MasterFaderProps {
 export const MasterFader = observer(({ masterControl }: MasterFaderProps) => {
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        height: '300px',
-        width: '100%',
-        padding: '0 2rem 0 2rem',
-      }}
-    >
+    <div className={styles.masterFader}>
       <div
         style={{
           background: "#444",
@@ -33,7 +25,7 @@ export const MasterFader = observer(({ masterControl }: MasterFaderProps) => {
           justifyContent: 'space-between',
           alignItems: 'center',
           height: '100%',
-          width: '100%',
+          width: '120px',
         }}
       >
         <Text style={{ color: '#aaa' }}>Master</Text>
@@ -42,8 +34,8 @@ export const MasterFader = observer(({ masterControl }: MasterFaderProps) => {
             display: 'flex',
             justifyContent: 'space-evenly',
             gap: '20px',
-            alignItems: 'center',
-            width: '100%',
+            
+            width: 'fit-content',
           }}
         >
         </div>
@@ -52,8 +44,7 @@ export const MasterFader = observer(({ masterControl }: MasterFaderProps) => {
             display: 'flex',
             gap: '10px',
             justifyContent: 'space-evenly',
-            padding: '30px',
-            height: '250px',
+            padding: '10px',
           }}
         >
           <MasterMeter
