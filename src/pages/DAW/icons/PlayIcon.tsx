@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-export const PlayIcon = ({ width = 24, height = 24, color = 'black' }) => (
+export const PlayIcon = ({ width = 24, height = 24, color = "black" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -12,8 +12,8 @@ export const PlayIcon = ({ width = 24, height = 24, color = 'black' }) => (
       d="M8 5v14l11-7z"
       style={{
         stroke: color,
-        strokeWidth: '2px',
-        strokeLinejoin: 'round',
+        strokeWidth: "2px",
+        strokeLinejoin: "round",
         fill: color,
         borderRadius: 2,
       }}

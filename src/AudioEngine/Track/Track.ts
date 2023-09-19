@@ -1,7 +1,7 @@
 import { Clip } from "./Clip";
-import { action, makeObservable, observable } from 'mobx';
+import { action, makeObservable, observable } from "mobx";
 import { AudioEngine } from "..";
-import * as Tone from 'tone';
+import * as Tone from "tone";
 
 export class Track {
   public volume: number | null = null;
@@ -12,17 +12,17 @@ export class Track {
   public rightMeter = new Tone.Meter(0.75);
   public splitter = new Tone.Split();
   public recorder = new Tone.Recorder();
-  public placeholderClipStart: Tone.TimeClass | null = null; 
+  public placeholderClipStart: Tone.TimeClass | null = null;
 
   constructor(
     public audioEngine: AudioEngine,
     public id: number,
     public name: string,
     public clips: Clip[] = observable.array([]),
-    public color: string = 'rgb(125, 0, 250)',
+    public color: string = "rgb(125, 0, 250)",
     public selected: boolean = false,
     public channel: Tone.Channel = new Tone.Channel(),
-    public muted = channel.mute,
+    public muted = channel.mute
   ) {
     makeObservable(this, {
       name: observable,
@@ -56,14 +56,18 @@ export class Track {
   }
 
   play() {
-    if (this.active && this.audioEngine.state === 'recording') {
+    if (this.active && this.audioEngine.state === "recording") {
       return;
     }
     const transport = Tone.getTransport();
-    this.clips.forEach(clip => {
-      const seekTime = (transport.seconds - clip.start.toSeconds());
-      if (clip.end && transport.seconds > clip.start.toSeconds() && transport.seconds < clip.end?.toSeconds()) {
-        clip.play(Tone.now(), seekTime)
+    this.clips.forEach((clip) => {
+      const seekTime = transport.seconds - clip.start.toSeconds();
+      if (
+        clip.end &&
+        transport.seconds > clip.start.toSeconds() &&
+        transport.seconds < clip.end?.toSeconds()
+      ) {
+        clip.play(Tone.now(), seekTime);
       } else {
         clip.schedule();
       }
@@ -72,46 +76,45 @@ export class Track {
 
   setPlaceholderClipStart = (time: Tone.TimeClass | null) => {
     this.placeholderClipStart = time;
-  }
+  };
 
   record = async () => {
     const startSeconds = Tone.getTransport().seconds;
     this.recorder.start();
-    this.setPlaceholderClipStart(Tone.Time(startSeconds))
-    Tone.getTransport().once('stop', async () => {
+    this.setPlaceholderClipStart(Tone.Time(startSeconds));
+    Tone.getTransport().once("stop", async () => {
       const blob = await this.recorder.stop();
       const url = URL.createObjectURL(blob);
-      this.setPlaceholderClipStart(null)
+      this.setPlaceholderClipStart(null);
       this.addClip(url, startSeconds);
     });
-  }
-  
+  };
 
   setVolume = (value: number) => {
     this.channel.set({ volume: Math.round(value) });
     this.volume = Math.round(this.channel.volume.value);
-  }
+  };
 
   setPan = (value: number) => {
     this.channel.set({ pan: value / 100 });
-    this.pan = this.channel.pan.value * 100
-  }
+    this.pan = this.channel.pan.value * 100;
+  };
 
   setMuted = (state: boolean) => {
     this.channel.set({ mute: state });
     this.muted = this.channel.mute;
-  }
+  };
 
   setActive = (newState: boolean) => {
     this.active = newState;
-  }
+  };
 
   toggleActive = () => {
     this.setActive(!this.active);
-  }
+  };
 
   stop() {
-    this.clips.forEach(clip => clip.stop())
+    this.clips.forEach((clip) => clip.stop());
   }
 
   setName(value: string) {
@@ -119,7 +122,7 @@ export class Track {
   }
 
   setColor(color: string) {
-    this.color = color
+    this.color = color;
   }
 
   select() {
@@ -127,19 +130,19 @@ export class Track {
   }
 
   selectAllClips = () => {
-    this.clips.forEach(clip => clip.setSelect(true))
-  }
+    this.clips.forEach((clip) => clip.setSelect(true));
+  };
 
   deselect() {
     this.selected = false;
   }
 
   toggleSelect() {
-    this.selected =  !this.selected
+    this.selected = !this.selected;
   }
 
   mute() {
-    this.channel.mute = true
+    this.channel.mute = true;
   }
 
   unmute() {
@@ -152,8 +155,8 @@ export class Track {
   }
 
   addClip(src: string, startSeconds: number) {
-    const buffer = new Tone.ToneAudioBuffer(src)
-    const clip = new Clip(this, src, buffer, Tone.Time(startSeconds, 's'));
+    const buffer = new Tone.ToneAudioBuffer(src);
+    const clip = new Clip(this, src, buffer, Tone.Time(startSeconds, "s"));
     this.clips.push(clip);
   }
 

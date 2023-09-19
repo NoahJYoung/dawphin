@@ -1,1 +1,1 @@
-export { PlaceholderClip } from './PlaceholderClip';
+export { PlaceholderClip } from "./PlaceholderClip";

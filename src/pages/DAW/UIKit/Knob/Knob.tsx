@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface KnobProps {
   value: number;
@@ -12,8 +12,14 @@ interface KnobProps {
   double?: boolean;
 }
 
-const convertRange = (oldMin: number, oldMax: number, newMin: number, newMax: number, oldValue: number) => {
-  return (oldValue - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
+const convertRange = (
+  oldMin: number,
+  oldMax: number,
+  newMin: number,
+  newMax: number,
+  oldValue: number
+) => {
+  return ((oldValue - oldMin) * (newMax - newMin)) / (oldMax - oldMin) + newMin;
 };
 
 export const Knob = ({
@@ -23,7 +29,7 @@ export const Knob = ({
   min = -50,
   max = 50,
   degrees = 270,
-  color = 'blue',
+  color = "blue",
   double = false,
 }: KnobProps) => {
   const startAngle = (360 - degrees) / 2;
@@ -31,9 +37,7 @@ export const Knob = ({
   const margin = size * 0.1;
 
   const [deg, setDeg] = useState(
-    Math.floor(
-      convertRange(min, max, startAngle, endAngle, value)
-    )
+    Math.floor(convertRange(min, max, startAngle, endAngle, value))
   );
 
   useEffect(() => {
@@ -58,9 +62,9 @@ export const Knob = ({
       setDeg(currentDeg);
     };
 
-    document.addEventListener('mousemove', moveHandler);
-    document.addEventListener('mouseup', () => {
-      document.removeEventListener('mousemove', moveHandler);
+    document.addEventListener("mousemove", moveHandler);
+    document.addEventListener("mouseup", () => {
+      document.removeEventListener("mousemove", moveHandler);
     });
   };
 
@@ -77,28 +81,40 @@ export const Knob = ({
 
   const calculateColorAngle = () => {
     if (double) {
-      const colorAngle = value <= 0
-    ? 180 - convertRange(min, max, startAngle, endAngle, value)
-    : 360 - convertRange(min, max, startAngle - 180, endAngle -180, value);
-    
-      const negativeGradient =  `conic-gradient(${color} ${colorAngle}deg, #222 ${colorAngle}deg)`;
-      const positiveGradient =  `conic-gradient(#222 ${colorAngle}deg, ${color} ${colorAngle}deg)`;
-    
-      const background = value > 0 ? positiveGradient : negativeGradient
+      const colorAngle =
+        value <= 0
+          ? 180 - convertRange(min, max, startAngle, endAngle, value)
+          : 360 -
+            convertRange(min, max, startAngle - 180, endAngle - 180, value);
+
+      const negativeGradient = `conic-gradient(${color} ${colorAngle}deg, #222 ${colorAngle}deg)`;
+      const positiveGradient = `conic-gradient(#222 ${colorAngle}deg, ${color} ${colorAngle}deg)`;
+
+      const background = value > 0 ? positiveGradient : negativeGradient;
 
       return background;
     } else {
-      const colorAngle = 225 - convertRange(min, max, startAngle - 180, endAngle - 180, value);
+      const colorAngle =
+        225 - convertRange(min, max, startAngle - 180, endAngle - 180, value);
       const background = `conic-gradient(#222 ${colorAngle}deg, ${color} ${colorAngle}deg)`;
 
       return background;
     }
-  }
+  };
 
   const background = calculateColorAngle();
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }} onDoubleClick={handleResetValue} onMouseDown={startDrag}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        position: "relative",
+      }}
+      onDoubleClick={handleResetValue}
+      onMouseDown={startDrag}
+    >
       <svg
         className="knob"
         width={size}
@@ -106,17 +122,11 @@ export const Knob = ({
         style={{
           transform: `rotate(${deg - 180}deg)`,
           background,
-          borderRadius: '50%',
-          boxShadow: '-1px -4px 5px rgba(25, 25, 25, 0.5)'
+          borderRadius: "50%",
+          boxShadow: "-1px -4px 5px rgba(25, 25, 25, 0.5)",
         }}
       >
-        
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={size / 2}
-          fill="none"
-        />
+        <circle cx={size / 2} cy={size / 2} r={size / 2} fill="none" />
 
         <circle
           cx={size / 2}
@@ -132,10 +142,12 @@ export const Knob = ({
           y2={margin * 2}
           stroke={color}
           strokeWidth="2"
-        />     
+        />
       </svg>
 
-      <p style={{ position: 'absolute', margin: 0, fontSize: '0.65rem' }}>{Math.round(value)}</p>
+      <p style={{ position: "absolute", margin: 0, fontSize: "0.65rem" }}>
+        {Math.round(value)}
+      </p>
     </div>
   );
 };

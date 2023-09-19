@@ -1,5 +1,5 @@
-import { MasterControl } from './MasterControl';
-import { AudioEngine } from '.';
+import { MasterControl } from "./MasterControl";
+import { AudioEngine } from ".";
 
 const master = new MasterControl();
-export const audioEngineInstance = new AudioEngine(master)
+export const audioEngineInstance = new AudioEngine(master);

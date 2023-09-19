@@ -1,7 +1,8 @@
-@import './variables.scss';
-@import './inter.scss';
+@import "./variables.scss";
+@import "./inter.scss";
 
-html, body {
+html,
+body {
   margin: 0;
   box-sizing: border-box;
   background: $surface-0;
@@ -9,7 +10,7 @@ html, body {
 
 * {
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .ant-slider-handle::before,

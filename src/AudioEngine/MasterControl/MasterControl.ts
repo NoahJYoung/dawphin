@@ -1,5 +1,5 @@
 import { observable, makeObservable, action } from "mobx";
-import * as Tone from 'tone';
+import * as Tone from "tone";
 
 export class MasterControl {
   public volume: number | null = null;
@@ -16,7 +16,7 @@ export class MasterControl {
       setVolume: action.bound,
     });
 
-    Tone.getDestination().connect(this.splitter)
+    Tone.getDestination().connect(this.splitter);
     this.splitter.connect(this.leftMeter, 0);
     this.splitter.connect(this.rightMeter, 1);
   }
@@ -24,5 +24,5 @@ export class MasterControl {
   setVolume = (value: number) => {
     Tone.getDestination().set({ volume: Math.round(value) });
     this.volume = Math.round(Tone.getDestination().volume.value);
-  }
-};
+  };
+}

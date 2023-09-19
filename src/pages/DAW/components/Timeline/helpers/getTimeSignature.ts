@@ -6,4 +6,4 @@ export const getTimeSignature = (audioEngine: AudioEngine) => {
   } else {
     return audioEngine.timeSignature;
   }
-}
+};

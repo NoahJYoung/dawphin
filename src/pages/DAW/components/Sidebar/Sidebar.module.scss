@@ -1,12 +1,12 @@
-@import 'src/styles/variables.scss';
+@import "src/styles/variables.scss";
 
 .sidebarWrapper {
   display: flex;
   flex-direction: column;
   padding-right: $track-panel-x-padding;
   padding-left: $track-panel-x-padding;
-  max-width: 235px;
-  width: 120px;
+  max-width: 64px;
+  transition: max-width 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 
   .trackPanelsWrapper {
     height: calc(60vh - 40px);
@@ -17,7 +17,7 @@
   }
 
   .trackPanels {
-    display:  flex;
+    display: flex;
     flex-direction: column;
     gap: $clip-top-padding;
     border-radius: $border-radius-med;
@@ -25,5 +25,6 @@
 }
 
 .expanded {
-  width: 100%;
+  max-width: 100%;
+  transition: max-width 0.5s cubic-bezier(0.86, 0, 0.07, 1);
 }

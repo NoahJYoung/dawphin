@@ -1,5 +1,5 @@
-import React from 'react';
-import { DAW } from './pages';
+import React from "react";
+import { DAW } from "./pages";
 
 const App: React.FC = () => {
   return (
@@ -9,4 +9,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App
+export default App;

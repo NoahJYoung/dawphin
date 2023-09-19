@@ -1,2 +1,2 @@
-export { getTrackBackgroundColor } from './getTrackBackgroundColor';
-export { convertRgbToRgba } from './converRgbToRgba';
+export { getTrackBackgroundColor } from "./getTrackBackgroundColor";
+export { convertRgbToRgba } from "./converRgbToRgba";

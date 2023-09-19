@@ -1,0 +1,42 @@
+@import "src/styles/variables.scss";
+
+.toolbarButton {
+  background: $surface-1;
+  color: $text-light;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .buttonIcon {
+    font-size: 1.1rem;
+  }
+}
+
+.toolbarButton:hover {
+  opacity: 0.5;
+  background: $surface-1 !important;
+  color: $text-light !important;
+}
+
+.hidden {
+  display: none;
+}
+
+.active {
+  color: $primary-blue;
+}
+
+.active:hover {
+  color: $primary-blue !important;
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
+
+@media (min-width: 1025px) {
+  .lgHidden {
+    display: none;
+  }
+}

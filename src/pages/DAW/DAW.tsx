@@ -1,23 +1,28 @@
-import { audioEngineInstance } from 'src/AudioEngine';
-import { AudioEngine } from 'src/AudioEngine/AudioEngine';
-import { useState, useEffect, useRef } from 'react';
-import { Mixer, TimelineView, Tracks, Sidebar, TransportView } from './components';
-import { MasterFader } from './components/MasterFader';
+import { audioEngineInstance } from "src/AudioEngine";
+import { AudioEngine } from "src/AudioEngine/AudioEngine";
+import { useState, useEffect, useRef } from "react";
+import {
+  Mixer,
+  TimelineView,
+  Tracks,
+  Sidebar,
+  TransportView,
+} from "./components";
+import { MasterFader } from "./components/MasterFader";
 
-import styles from './DAW.module.scss';
+import styles from "./DAW.module.scss";
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
   const [audioEngine] = useState<AudioEngine>(audioEngineInstance);
-  
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackPanelsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.addEventListener('click', audioEngine.startTone);
-    return document.removeEventListener('click', audioEngine.startTone);
-  }, [audioEngine])
+    document.addEventListener("click", audioEngine.startTone);
+    return document.removeEventListener("click", audioEngine.startTone);
+  }, [audioEngine]);
 
   return (
     <div className={styles.wrapper}>
@@ -49,5 +54,5 @@ export const DAW = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-export const PauseIcon = ({ width = 24, height = 24, color = 'black' }) => (
+export const PauseIcon = ({ width = 24, height = 24, color = "black" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -12,8 +12,8 @@ export const PauseIcon = ({ width = 24, height = 24, color = 'black' }) => (
       d="M6 5h3v14h-3z"
       style={{
         stroke: color,
-        strokeWidth: '2px',
-        strokeLinejoin: 'round',
+        strokeWidth: "2px",
+        strokeLinejoin: "round",
         fill: color,
         borderRadius: `${4}px`,
       }}
@@ -22,8 +22,8 @@ export const PauseIcon = ({ width = 24, height = 24, color = 'black' }) => (
       d="M14 5h3v14h-3z"
       style={{
         stroke: color,
-        strokeWidth: '2px',
-        strokeLinejoin: 'round',
+        strokeWidth: "2px",
+        strokeLinejoin: "round",
         fill: color,
         borderRadius: `${4}px`,
       }}

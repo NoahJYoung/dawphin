@@ -1,5 +1,5 @@
 import { AudioEngine } from "src/AudioEngine";
-import * as Tone from 'tone';
+import * as Tone from "tone";
 
 export const calculateGridlineValues = (audioEngine: AudioEngine) => {
   const bpm = audioEngine.bpm;

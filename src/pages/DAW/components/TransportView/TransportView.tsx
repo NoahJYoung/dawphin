@@ -4,7 +4,7 @@ import { AudioEngine } from "src/AudioEngine";
 import { ProjectDataDisplay, TransportControls } from "./components";
 
 interface TransportViewProps {
-  audioEngine: AudioEngine
+  audioEngine: AudioEngine;
 }
 
 export const TransportView = observer(({ audioEngine }: TransportViewProps) => {
@@ -12,16 +12,16 @@ export const TransportView = observer(({ audioEngine }: TransportViewProps) => {
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: screenWidth < 769 ? 'column' : 'row',
-        height: '50px',
-        gap: '1rem',
-        alignItems: screenWidth < 769 ? undefined : 'center',
-        marginBottom: '5px'
+        display: "flex",
+        flexDirection: screenWidth < 769 ? "column" : "row",
+        height: "50px",
+        gap: "1rem",
+        alignItems: screenWidth < 769 ? undefined : "center",
+        marginBottom: "5px",
       }}
     >
       <TransportControls audioEngine={audioEngine} />
       <ProjectDataDisplay audioEngine={audioEngine} />
     </div>
-  )
-})
+  );
+});

@@ -1,18 +1,24 @@
 interface PlayheadProps {
-  left: number
-  width: number
-  gridHeight: number
-  moveCursor: (e: React.MouseEvent) => void
-  playheadRef: React.LegacyRef<SVGSVGElement>
+  left: number;
+  width: number;
+  gridHeight: number;
+  moveCursor: (e: React.MouseEvent) => void;
+  playheadRef: React.LegacyRef<SVGSVGElement>;
 }
 
-export const Playhead = ({ left, width, moveCursor, gridHeight, playheadRef }: PlayheadProps) => (
+export const Playhead = ({
+  left,
+  width,
+  moveCursor,
+  gridHeight,
+  playheadRef,
+}: PlayheadProps) => (
   <svg
     ref={playheadRef}
     onClick={moveCursor}
     style={{
       zIndex: 5,
-      position: 'absolute',
+      position: "absolute",
     }}
     width={width.toString()}
     height={gridHeight.toString()}

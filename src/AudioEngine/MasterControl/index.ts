@@ -1,1 +1,1 @@
-export { MasterControl } from './MasterControl';
+export { MasterControl } from "./MasterControl";
