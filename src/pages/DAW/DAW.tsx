@@ -9,9 +9,9 @@ import {
   TransportView,
 } from "./components";
 import { MasterFader } from "./components/MasterFader";
+import { Modal } from "antd";
 
 import styles from "./DAW.module.scss";
-import { Button, Modal } from "antd";
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
