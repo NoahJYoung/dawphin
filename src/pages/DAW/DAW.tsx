@@ -11,18 +11,24 @@ import {
 import { MasterFader } from "./components/MasterFader";
 
 import styles from "./DAW.module.scss";
+import { Button, Modal } from "antd";
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
   const [audioEngine] = useState<AudioEngine>(audioEngineInstance);
+  const [startToneModalOpen, setStartToneModalOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackPanelsRef = useRef<HTMLDivElement>(null);
 
+  const handleOk = () => {
+    audioEngine.startTone();
+    setStartToneModalOpen(false);
+  };
+
   useEffect(() => {
-    document.addEventListener("click", audioEngine.startTone);
-    return document.removeEventListener("click", audioEngine.startTone);
-  }, [audioEngine]);
+    setStartToneModalOpen(true);
+  }, []);
 
   return (
     <div className={styles.wrapper}>
@@ -53,6 +59,13 @@ export const DAW = () => {
           <Mixer audioEngine={audioEngineInstance} />
         </div>
       </div>
+      <Modal
+        title="Start audio context"
+        open={startToneModalOpen}
+        onOk={handleOk}
+      >
+        Click 'OK' to start the audio context
+      </Modal>
     </div>
   );
 };

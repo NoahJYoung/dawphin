@@ -359,6 +359,7 @@ export class AudioEngine {
   };
 
   startTone = () => {
+    console.log("starting audio context");
     Tone.start();
   };
 }
