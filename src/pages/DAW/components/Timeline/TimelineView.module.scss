@@ -1,0 +1,17 @@
+.timelineView {
+  position: relative;
+  padding-right: 1px;
+  overflow: auto;
+}
+
+@media (max-width: 480px) {
+  .timelineView {
+    height: 50vh;
+  }
+}
+
+@media (min-width: 481px) {
+  .timelineView {
+    height: 55vh;
+  }
+}

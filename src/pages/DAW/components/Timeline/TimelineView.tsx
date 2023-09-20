@@ -16,7 +16,7 @@ import * as Tone from "tone";
 import { useTimeline } from "./hooks";
 import { CLIP_HEIGHT, TOPBAR_HEIGHT } from "../../constants";
 
-import "./TimelineView.css";
+import styles from "./TimelineView.module.scss";
 
 interface TimelineProps {
   audioEngine: AudioEngine;
@@ -109,7 +109,7 @@ export const TimelineView = observer(
     return (
       <TimelineContextMenu audioEngine={audioEngine}>
         <div
-          className="timeline"
+          className={`${styles.timelineView} styled-scrollbar`}
           ref={containerRef}
           onClick={moveCursor}
           onMouseMove={handleMouseMove}
@@ -119,14 +119,6 @@ export const TimelineView = observer(
             if (trackPanelsRef?.current) {
               trackPanelsRef.current.scrollTop = target.scrollTop;
             }
-          }}
-          style={{
-            paddingRight: "1px",
-            maxHeight: "60vh",
-            minHeight: "60vh",
-            position: "relative",
-            overflowY: "auto",
-            overflowX: "scroll",
           }}
         >
           <div

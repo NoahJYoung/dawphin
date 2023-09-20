@@ -5,23 +5,21 @@
   flex-direction: column;
   justify-content: space-between;
   max-width: 100vw;
-  overflow: hidden;
 
   .topPanel {
     display: flex;
     position: relative;
-    // height: 55%;
   }
 
   .bottomPanelOuter {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 45%;
     padding: 5px;
 
     .bottomPanelInner {
       display: flex;
+      gap: 5px;
       height: 100%;
       color: $text-light;
     }
@@ -30,36 +28,44 @@
   @media (min-width: 769px) {
     .topPanel {
       height: 55%;
-      overflow: hidden;
+      overflow: auto;
     }
 
     .bottomPanelOuter {
-      height: 45%;
-      overflow: hidden;
+      height: 100%;
+      overflow: auto;
     }
   }
 
   @media (min-width: 481px) {
     .topPanel {
-      height: 60vh;
-      overflow: hidden;
+      max-height: 55vh;
     }
 
     .bottomPanelOuter {
-      height: 40vh;
-      overflow: hidden;
+      height: 45vh;
+
+      .bottomPanelInner {
+        height: 100%;
+        overflow: auto;
+      }
     }
   }
 
   @media (max-width: 480px) {
     .topPanel {
-      height: 45vh;
+      max-height: 50vh;
       overflow: hidden;
     }
 
     .bottomPanelOuter {
-      height: 55vh;
+      height: 50vh;
       overflow: hidden;
+
+      .bottomPanelInner {
+        height: 100%;
+        overflow: auto;
+      }
     }
   }
 }

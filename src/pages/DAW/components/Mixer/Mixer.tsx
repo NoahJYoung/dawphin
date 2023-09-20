@@ -11,7 +11,7 @@ interface MixerProps {
 export const Mixer = observer(({ audioEngine }: MixerProps) => {
   return (
     <div
-      className={styles.mixer}
+      className={`${styles.mixer} styled-scrollbar`}
       style={{
         maxWidth: "100%",
         overflow: "auto",

@@ -23,18 +23,17 @@ export const MasterFader = observer(({ masterControl }: MasterFaderProps) => {
           flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
-          height: "100%",
-          width: "120px",
+          height: 325,
         }}
       >
         <Text style={{ color: "#aaa" }}>Master</Text>
         <div
           style={{
+            padding: "0.25rem",
             display: "flex",
-            justifyContent: "space-evenly",
-            gap: "20px",
-
-            width: "fit-content",
+            flexDirection: "column",
+            gap: "4px",
+            height: "100%",
           }}
         ></div>
         <div

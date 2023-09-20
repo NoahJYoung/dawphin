@@ -89,6 +89,7 @@ export const TrackPanel = observer(
               alignItems: "center",
               justifyContent: "space-between",
               height: "fit-content",
+              position: "relative",
             }}
           >
             <Button
@@ -138,6 +139,7 @@ export const TrackPanel = observer(
               style={{
                 background: "transparent",
                 border: "none",
+                maxWidth: "100%",
               }}
               disabledAlpha
               value={track.color}

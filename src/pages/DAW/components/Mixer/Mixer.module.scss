@@ -1,25 +1,5 @@
-.mixer::-webkit-scrollbar {
-
-  width: 8px;
-  height: 8px;
-  background-color: #888; /* or add it to the track */
-  opacity: 0.1;
-
+.mixer {
+  padding: 5px;
+  padding-top: 0;
+  gap: "10px";
 }
-
-.mixer::-webkit-scrollbar-thumb {
-  background: #555;
-}
-
-.mixer::-webkit-scrollbar-track {
-  border-radius: 2px;
-}
-
-.mixer::-webkit-scrollbar-track-piece {
-  border-radius: 2px;
-}
-
-.mixer::-webkit-scrollbar-corner {
-  background-color: #222;
-}
-

@@ -1,0 +1,24 @@
+@media (min-width: 1025px) {
+  .styled-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: transparent;
+  }
+
+  .styled-scrollbar::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+  }
+
+  .styled-scrollbar::-webkit-scrollbar-track {
+    border-radius: 2px;
+  }
+
+  .styled-scrollbar::-webkit-scrollbar-track-piece {
+    border-radius: 2px;
+  }
+
+  .styled-scrollbar::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}
