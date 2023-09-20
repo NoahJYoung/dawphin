@@ -1,26 +1,28 @@
-import React from "react";
 import { AudioEngine } from "src/AudioEngine";
 import { ChannelStrip } from "./components";
 import { observer } from "mobx-react-lite";
 
-import styles from './Mixer.module.scss';
+import styles from "./Mixer.module.scss";
 
 interface MixerProps {
-  audioEngine: AudioEngine
+  audioEngine: AudioEngine;
 }
 
 export const Mixer = observer(({ audioEngine }: MixerProps) => {
-
   return (
-    <div className={styles.mixer} style={{
-      maxWidth: '100%',
-      overflow: 'auto',
-      height: '300px',
-      display: 'flex',
-      gap: '4px',
+    <div
+      className={styles.mixer}
+      style={{
+        maxWidth: "100%",
+        overflow: "auto",
+        height: "300px",
+        display: "flex",
+        gap: "4px",
       }}
     >
-      {audioEngine.tracks.map((track, i)=> <ChannelStrip key={track.id} trackNumber={i + 1} track={track} />)}
+      {audioEngine.tracks.map((track, i) => (
+        <ChannelStrip key={track.id} trackNumber={i + 1} track={track} />
+      ))}
     </div>
-  )
-})
+  );
+});

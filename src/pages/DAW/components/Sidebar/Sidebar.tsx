@@ -6,7 +6,6 @@ import {
   SCROLLBAR_HEIGHT,
   MIN_GRID_HEIGHT,
   CLIP_HEIGHT,
-  TRACK_PANEL_X_PADDING,
   CLIP_TOP_PADDING,
 } from "../../constants";
 import styles from "./Sidebar.module.scss";

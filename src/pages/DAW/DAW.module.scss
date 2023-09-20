@@ -5,12 +5,12 @@
   flex-direction: column;
   justify-content: space-between;
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow: hidden;
 
   .topPanel {
     display: flex;
     position: relative;
-    height: 55%;
+    // height: 55%;
   }
 
   .bottomPanelOuter {
@@ -27,27 +27,39 @@
     }
   }
 
-  // @media (min-width: 769px) {
-  //   .topPanel {
-  //     height: 55%;
-  //     overflow: hidden;
-  //   }
+  @media (min-width: 769px) {
+    .topPanel {
+      height: 55%;
+      overflow: hidden;
+    }
 
-  //   .bottomPanelOuter {
-  //     height: 45%;
-  //     overflow: hidden;
-  //   }
-  // }
+    .bottomPanelOuter {
+      height: 45%;
+      overflow: hidden;
+    }
+  }
 
-  // @media (max-width: 768px) {
-  //   .topPanel {
-  //     height: 50%;
-  //     overflow: hidden;
-  //   }
+  @media (min-width: 481px) {
+    .topPanel {
+      height: 60vh;
+      overflow: hidden;
+    }
 
-  //   .bottomPanelOuter {
-  //     height: 50%;
-  //     overflow: hidden;
-  //   }
-  // }
+    .bottomPanelOuter {
+      height: 40vh;
+      overflow: hidden;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .topPanel {
+      height: 45vh;
+      overflow: hidden;
+    }
+
+    .bottomPanelOuter {
+      height: 55vh;
+      overflow: hidden;
+    }
+  }
 }

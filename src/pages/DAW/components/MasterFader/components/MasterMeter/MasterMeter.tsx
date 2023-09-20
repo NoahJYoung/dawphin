@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { MasterControl } from "src/AudioEngine/MasterControl";
 import * as Tone from "tone";
 

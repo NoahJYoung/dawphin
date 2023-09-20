@@ -3,8 +3,6 @@ import {
   TableOutlined,
   ZoomOutOutlined,
   ZoomInOutlined,
-  CaretLeftOutlined,
-  DoubleLeftOutlined,
   LeftOutlined,
 } from "@ant-design/icons";
 import { Button } from "antd";
@@ -32,6 +30,7 @@ export const Toolbar = observer(
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          padding: "4px 0 4px 0",
         }}
       >
         <Button

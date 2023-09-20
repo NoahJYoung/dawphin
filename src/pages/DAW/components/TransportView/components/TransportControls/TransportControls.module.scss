@@ -1,0 +1,30 @@
+@import "src/styles/variables.scss";
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-evenly;
+
+  .transportButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: $border-radius-med;
+    background: $surface-1;
+    border: none;
+    color: $text-light;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .transportButton:hover {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 480px) {
+  .transport {
+    width: 100%;
+  }
+}

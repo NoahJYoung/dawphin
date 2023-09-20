@@ -1,5 +1,3 @@
-import React from "react";
-
 export const StopIcon = ({ width = 24, height = 24, color = "black" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

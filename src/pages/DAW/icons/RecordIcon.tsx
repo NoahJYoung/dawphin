@@ -1,5 +1,3 @@
-import React from "react";
-
 export const RecordIcon = ({
   width = 48,
   height = 48,
