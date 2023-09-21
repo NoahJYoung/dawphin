@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: space-between;
   max-width: 100vw;
+  overflow-x: hidden;
 
   .topPanel {
     display: flex;

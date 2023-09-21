@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import { AudioEngine } from "src/AudioEngine";
-import { Toolbar, TrackPanel } from "./components";
+import { Toolbar, TrackPanel, SidebarContextMenu } from "./components";
 import {
   SCROLLBAR_HEIGHT,
   MIN_GRID_HEIGHT,
@@ -35,32 +35,40 @@ export const Sidebar = observer(
     }, [audioEngine.tracks.length]);
 
     return (
-      <div
-        className={`${styles.sidebarWrapper} ${
-          expanded ? styles.expanded : ""
-        }`}
-      >
-        <Toolbar
-          expanded={expanded}
-          toggleExpanded={toggleExpanded}
-          audioEngine={audioEngine}
-          containerRef={containerRef}
-        />
+      <SidebarContextMenu audioEngine={audioEngine}>
+        <div
+          style={{
+            minWidth: expanded ? 235 : 64,
+          }}
+          className={`${styles.sidebarWrapper} ${
+            expanded ? styles.expanded : ""
+          }`}
+        >
+          <Toolbar
+            expanded={expanded}
+            toggleExpanded={toggleExpanded}
+            audioEngine={audioEngine}
+            containerRef={containerRef}
+          />
 
-        <div className={styles.trackPanelsWrapper} ref={trackPanelsRef}>
-          <div className={styles.trackPanels} style={{ height: sectionHeight }}>
-            {audioEngine.tracks.map((track, i) => (
-              <TrackPanel
-                audioEngine={audioEngine}
-                trackNumber={i + 1}
-                key={track.id}
-                track={track}
-                expanded={expanded}
-              />
-            ))}
+          <div className={styles.trackPanelsWrapper} ref={trackPanelsRef}>
+            <div
+              className={styles.trackPanels}
+              style={{ height: sectionHeight }}
+            >
+              {audioEngine.tracks.map((track, i) => (
+                <TrackPanel
+                  audioEngine={audioEngine}
+                  trackNumber={i + 1}
+                  key={track.id}
+                  track={track}
+                  expanded={expanded}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </SidebarContextMenu>
     );
   }
 );

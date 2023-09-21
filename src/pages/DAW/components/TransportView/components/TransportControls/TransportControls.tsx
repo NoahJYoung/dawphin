@@ -17,10 +17,11 @@ import styles from "./TransportControls.module.scss";
 interface TransportControlsProps {
   audioEngine: AudioEngine;
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
+  openModal: () => void;
 }
 
 export const TransportControls = observer(
-  ({ audioEngine, containerRef }: TransportControlsProps) => {
+  ({ audioEngine, containerRef, openModal }: TransportControlsProps) => {
     const handleZoomIn = () => {
       audioEngine.setZoom("zoomIn");
       if (
@@ -191,7 +192,7 @@ export const TransportControls = observer(
               }}
             />
           }
-          onClick={() => alert("Project Settings Modal")}
+          onClick={openModal}
         />
       </div>
     );

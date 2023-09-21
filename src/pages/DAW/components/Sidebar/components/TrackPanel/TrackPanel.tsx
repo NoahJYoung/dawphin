@@ -138,6 +138,7 @@ export const TrackPanel = observer(
             <ColorPicker
               size={"small"}
               format="rgb"
+              placement="topRight"
               style={{
                 background: "transparent",
                 border: "none",
@@ -149,7 +150,6 @@ export const TrackPanel = observer(
                 const r = e.toRgb().r;
                 const g = e.toRgb().g;
                 const b = e.toRgb().b;
-                console.log(`rgb(${r},${g},${b})`);
                 track.setColor(`rgb(${r},${g},${b})`);
               }}
             />

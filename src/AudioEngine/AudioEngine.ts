@@ -208,6 +208,10 @@ export class AudioEngine {
     this.selectedClips.forEach((clip) => clip.deleteClip());
   }
 
+  setSelectedTracksColor = (color: string) => {
+    this.selectedTracks.forEach((track) => track.setColor(color));
+  };
+
   splitSelectedClipsAtPlayhead = () => {
     this.getSelectedClips();
     this.selectedClips.forEach((clip) => {

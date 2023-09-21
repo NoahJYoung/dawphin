@@ -87,24 +87,18 @@ export const ClipView = observer(
 
     const handleTouchStart = (e: React.TouchEvent) => {
       if (e.touches.length === 2) {
-        // Two fingers detected
         prevX.current = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       }
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
-      // Check for two-finger touch
       if (e.touches.length === 2) {
-        e.preventDefault(); // Prevent the browser's default scroll behavior
-
         const touch1 = e.touches[0];
         const touch2 = e.touches[1];
 
-        // Calculate the average x-coordinate of the two touchpoints
         const avgClientX = (touch1.clientX + touch2.clientX) / 2;
 
         const dragValue = 10;
-        const movementMultiplier = 2; // This is to amplify the movement; adjust as needed
         const movementValue = dragValue * audioEngine.samplesPerPixel;
 
         if (overviewRef.current && timelineRect) {
