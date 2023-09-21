@@ -6,23 +6,29 @@ import styles from "./TransportView.module.scss";
 
 interface TransportViewProps {
   audioEngine: AudioEngine;
+  containerRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
-export const TransportView = observer(({ audioEngine }: TransportViewProps) => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        height: "50px",
-        gap: "1rem",
-        alignItems: "center",
-        marginBottom: "5px",
-      }}
-    >
-      <TransportControls audioEngine={audioEngine} />
-      <div className={styles.hideOnSmallScreens}>
-        <ProjectDataDisplay audioEngine={audioEngine} />
+export const TransportView = observer(
+  ({ audioEngine, containerRef }: TransportViewProps) => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          height: "50px",
+          gap: "1rem",
+          alignItems: "center",
+          marginBottom: "5px",
+        }}
+      >
+        <TransportControls
+          containerRef={containerRef}
+          audioEngine={audioEngine}
+        />
+        <div className={styles.hideOnSmallScreens}>
+          <ProjectDataDisplay audioEngine={audioEngine} />
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);

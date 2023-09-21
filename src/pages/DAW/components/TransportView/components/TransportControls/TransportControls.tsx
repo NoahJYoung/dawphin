@@ -1,3 +1,4 @@
+import React from "react";
 import {
   EllipsisOutlined,
   StepBackwardOutlined,
@@ -9,15 +10,46 @@ import { Button } from "antd";
 import { observer } from "mobx-react-lite";
 import { AudioEngine } from "src/AudioEngine";
 import { PauseIcon, PlayIcon, RecordIcon, StopIcon } from "src/pages/DAW/icons";
+import * as Tone from "tone";
 
 import styles from "./TransportControls.module.scss";
 
 interface TransportControlsProps {
   audioEngine: AudioEngine;
+  containerRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 export const TransportControls = observer(
-  ({ audioEngine }: TransportControlsProps) => {
+  ({ audioEngine, containerRef }: TransportControlsProps) => {
+    const handleZoomIn = () => {
+      audioEngine.setZoom("zoomIn");
+      if (
+        containerRef.current?.scrollLeft ||
+        containerRef.current?.scrollLeft === 0
+      ) {
+        const transportPos =
+          (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
+          audioEngine.samplesPerPixel;
+        const offset = containerRef.current.clientWidth / 2;
+        containerRef.current.scrollLeft = transportPos - offset;
+      }
+    };
+
+    const handleZoomOut = () => {
+      audioEngine.setZoom("zoomOut");
+      if (containerRef.current?.scrollLeft) {
+        if (
+          containerRef.current?.scrollLeft ||
+          containerRef.current?.scrollLeft === 0
+        ) {
+          const transportPos =
+            (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
+            audioEngine.samplesPerPixel;
+          const offset = containerRef.current.clientWidth / 2;
+          containerRef.current.scrollLeft = transportPos - offset;
+        }
+      }
+    };
     return (
       <div className={styles.transport}>
         <Button
@@ -129,7 +161,7 @@ export const TransportControls = observer(
               }}
             />
           }
-          onClick={() => audioEngine.setZoom("zoomOut")}
+          onClick={handleZoomOut}
         />
 
         <Button
@@ -144,7 +176,7 @@ export const TransportControls = observer(
               }}
             />
           }
-          onClick={() => audioEngine.setZoom("zoomIn")}
+          onClick={handleZoomIn}
         />
 
         <Button

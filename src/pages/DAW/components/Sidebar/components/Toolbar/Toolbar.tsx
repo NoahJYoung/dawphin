@@ -1,16 +1,9 @@
-import {
-  PlusOutlined,
-  TableOutlined,
-  ZoomOutOutlined,
-  ZoomInOutlined,
-  LeftOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, TableOutlined, LeftOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { observer } from "mobx-react-lite";
 import { AudioEngine } from "src/AudioEngine";
 import { TOPBAR_HEIGHT } from "src/pages/DAW/constants";
 import { MetronomeIcon } from "src/pages/DAW/icons";
-import * as Tone from "tone";
 
 import styles from "./Toolbar.module.scss";
 
@@ -22,7 +15,7 @@ interface ToolbarProps {
 }
 
 export const Toolbar = observer(
-  ({ audioEngine, containerRef, expanded, toggleExpanded }: ToolbarProps) => {
+  ({ audioEngine, expanded, toggleExpanded }: ToolbarProps) => {
     return (
       <div
         style={{

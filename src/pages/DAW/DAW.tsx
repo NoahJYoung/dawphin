@@ -42,7 +42,10 @@ export const DAW = () => {
         </TimelineView>
       </div>
       <div className={styles.bottomPanelOuter}>
-        <TransportView audioEngine={audioEngineInstance} />
+        <TransportView
+          containerRef={containerRef}
+          audioEngine={audioEngineInstance}
+        />
         <div className={styles.bottomPanelInner}>
           <MasterFader masterControl={audioEngine.masterControl} />
           <Mixer audioEngine={audioEngineInstance} />
