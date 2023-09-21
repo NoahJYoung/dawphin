@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  justify-content: space-evenly;
+  justify-content: space-between;
 
   .transportButton {
     display: flex;
@@ -16,6 +16,26 @@
     color: $text-light;
     height: 2.5rem;
     width: 2.5rem;
+  }
+
+  .zoomControl {
+    color: $text-dark;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    border: none;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .elipsis {
+    color: $text-dark;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1.5rem;
+    width: 1.5rem;
   }
 
   .transportButton:hover {

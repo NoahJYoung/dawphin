@@ -1,4 +1,10 @@
-import { StepBackwardOutlined, StepForwardOutlined } from "@ant-design/icons";
+import {
+  EllipsisOutlined,
+  StepBackwardOutlined,
+  StepForwardOutlined,
+  ZoomInOutlined,
+  ZoomOutOutlined,
+} from "@ant-design/icons";
 import { Button } from "antd";
 import { observer } from "mobx-react-lite";
 import { AudioEngine } from "src/AudioEngine";
@@ -109,6 +115,51 @@ export const TransportControls = observer(
             />
           }
           onClick={audioEngine.record}
+        />
+
+        <Button
+          className={styles.zoomControl}
+          icon={
+            <ZoomOutOutlined
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 20,
+              }}
+            />
+          }
+          onClick={() => audioEngine.setZoom("zoomOut")}
+        />
+
+        <Button
+          className={styles.zoomControl}
+          icon={
+            <ZoomInOutlined
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 20,
+              }}
+            />
+          }
+          onClick={() => audioEngine.setZoom("zoomIn")}
+        />
+
+        <Button
+          className={styles.elipsis}
+          icon={
+            <EllipsisOutlined
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 20,
+              }}
+            />
+          }
+          onClick={() => alert("Project Settings Modal")}
         />
       </div>
     );
