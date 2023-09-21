@@ -14,10 +14,12 @@ export const TrackPanel = observer(
   ({
     track,
     audioEngine,
+    expanded,
   }: {
     track: Track;
     trackNumber: number;
     audioEngine: AudioEngine;
+    expanded: boolean;
   }) => {
     const transport = Tone.getTransport();
 
@@ -160,7 +162,11 @@ export const TrackPanel = observer(
             }}
           >
             <div
-              style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
+              style={{
+                display: expanded ? "flex" : "none",
+                gap: "0.5rem",
+                alignItems: "center",
+              }}
             >
               <input
                 value={""}
@@ -181,7 +187,11 @@ export const TrackPanel = observer(
             </div>
 
             <div
-              style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
+              style={{
+                display: expanded ? "flex" : "none",
+                gap: "0.5rem",
+                alignItems: "center",
+              }}
             >
               <Button
                 onClick={() => {

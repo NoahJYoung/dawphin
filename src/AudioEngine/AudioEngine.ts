@@ -296,6 +296,7 @@ export class AudioEngine {
   };
 
   toStart = () => {
+    this.startTone();
     const initialState = this.state;
     if (this.updateTimelineUI) {
       this.pause();
@@ -310,6 +311,7 @@ export class AudioEngine {
   };
 
   toEnd = () => {
+    this.startTone();
     if (this.updateTimelineUI) {
       this.pause();
       Tone.getTransport().position = `${this.totalMeasures}:0:0`;
@@ -319,6 +321,7 @@ export class AudioEngine {
   };
 
   record = async () => {
+    this.startTone();
     if (this.state !== "recording") {
       this.getActiveTracks();
       // Temporary logic to test mic input, replace with input logic eventually
@@ -336,6 +339,7 @@ export class AudioEngine {
   };
 
   play = () => {
+    this.startTone();
     if (this.state !== "playing") {
       this.setState("playing");
       this.tracks.forEach((track) => track.play());
@@ -344,6 +348,7 @@ export class AudioEngine {
   };
 
   stop = () => {
+    this.startTone();
     Tone.getTransport().stop();
     this.tracks.forEach((track) => track.stop());
     this.setState("stopped");

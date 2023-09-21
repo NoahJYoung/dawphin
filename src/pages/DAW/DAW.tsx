@@ -1,6 +1,6 @@
 import { audioEngineInstance } from "src/AudioEngine";
 import { AudioEngine } from "src/AudioEngine/AudioEngine";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import {
   Mixer,
   TimelineView,
@@ -9,26 +9,15 @@ import {
   TransportView,
 } from "./components";
 import { MasterFader } from "./components/MasterFader";
-import { Modal } from "antd";
 
 import styles from "./DAW.module.scss";
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
   const [audioEngine] = useState<AudioEngine>(audioEngineInstance);
-  const [startToneModalOpen, setStartToneModalOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackPanelsRef = useRef<HTMLDivElement>(null);
-
-  const handleOk = () => {
-    audioEngine.startTone();
-    setStartToneModalOpen(false);
-  };
-
-  useEffect(() => {
-    setStartToneModalOpen(true);
-  }, []);
 
   return (
     <div className={styles.wrapper}>
@@ -59,13 +48,6 @@ export const DAW = () => {
           <Mixer audioEngine={audioEngineInstance} />
         </div>
       </div>
-      <Modal
-        title="Start audio context"
-        open={startToneModalOpen}
-        onOk={handleOk}
-      >
-        Click 'OK' to start the audio context
-      </Modal>
     </div>
   );
 };

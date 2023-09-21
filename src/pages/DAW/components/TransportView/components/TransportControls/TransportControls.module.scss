@@ -31,11 +31,12 @@
 
   .elipsis {
     color: $text-dark;
-    display: flex;
     justify-content: center;
     align-items: center;
-    height: 1.5rem;
-    width: 1.5rem;
+    height: 2.5rem;
+    background: transparent;
+    width: 2.5rem;
+    border: none;
   }
 
   .transportButton:hover {
@@ -46,5 +47,15 @@
 @media (max-width: 480px) {
   .transport {
     width: 100%;
+  }
+
+  .elipsis {
+    display: flex;
+  }
+}
+
+@media (min-width: 481px) {
+  .elipsis {
+    display: none;
   }
 }

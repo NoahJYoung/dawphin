@@ -59,44 +59,7 @@ export const Toolbar = observer(
           icon={<TableOutlined className={styles.buttonIcon} />}
           onClick={() => audioEngine.setSnap(!audioEngine.snap)}
         />
-        <Button
-          className={`${styles.toolbarButton} ${expanded ? "" : styles.hidden}`}
-          type="text"
-          icon={<ZoomOutOutlined className={styles.buttonIcon} />}
-          onClick={() => {
-            audioEngine.setZoom("zoomOut");
-            if (containerRef.current?.scrollLeft) {
-              if (
-                containerRef.current?.scrollLeft ||
-                containerRef.current?.scrollLeft === 0
-              ) {
-                const transportPos =
-                  (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
-                  audioEngine.samplesPerPixel;
-                const offset = containerRef.current.clientWidth / 2;
-                containerRef.current.scrollLeft = transportPos - offset;
-              }
-            }
-          }}
-        />
-        <Button
-          className={`${styles.toolbarButton} ${expanded ? "" : styles.hidden}`}
-          type="text"
-          icon={<ZoomInOutlined className={styles.buttonIcon} />}
-          onClick={() => {
-            audioEngine.setZoom("zoomIn");
-            if (
-              containerRef.current?.scrollLeft ||
-              containerRef.current?.scrollLeft === 0
-            ) {
-              const transportPos =
-                (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
-                audioEngine.samplesPerPixel;
-              const offset = containerRef.current.clientWidth / 2;
-              containerRef.current.scrollLeft = transportPos - offset;
-            }
-          }}
-        />
+
         <Button
           className={`${styles.lgHidden} ${styles.toolbarButton} ${
             !expanded ? styles.rotate : ""

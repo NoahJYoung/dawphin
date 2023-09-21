@@ -106,6 +106,7 @@ export class Track {
   };
 
   setActive = (newState: boolean) => {
+    Tone.start();
     this.active = newState;
   };
 

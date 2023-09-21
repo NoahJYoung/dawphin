@@ -19,7 +19,9 @@ interface SidebarProps {
 
 export const Sidebar = observer(
   ({ audioEngine, trackPanelsRef, containerRef }: SidebarProps) => {
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(
+      window.innerWidth > 480 ? true : false
+    );
 
     const toggleExpanded = () => setExpanded(!expanded);
 
@@ -53,6 +55,7 @@ export const Sidebar = observer(
                 trackNumber={i + 1}
                 key={track.id}
                 track={track}
+                expanded={expanded}
               />
             ))}
           </div>
