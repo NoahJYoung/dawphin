@@ -7,8 +7,6 @@ import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import WaveSurfer from "wavesurfer.js";
 import * as Tone from "tone";
 
-// This file needs a lot of cleanup, but I'm committing now to push and test on mobile
-
 interface ClipViewProps {
   clip: Clip;
   audioEngine: AudioEngine;
@@ -22,10 +20,8 @@ export const ClipView = observer(
     const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
     const [peaks, setPeaks] = useState<number[][] | undefined>(undefined);
     const prevX = useRef(0);
-    const overviewRef = useRef<HTMLDivElement>(null);
+    const overviewRef = useRef(null);
     const audioRef = useRef(null);
-    const touchStartX = useRef<number>(0);
-    const touchStartY = useRef<number>(0);
 
     useEffect(() => {
       if (wavesurfer) {
@@ -89,96 +85,36 @@ export const ClipView = observer(
       }
     };
 
-    const [isDraggable, setIsDraggable] = useState(false);
-    const longPressTimer = useRef<number | null>(null);
-
     const handleTouchStart = (e: React.TouchEvent) => {
-      longPressTimer.current = setTimeout(() => {
-        setIsDraggable(true);
-      }, 500); // 500ms for long press
-    };
-
-    const handleTouchEnd = (e: React.TouchEvent) => {
-      if (longPressTimer.current) {
-        clearTimeout(longPressTimer.current);
+      if (e.touches.length === 2) {
+        // Two fingers detected
+        prevX.current = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       }
     };
 
-    // const handleTouchMove = (e: React.TouchEvent) => {
-    //   if (isDraggable) {
-    //     // e.preventDefault();
+    const handleTouchMove = (e: React.TouchEvent) => {
+      if (e.touches.length === 2 && prevX.current) {
+        const averageX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const deltaX = averageX - prevX.current;
 
-    //     const dragValue = 2.5;
-    //     const movementValue = dragValue * audioEngine.samplesPerPixel;
-
-    //     // Using the first touch point. For multi-touch, this may need to be adjusted.
-    //     const touchClientX = e.changedTouches[0].clientX;
-
-    //     if (overviewRef.current && timelineRect) {
-    //       if (touchClientX !== prevX.current) {
-    //         if (touchClientX > prevX.current) {
-    //           audioEngine.moveSelectedClips(movementValue, "right");
-    //         } else {
-    //           audioEngine.moveSelectedClips(movementValue, "left");
-    //         }
-    //         prevX.current = touchClientX;
-    //       }
-    //     }
-    //   }
-    // };
-
-    // const handleGlobalTouchMove = (e: TouchEvent) => {
-    //   if (overviewRef.current?.contains(e.target as Node)) {
-    //     const deltaX = e.touches[0].clientX - touchStartX.current;
-    //     const deltaY = e.touches[0].clientY - touchStartY.current;
-
-    //     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    //       e.preventDefault();
-    //     }
-    //   }
-    // };
-
-    const handleRawTouchMove = (e: TouchEvent) => {
-      if (isDraggable) {
-        e.preventDefault();
-        const dragValue = 2.5;
+        // Determine the movement value
+        const dragValue = 2.5; // This can be adjusted based on desired sensitivity
         const movementValue = dragValue * audioEngine.samplesPerPixel;
-        const touchClientX = e.changedTouches[0].clientX;
 
         if (overviewRef.current && timelineRect) {
-          if (touchClientX !== prevX.current) {
-            if (touchClientX > prevX.current) {
+          if (Math.abs(deltaX) > 5) {
+            // Threshold to avoid minor accidental movements
+            if (deltaX > 0) {
               audioEngine.moveSelectedClips(movementValue, "right");
             } else {
               audioEngine.moveSelectedClips(movementValue, "left");
             }
-            prevX.current = touchClientX;
           }
+
+          prevX.current = averageX;
         }
       }
     };
-
-    useEffect(() => {
-      // document.addEventListener("touchmove", handleGlobalTouchMove, {
-      //   passive: false,
-      // });
-
-      if (overviewRef.current) {
-        overviewRef.current.addEventListener("touchmove", handleRawTouchMove, {
-          passive: false,
-        });
-      }
-
-      return () => {
-        // document.removeEventListener("touchmove", handleGlobalTouchMove);
-        if (overviewRef.current) {
-          overviewRef.current.removeEventListener(
-            "touchmove",
-            handleRawTouchMove
-          );
-        }
-      };
-    }, [isDraggable, audioEngine, timelineRect]);
 
     useEffect(() => {
       const sampleRate = Tone.getContext().sampleRate;
@@ -229,8 +165,12 @@ export const ClipView = observer(
           id={`wave-container${clip.id}`}
           draggable
           onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          // onTouchMove={handleTouchMove}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={() => {
+            if (audioEngine.snap) {
+              audioEngine.quantizeSelectedClips();
+            }
+          }}
           onDrag={handleDrag}
           onDragStart={handleDragStart}
           onDragEnd={() => {
