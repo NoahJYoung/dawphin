@@ -49,23 +49,40 @@ export const Knob = ({
     }
   }, [deg, min, max, startAngle, endAngle, onChange]);
 
-  const startDrag = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const startDrag = (e: React.MouseEvent | React.TouchEvent) => {
+    if (e.type !== "touchMove") {
+      e.preventDefault();
+    }
+
     const knob = e.currentTarget.getBoundingClientRect();
     const pts = {
       x: knob.left + knob.width / 2,
       y: knob.top + knob.height / 2,
     };
 
-    const moveHandler = (e: MouseEvent) => {
-      const currentDeg = getDeg(e.clientX, e.clientY, pts);
+    const moveHandler = (e: MouseEvent | TouchEvent) => {
+      let currentX, currentY;
+      if (e.type === "touchmove") {
+        currentX = (e as TouchEvent).touches[0].clientX;
+        currentY = (e as TouchEvent).touches[0].clientY;
+      } else {
+        currentX = (e as MouseEvent).clientX;
+        currentY = (e as MouseEvent).clientY;
+      }
+
+      const currentDeg = getDeg(currentX, currentY, pts);
       setDeg(currentDeg);
     };
 
-    document.addEventListener("mousemove", moveHandler);
-    document.addEventListener("mouseup", () => {
+    const endHandler = () => {
       document.removeEventListener("mousemove", moveHandler);
-    });
+      document.removeEventListener("touchmove", moveHandler);
+    };
+
+    document.addEventListener("mousemove", moveHandler);
+    document.addEventListener("mouseup", endHandler);
+    document.addEventListener("touchmove", moveHandler);
+    document.addEventListener("touchend", endHandler);
   };
 
   const getDeg = (cX: number, cY: number, pts: { x: number; y: number }) => {
@@ -114,6 +131,7 @@ export const Knob = ({
       }}
       onDoubleClick={handleResetValue}
       onMouseDown={startDrag}
+      onTouchStart={startDrag}
     >
       <svg
         className="knob"
