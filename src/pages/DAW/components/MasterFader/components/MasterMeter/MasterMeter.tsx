@@ -1,7 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
 import { MasterControl } from "src/AudioEngine/MasterControl";
-import * as Tone from "tone";
 
 interface MasterMeterProps {
   master: MasterControl;
@@ -12,53 +11,68 @@ interface MasterMeterProps {
 export const MasterMeter = observer(
   ({ master, canvasHeight, canvasWidth }: MasterMeterProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const drawEventId = useRef<number | null>(null);
+    const animationFrameId = useRef<number | null>(null);
 
     useEffect(() => {
-      const canvas = canvasRef.current;
-      const context = canvas?.getContext("2d");
-
-      if (!context) return;
-      const clearCanvas = () => {
-        context.clearRect(0, 0, canvasWidth, canvasHeight);
-      };
-
-      Tone.getTransport().on("pause", clearCanvas);
-      Tone.getTransport().on("stop", clearCanvas);
-
       const drawMeter = () => {
+        const canvas = canvasRef.current;
+        const context = canvas?.getContext("2d");
+        if (!context) return;
+
         const leftMeterValue = master.leftMeter.getValue() as number;
         const rightMeterValue = master.rightMeter.getValue() as number;
 
-        const leftMeterHeight = (leftMeterValue + 60) * (canvasHeight / 60);
-        context.fillStyle = "green";
         context.clearRect(0, 0, canvasWidth, canvasHeight);
-        context.fillRect(
-          0,
-          canvasHeight - leftMeterHeight,
+
+        const drawChannelMeter = (
+          x: number,
+          width: number,
+          meterValue: number
+        ) => {
+          const totalHeight = (meterValue + 60) * (canvasHeight / 60);
+          const greenHeight = Math.min(totalHeight, (56 * canvasHeight) / 60);
+          const yellowHeight = Math.min(
+            totalHeight - greenHeight,
+            (59 * canvasHeight) / 59 - greenHeight
+          );
+          const redHeight = totalHeight - greenHeight - yellowHeight;
+
+          context.fillStyle = "green";
+          context.fillRect(x, canvasHeight - greenHeight, width, greenHeight);
+          context.fillStyle = "yellow";
+          context.fillRect(
+            x,
+            canvasHeight - greenHeight - yellowHeight,
+            width,
+            yellowHeight
+          );
+          context.fillStyle = "red";
+          context.fillRect(
+            x,
+            canvasHeight - greenHeight - yellowHeight - redHeight,
+            width,
+            redHeight
+          );
+        };
+
+        drawChannelMeter(0, canvasWidth / 2 - 2, leftMeterValue);
+        drawChannelMeter(
+          canvasWidth / 2 + 2,
           canvasWidth / 2 - 2,
-          leftMeterHeight
+          rightMeterValue
         );
 
-        const rightMeterHeight = (rightMeterValue + 60) * (canvasHeight / 60);
-        context.fillRect(
-          canvasWidth / 2 + 2,
-          canvasHeight - rightMeterHeight,
-          canvasWidth / 2 - 2,
-          rightMeterHeight
-        );
+        animationFrameId.current = requestAnimationFrame(drawMeter);
       };
 
-      drawEventId.current = Tone.getTransport().scheduleRepeat(drawMeter, 0.05);
+      drawMeter();
 
       return () => {
-        if (drawEventId.current) {
-          Tone.getTransport().clear(drawEventId.current);
+        if (animationFrameId.current) {
+          cancelAnimationFrame(animationFrameId.current);
         }
-        Tone.getTransport().off("pause", clearCanvas);
-        Tone.getTransport().off("stop", clearCanvas);
       };
-    }, [master, canvasRef, canvasHeight, canvasWidth]);
+    }, [master, canvasHeight, canvasWidth]);
 
     return (
       <div

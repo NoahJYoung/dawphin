@@ -137,7 +137,7 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
             height: "175px",
           }}
         >
-          <Meter track={track} canvasHeight={175} canvasWidth={30} />
+          <Meter track={track} canvasHeight={175} canvasWidth={24} />
           <Slider
             className={styles.slider}
             min={-51}
@@ -191,7 +191,7 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
               M
             </Button>
             <Button
-              onClick={() => {}}
+              onClick={() => track.setSolo(!track.solo)}
               type="text"
               style={{
                 width: "1.5rem",

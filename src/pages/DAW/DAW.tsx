@@ -1,6 +1,6 @@
 import { audioEngineInstance } from "src/AudioEngine";
 import { AudioEngine } from "src/AudioEngine/AudioEngine";
-import { useState, useRef, Profiler } from "react";
+import { useState, useRef } from "react";
 import {
   Mixer,
   TimelineView,

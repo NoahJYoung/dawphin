@@ -6,8 +6,8 @@ export class MasterControl {
   public pan: number | null = null;
 
   constructor(
-    public leftMeter = new Tone.Meter(0.75),
-    public rightMeter = new Tone.Meter(0.75),
+    public leftMeter = new Tone.Meter(0.9),
+    public rightMeter = new Tone.Meter(0.9),
     public splitter = new Tone.Split()
   ) {
     makeObservable(this, {

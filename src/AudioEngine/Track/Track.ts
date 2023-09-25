@@ -9,8 +9,8 @@ export class Track {
   public pan: number | null = null;
   public solo: boolean = false;
   public active: boolean = false;
-  public leftMeter = new Tone.Meter(0.75);
-  public rightMeter = new Tone.Meter(0.75);
+  public leftMeter = new Tone.Meter(0.9);
+  public rightMeter = new Tone.Meter(0.9);
   public splitter = new Tone.Split();
   public recorder = new Tone.Recorder();
   public placeholderClipStart: Tone.TimeClass | null = null;
@@ -37,6 +37,7 @@ export class Track {
       setPlaceholderClipStart: action.bound,
       setActive: action.bound,
       setMuted: action.bound,
+      setSolo: action.bound,
       setVolume: action.bound,
       setPan: action.bound,
       addClip: action.bound,
@@ -104,6 +105,11 @@ export class Track {
   setMuted = (state: boolean) => {
     this.channel.set({ mute: state });
     this.muted = this.channel.mute;
+  };
+
+  setSolo = (state: boolean) => {
+    this.channel.solo = state;
+    this.solo = this.channel.solo;
   };
 
   setActive = (newState: boolean) => {
@@ -193,8 +199,7 @@ export class Track {
   }
 
   toggleMute() {
-    this.channel.mute = !this.channel.mute;
-    this.muted = this.channel.mute;
+    this.setMuted(!this.muted);
   }
 
   addClip(src: string, startSeconds: number) {

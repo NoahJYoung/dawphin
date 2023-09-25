@@ -215,7 +215,7 @@ export const TrackPanel = observer(
                 M
               </Button>
               <Button
-                onClick={() => {}}
+                onClick={() => track.setSolo(!track.solo)}
                 type="text"
                 style={{
                   width: "1.5rem",
