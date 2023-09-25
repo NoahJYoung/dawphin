@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Input, Slider } from "antd";
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
@@ -7,12 +7,27 @@ import { Meter } from "./components";
 import { RecordIcon } from "src/pages/DAW/icons";
 
 import styles from "./ChannelStrip.module.scss";
+import { EffectsModal } from "../../../Sidebar/components";
 interface ChannelStripProps {
   track: Track;
   trackNumber: number;
 }
 
 export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
+  const [effectsModalOpen, setEffectsModalOpen] = useState(false);
+
+  const openEffectsModal = () => {
+    setEffectsModalOpen(true);
+  };
+
+  const closeEffectsModal = () => {
+    setEffectsModalOpen(false);
+  };
+
+  const toggleEffectsModal = () => {
+    setEffectsModalOpen(!effectsModalOpen);
+  };
+
   const handleSelect = (e: React.MouseEvent) => {
     const audioEngine = track.audioEngine;
     if (!e.ctrlKey) {
@@ -210,9 +225,35 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
             >
               <p>S</p>
             </Button>
+
+            <Button
+              onClick={toggleEffectsModal}
+              type="text"
+              style={{
+                width: "1.5rem",
+                height: "1.5rem",
+                borderRadius: "6px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                border: `1px solid #aaa`,
+                color: "#aaa",
+                padding: 0,
+                paddingTop: 1,
+                fontSize: "0.75rem",
+                fontWeight: "bold",
+              }}
+            >
+              <p>FX</p>
+            </Button>
           </div>
         </div>
       </div>
+      <EffectsModal
+        onCancel={closeEffectsModal}
+        track={track}
+        open={effectsModalOpen}
+      />
     </div>
   );
 });

@@ -14,13 +14,14 @@ export class Track {
   public splitter = new Tone.Split();
   public recorder = new Tone.Recorder();
   public placeholderClipStart: Tone.TimeClass | null = null;
+  public effectsChain: Tone.ToneAudioNode[] = [];
 
   constructor(
     public audioEngine: AudioEngine,
     public id: number,
     public name: string,
     public clips: Clip[] = observable.array([]),
-    public color: string = "rgb(125, 0, 250)",
+    public color: string = "rgb(150, 150, 150)",
     public selected: boolean = false,
     public channel: Tone.Channel = new Tone.Channel(),
     public muted = channel.mute
@@ -34,6 +35,8 @@ export class Track {
       muted: observable,
       active: observable,
       placeholderClipStart: observable,
+      effectsChain: observable,
+      setEffectsChain: action.bound,
       setPlaceholderClipStart: action.bound,
       setActive: action.bound,
       setMuted: action.bound,
@@ -139,6 +142,22 @@ export class Track {
 
   selectAllClips = () => {
     this.clips.forEach((clip) => clip.setSelect(true));
+  };
+
+  setEffectsChain = (effects: Tone.ToneAudioNode[]) => {
+    this.effectsChain = effects;
+  };
+
+  addEffect = (effect: Tone.ToneAudioNode) => {
+    this.effectsChain.forEach((effect, i) => {
+      if (i < this.effectsChain.length - 1) {
+        effect.disconnect(this.effectsChain[i + 1]);
+      }
+    });
+
+    this.setEffectsChain([...this.effectsChain, effect]);
+
+    this.channel.chain(...this.effectsChain, Tone.getDestination());
   };
 
   joinSelectedClips = () => {

@@ -30,10 +30,10 @@ export const Meter = observer(
           meterValue: number
         ) => {
           const totalHeight = (meterValue + 60) * (canvasHeight / 60);
-          const greenHeight = Math.min(totalHeight, (56 * canvasHeight) / 60);
+          const greenHeight = Math.min(totalHeight, (52 * canvasHeight) / 60);
           const yellowHeight = Math.min(
             totalHeight - greenHeight,
-            (59 * canvasHeight) / 59 - greenHeight
+            (56 * canvasHeight) / 60 - greenHeight
           );
           const redHeight = totalHeight - greenHeight - yellowHeight;
 
