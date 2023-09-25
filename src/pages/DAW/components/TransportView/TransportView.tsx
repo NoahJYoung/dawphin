@@ -29,8 +29,11 @@ export const TransportView = observer(
         style={{
           display: "flex",
           height: "50px",
+          width: "100%",
+          maxWidth: "400px",
           gap: "1rem",
           alignItems: "center",
+          justifyContent: "space-between",
           marginBottom: "5px",
         }}
       >

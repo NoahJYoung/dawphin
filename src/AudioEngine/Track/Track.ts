@@ -2,6 +2,7 @@ import { Clip } from "./Clip";
 import { action, makeObservable, observable } from "mobx";
 import { AudioEngine } from "..";
 import * as Tone from "tone";
+import audioBufferToWav from "audiobuffer-to-wav";
 
 export class Track {
   public volume: number | null = null;
@@ -134,6 +135,47 @@ export class Track {
     this.clips.forEach((clip) => clip.setSelect(true));
   };
 
+  joinSelectedClips = () => {
+    const selectedClips = this.clips.filter((clip) => clip.isSelected);
+    if (selectedClips.length < 2) return;
+
+    selectedClips.sort((a, b) => a.start.toSeconds() - b.start.toSeconds());
+
+    const gapsInSeconds = [];
+
+    for (let i = 0; i < selectedClips.length - 1; i++) {
+      const currentClipEnd = selectedClips[i].end?.toSeconds() || 0;
+      const nextClipStart = selectedClips[i + 1].start.toSeconds();
+      const gap = nextClipStart - currentClipEnd;
+      gapsInSeconds.push(gap);
+    }
+
+    const concatenatedBuffer = Clip.concatenateBuffers(
+      selectedClips.map((clip) => clip.audioBuffer),
+      gapsInSeconds
+    );
+
+    const buffer = concatenatedBuffer.get();
+    if (buffer) {
+      const blob = new Blob([audioBufferToWav(buffer)], {
+        type: "audio/wav",
+      });
+      const src = URL.createObjectURL(blob);
+
+      selectedClips.forEach((clip) => {
+        const clipsCopy = [...this.clips];
+        const index = clipsCopy.indexOf(clip);
+        if (index !== -1) clipsCopy.splice(index, 1);
+        clip.deleteClip();
+        this.setClips(clipsCopy);
+      });
+
+      const clipId = this.addClip(src, selectedClips[0].start.toSamples());
+      const newClip = this.clips.find((clip) => clip.id === clipId);
+      newClip && newClip.setSelect(true);
+    }
+  };
+
   deselect() {
     this.selected = false;
   }
@@ -159,6 +201,8 @@ export class Track {
     const buffer = new Tone.ToneAudioBuffer(src);
     const clip = new Clip(this, src, buffer, Tone.Time(startSeconds, "s"));
     this.clips.push(clip);
+
+    return clip.id;
   }
 
   setClips(clips: Clip[]) {

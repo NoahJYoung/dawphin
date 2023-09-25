@@ -182,4 +182,35 @@ export class Clip {
 
     return null;
   }
+
+  static concatenateBuffers(
+    buffers: Tone.ToneAudioBuffer[],
+    gapsInSeconds: number[] = []
+  ): Tone.ToneAudioBuffer {
+    const totalLength =
+      buffers.reduce((sum, buffer) => sum + buffer.length, 0) +
+      gapsInSeconds.reduce(
+        (sum, gap) => sum + gap * Tone.getContext().sampleRate,
+        0
+      );
+
+    const audioContext = Tone.getContext().rawContext;
+    const concatenatedBuffer = audioContext.createBuffer(
+      1,
+      totalLength,
+      audioContext.sampleRate
+    );
+
+    let offset = 0;
+    buffers.forEach((buffer, index) => {
+      concatenatedBuffer.copyToChannel(buffer.getChannelData(0), 0, offset);
+      offset += buffer.length;
+
+      if (index < buffers.length - 1 && gapsInSeconds[index]) {
+        offset += gapsInSeconds[index] * Tone.getContext().sampleRate;
+      }
+    });
+
+    return new Tone.ToneAudioBuffer(concatenatedBuffer);
+  }
 }

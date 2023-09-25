@@ -236,6 +236,10 @@ export class AudioEngine {
     });
   };
 
+  joinSelectedClips = () => {
+    this.tracks.forEach((track) => track.joinSelectedClips());
+  };
+
   deselectClips() {
     this.getSelectedClips();
     this.selectedClips.forEach((clip) => clip.setSelect(false));

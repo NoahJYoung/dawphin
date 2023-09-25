@@ -1,6 +1,6 @@
 import { audioEngineInstance } from "src/AudioEngine";
 import { AudioEngine } from "src/AudioEngine/AudioEngine";
-import { useState, useRef } from "react";
+import { useState, useRef, Profiler } from "react";
 import {
   Mixer,
   TimelineView,
@@ -8,6 +8,7 @@ import {
   Sidebar,
   TransportView,
 } from "./components";
+
 import { MasterFader } from "./components/MasterFader";
 
 import styles from "./DAW.module.scss";

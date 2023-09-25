@@ -84,7 +84,7 @@ export const TimelineView = observer(
     };
 
     useEffect(() => {
-      if (!!gridRef.current) {
+      if (gridRef.current) {
         const rect = gridRef.current.getBoundingClientRect();
         setTimelineRect(rect);
         updatePlayhead();
@@ -100,10 +100,15 @@ export const TimelineView = observer(
     ]);
 
     useEffect(() => {
-      Tone.getTransport().scheduleRepeat(() => {
+      const id = Tone.getTransport().scheduleRepeat(() => {
         updatePlayhead();
       }, 0.01);
+
       audioEngine.updateTimelineUI = updatePlayhead;
+
+      return () => {
+        Tone.getTransport().clear(id);
+      };
     }, []);
 
     return (

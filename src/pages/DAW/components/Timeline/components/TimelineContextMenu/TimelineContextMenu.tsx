@@ -7,6 +7,7 @@ import {
   RiseOutlined,
   FallOutlined,
   ArrowRightOutlined,
+  MergeCellsOutlined,
 } from "@ant-design/icons";
 import type { AudioEngine } from "src/AudioEngine";
 import { observer } from "mobx-react-lite";
@@ -64,20 +65,27 @@ export const TimelineContextMenu = observer(
       {
         key: "4",
         onClick: audioEngine.splitSelectedClipsAtPlayhead,
-        label: "Split at playhead",
+        label: "Split",
         disabled: !hasSelectedClips,
         icon: <SplitCellsOutlined />,
       },
-      { type: "divider" },
       {
         key: "5",
+        onClick: audioEngine.joinSelectedClips,
+        label: "Join",
+        disabled: !hasSelectedClips,
+        icon: <MergeCellsOutlined />,
+      },
+      { type: "divider" },
+      {
+        key: "6",
         onClick: () => audioEngine.setNormalized(true),
         label: "Normalize",
         disabled: !hasSelectedClips,
         icon: <RiseOutlined />,
       },
       {
-        key: "6",
+        key: "7",
         onClick: () => audioEngine.setNormalized(false),
         label: "Denormalize",
         disabled: !hasSelectedClips,
@@ -85,7 +93,7 @@ export const TimelineContextMenu = observer(
       },
       { type: "divider" },
       {
-        key: "7",
+        key: "8",
         onClick: () =>
           audioEngine.selectedClips[0].setPosition(cursorPositionSamples),
         label: "Move to cursor",
