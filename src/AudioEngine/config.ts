@@ -1,5 +1,7 @@
 import { MasterControl } from "./MasterControl";
 import { AudioEngine } from ".";
+import { FXFactory } from "./FXFactory/FXFactory";
 
 const master = new MasterControl();
-export const audioEngineInstance = new AudioEngine(master);
+const fxFactory = new FXFactory();
+export const audioEngineInstance = new AudioEngine(master, fxFactory);

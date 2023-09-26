@@ -1,11 +1,32 @@
-.EQ3Container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  row-gap: 3rem;
-  column-gap: 3rem;
+@import "src/styles/variables.scss";
 
-  .gridItem {
+.EQ3Container {
+  background: $surface-1;
+  border-radius: 5px;
+  padding: 10px;
+  max-width: 100%;
+  overflow: auto;
+
+  .knobsContainer {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    gap: 10px;
+
+    .knobRow {
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    .gridItem {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: center;
+
+      label {
+        font-size: 0.75rem;
+      }
+    }
   }
 }

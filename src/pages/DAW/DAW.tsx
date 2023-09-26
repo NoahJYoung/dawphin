@@ -21,7 +21,7 @@ export const DAW = () => {
   const trackPanelsRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} styled-scrollbar`}>
       <div className={styles.topPanel}>
         <Sidebar
           containerRef={containerRef}

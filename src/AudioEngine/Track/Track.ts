@@ -21,7 +21,7 @@ export class Track {
     public id: number,
     public name: string,
     public clips: Clip[] = observable.array([]),
-    public color: string = "rgb(150, 150, 150)",
+    public color: string = "rgb(125, 0, 250)",
     public selected: boolean = false,
     public channel: Tone.Channel = new Tone.Channel(),
     public muted = channel.mute

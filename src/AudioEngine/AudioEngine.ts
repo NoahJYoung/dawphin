@@ -4,6 +4,7 @@ import * as Tone from "tone";
 import { Clip } from "./Track/Clip";
 import audioBufferToWav from "audiobuffer-to-wav";
 import { MasterControl } from "./MasterControl";
+import { FXFactory } from "./FXFactory";
 
 interface ClipboardItem {
   data: Blob;
@@ -41,6 +42,7 @@ export class AudioEngine {
 
   constructor(
     public masterControl: MasterControl,
+    public fxFactory: FXFactory,
     public tracks: Track[] = observable.array([]),
     public cursorPosition: number = 0,
     public audioCtx = Tone.getContext()
