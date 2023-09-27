@@ -10,6 +10,7 @@ interface KnobProps {
   degrees?: number;
   color?: string;
   double?: boolean;
+  suffix?: string;
 }
 
 const convertRange = (
@@ -31,6 +32,7 @@ export const Knob = ({
   degrees = 270,
   color = "blue",
   double = false,
+  suffix,
 }: KnobProps) => {
   const startAngle = (360 - degrees) / 2;
   const endAngle = startAngle + degrees;
@@ -106,7 +108,6 @@ export const Knob = ({
 
       const negativeGradient = `conic-gradient(${color} ${colorAngle}deg, #222 ${colorAngle}deg)`;
       const positiveGradient = `conic-gradient(#222 ${colorAngle}deg, ${color} ${colorAngle}deg)`;
-
       const background = value > 0 ? positiveGradient : negativeGradient;
 
       return background;
@@ -164,7 +165,7 @@ export const Knob = ({
       </svg>
 
       <p style={{ position: "absolute", margin: 0, fontSize: "0.65rem" }}>
-        {Math.round(value)}
+        {`${Math.round(value)} ${suffix ?? ""}`}
       </p>
     </div>
   );

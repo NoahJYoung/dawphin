@@ -20,13 +20,14 @@ export const EQVisualizer = ({
   const height = 200;
   const width = 400;
   const margin = 24;
-  const minValue = -20;
+  const minValue = -10;
   const maxValue = 10;
   const minFreq = 20;
   const maxFreq = 20000;
 
   const calculateHeight = (value: number) =>
     ((value - minValue) / (maxValue - minValue)) * height;
+
   const freqToX = (freq: number) =>
     (Math.log(freq / minFreq) / Math.log(maxFreq / minFreq)) *
       (width - 2 * margin) +
@@ -40,15 +41,28 @@ export const EQVisualizer = ({
     return hertz;
   };
 
-  const generateBandPath = (freq1: number, freq2: number, value: number) => {
+  const generateBandPath = (
+    freq1: number,
+    freq2: number,
+    value: number,
+    color: string
+  ) => {
     const left = freqToX(freq1);
     const right = freqToX(freq2);
     const center = (left + right) / 2;
-    const top = height - (calculateHeight(value) - margin / 2) * 2;
+    const top = height + height / 2 - (calculateHeight(value) - margin / 2) * 2;
 
-    return `M ${left} ${height + margin} Q ${center} ${top} ${right} ${
-      height + margin
-    }`;
+    return (
+      <path
+        d={`M ${left} ${height / 2 + margin} Q ${center} ${top} ${right} ${
+          height / 2 + margin
+        } L ${right} ${height / 2 + margin} L ${left} ${height / 2 + margin}`}
+        fill={color}
+        fillOpacity="0.1"
+        stroke={color}
+        strokeWidth="2"
+      />
+    );
   };
 
   return (
@@ -70,26 +84,9 @@ export const EQVisualizer = ({
           strokeDasharray="5,5"
         />
 
-        <path
-          d={generateBandPath(20, lowFrequency, lowValue)}
-          fill="none"
-          stroke="red"
-          strokeWidth="2"
-        />
-
-        <path
-          d={generateBandPath(lowFrequency, highFrequency, midValue)}
-          fill="none"
-          stroke="blue"
-          strokeWidth="2"
-        />
-
-        <path
-          d={generateBandPath(highFrequency, 20000, highValue)}
-          fill="none"
-          stroke="green"
-          strokeWidth="2"
-        />
+        {generateBandPath(20, lowFrequency, lowValue, "red")}
+        {generateBandPath(lowFrequency, highFrequency, midValue, "blue")}
+        {generateBandPath(highFrequency, 20000, highValue, "green")}
 
         {[20, 100, 500, 1000, 5000, 10000, 20000].map((freq) => (
           <React.Fragment key={freq}>

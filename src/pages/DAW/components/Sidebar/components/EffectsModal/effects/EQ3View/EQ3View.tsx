@@ -39,6 +39,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
               min={-10}
               max={10}
               size={48}
+              suffix="Db"
               value={lowValue}
               onChange={(e) => {
                 EQ3.low.value = e.valueOf();
@@ -55,6 +56,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
               min={-10}
               max={10}
               size={48}
+              suffix="Db"
               value={midValue}
               onChange={(e) => {
                 EQ3.mid.value = e.valueOf();
@@ -71,6 +73,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
               min={-10}
               max={10}
               size={48}
+              suffix="Db"
               value={highValue}
               onChange={(e) => {
                 EQ3.high.value = e.valueOf();
@@ -84,9 +87,10 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
             <label>Low cutoff</label>
             <Knob
               min={20}
-              max={800}
+              max={1600}
               color="rgb(125, 0, 250)"
               size={48}
+              suffix="Hz"
               value={Number(lowFrequency.valueOf())}
               onChange={(e) => {
                 EQ3.lowFrequency.value = e.valueOf();
@@ -102,6 +106,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
               max={20000}
               size={48}
               color="rgb(125, 0, 250)"
+              suffix="Hz"
               value={Number(highFrequency.valueOf())}
               onChange={(e) => {
                 EQ3.highFrequency.value = e.valueOf();

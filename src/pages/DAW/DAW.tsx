@@ -42,6 +42,7 @@ export const DAW = () => {
           />
         </TimelineView>
       </div>
+
       <div className={styles.bottomPanelOuter}>
         <TransportView
           containerRef={containerRef}

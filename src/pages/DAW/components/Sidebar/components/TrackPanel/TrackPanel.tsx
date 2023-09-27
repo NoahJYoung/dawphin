@@ -62,6 +62,7 @@ export const TrackPanel = observer(
           width: TRACK_PANEL_FULL_WIDTH,
           height: CLIP_HEIGHT,
           background: "#333",
+          opacity: track.muted ? 0.5 : 1,
         }}
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}

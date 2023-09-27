@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { observer } from "mobx-react-lite";
-import { Modal } from "antd";
+import { Button, Modal } from "antd";
 import { AudioEngine } from "src/AudioEngine";
 import { ProjectDataDisplay, TransportControls } from "./components";
 
@@ -42,7 +42,10 @@ export const TransportView = observer(
           audioEngine={audioEngine}
           openModal={openModal}
         />
-        <div className={styles.hideOnSmallScreens}>
+        <div
+          style={{ display: "flex", alignItems: "center" }}
+          className={styles.hideOnSmallScreens}
+        >
           <ProjectDataDisplay audioEngine={audioEngine} />
         </div>
 
