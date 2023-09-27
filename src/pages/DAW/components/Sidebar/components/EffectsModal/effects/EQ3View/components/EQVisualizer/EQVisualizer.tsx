@@ -56,7 +56,7 @@ export const EQVisualizer = ({
       <path
         d={`M ${left} ${height / 2 + margin} Q ${center} ${top} ${right} ${
           height / 2 + margin
-        } L ${right} ${height / 2 + margin} L ${left} ${height / 2 + margin}`}
+        }`}
         fill={color}
         fillOpacity="0.1"
         stroke={color}

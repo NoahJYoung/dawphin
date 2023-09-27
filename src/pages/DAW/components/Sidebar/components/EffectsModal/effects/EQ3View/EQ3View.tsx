@@ -20,6 +20,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
 
   return (
     <div className={styles.EQ3Container}>
+      <h2>EQ3</h2>
       <EQVisualizer
         lowValue={lowValue}
         midValue={midValue}

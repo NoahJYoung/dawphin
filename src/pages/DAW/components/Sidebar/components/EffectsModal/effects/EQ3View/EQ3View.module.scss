@@ -3,8 +3,9 @@
 .EQ3Container {
   background: $surface-1;
   border-radius: 5px;
+  border: 1px solid #222;
   padding: 10px;
-  max-width: 100%;
+  max-width: fit-content;
   overflow: auto;
 
   .knobsContainer {

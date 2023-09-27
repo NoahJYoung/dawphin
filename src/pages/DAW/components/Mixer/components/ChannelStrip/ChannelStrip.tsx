@@ -16,10 +16,6 @@ interface ChannelStripProps {
 export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
   const [effectsModalOpen, setEffectsModalOpen] = useState(false);
 
-  const openEffectsModal = () => {
-    setEffectsModalOpen(true);
-  };
-
   const closeEffectsModal = () => {
     setEffectsModalOpen(false);
   };

@@ -80,7 +80,7 @@ export const MasterMeter = observer(
           width: canvasWidth,
           height: canvasHeight,
           background: "#000",
-          borderRadius: "5px",
+          borderRadius: "2px",
         }}
       >
         <canvas width={canvasWidth} height={canvasHeight} ref={canvasRef} />

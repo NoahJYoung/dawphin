@@ -60,6 +60,10 @@ export class Track {
     this.channel.toDestination();
   }
 
+  get fxFactory() {
+    return this.audioEngine.fxFactory;
+  }
+
   play() {
     if (this.active && this.audioEngine.state === "recording") {
       return;

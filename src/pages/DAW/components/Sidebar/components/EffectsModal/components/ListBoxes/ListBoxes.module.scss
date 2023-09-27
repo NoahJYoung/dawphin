@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+}
+
+@media (min-width: 769px) {
+  .container {
+    flex-direction: column;
+    height: 50%;
+    justify-content: space-evenly;
+    gap: 1rem;
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: row-reverse;
+    width: 100%;
+    gap: 0.5rem;
+  }
+}

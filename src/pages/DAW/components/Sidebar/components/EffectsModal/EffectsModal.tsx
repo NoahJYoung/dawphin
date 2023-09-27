@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import { Button, Modal } from "antd";
+import { useState } from "react";
+import { Modal } from "antd";
 import { Track } from "src/AudioEngine/Track";
 import * as Tone from "tone";
 import { EQ3View } from "./effects";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { MasterControl } from "src/AudioEngine/MasterControl";
+import { ListBoxes } from "./components/ListBoxes";
 
 import styles from "./EffectsModal.module.scss";
 
 interface EffectsModalProps {
-  track: Track;
+  track: Track | MasterControl;
   open: boolean;
   onCancel: () => void;
 }
 
-const getEffectInstances = (track: Track) => {
+const getEffectInstances = (track: Track | MasterControl) => {
   return track.effectsChain.map((effect, i) => {
     if (effect.name === "EQ3") {
       return <EQ3View key={i} EQ3={effect as Tone.EQ3} />;
@@ -30,92 +31,24 @@ export const EffectsModal = ({ track, open, onCancel }: EffectsModalProps) => {
 
   return (
     <Modal
+      className={styles.modal}
       title={track.name}
       closeIcon={false}
       onCancel={onCancel}
       onOk={onCancel}
       cancelButtonProps={{ style: { display: "none" } }}
+      okText="Close"
       open={open}
-      bodyStyle={{ height: "100%", width: "100%" }}
+      bodyStyle={{ height: "100%", width: "100%", padding: "0.5rem" }}
       width={800}
     >
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          gap: "10px",
-          color: "#aaa",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: "50%",
-            width: "40%",
-            justifyContent: "space-evenly",
-          }}
-        >
-          <ul
-            style={{
-              listStyle: "none",
-              margin: 0,
-              padding: 0,
-              border: "1px solid black",
-              height: "100%",
-              width: "100%",
-            }}
-          >
-            {track.effectsChain.map((effect, i) => (
-              <li onClick={() => setEffectViewIndex(i)} key={i}>
-                {effect.name}
-              </li>
-            ))}
-          </ul>
-
-          <ul
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              border: "1px solid black",
-              height: "100%",
-              padding: 0,
-            }}
-          >
-            {track.audioEngine.fxFactory.effects.map((effect) => (
-              <li
-                key={effect.name}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "100%",
-                }}
-              >
-                <span>{effect.name}</span>
-                <Button
-                  onClick={() => {
-                    const newEffect = track.audioEngine.fxFactory.createEffect(
-                      effect.name
-                    );
-                    track.addEffect(newEffect as Tone.ToneAudioNode);
-                  }}
-                  icon={<PlusCircleOutlined />}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div
-          className="styled-scrollbar"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            width: "100%",
-            overflow: "auto",
-          }}
-        >
+      <div className={styles.innerContainer}>
+        <ListBoxes
+          setEffectViewIndex={setEffectViewIndex}
+          effectViewIndex={effectViewIndex}
+          track={track}
+        />
+        <div className={styles.effectViewContainer}>
           {getEffectInstances(track)[effectViewIndex]}
         </div>
       </div>
