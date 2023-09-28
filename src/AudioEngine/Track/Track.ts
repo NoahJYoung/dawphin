@@ -164,6 +164,12 @@ export class Track {
     this.channel.chain(...this.effectsChain, Tone.getDestination());
   };
 
+  removeEffect = (index: number) => {
+    const filteredFX = [...this.effectsChain];
+    filteredFX.splice(index, 1);
+    this.setEffectsChain(filteredFX);
+  };
+
   joinSelectedClips = () => {
     const selectedClips = this.clips.filter((clip) => clip.isSelected);
     if (selectedClips.length < 2) return;

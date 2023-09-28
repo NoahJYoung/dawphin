@@ -2,7 +2,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 import { List, Button } from "antd";
 import { MasterControl } from "src/AudioEngine/MasterControl";
 import { Track } from "src/AudioEngine/Track";
-import * as Tone from "tone";
+import { v4 as uuidv4 } from "uuid";
 
 import styles from "./TrackFXListbox.module.scss";
 
@@ -27,12 +27,13 @@ export const TrackFXListBox = ({
         dataSource={track.effectsChain}
         renderItem={(item, i) => (
           <List.Item
+            key={uuidv4()}
             actions={[
               <Button
                 type="text"
                 onClick={() => {
-                  const newEffect = track.fxFactory.createEffect(item.name);
-                  track.addEffect(newEffect as Tone.ToneAudioNode);
+                  setEffectViewIndex(0);
+                  track.removeEffect(i);
                 }}
                 icon={<DeleteOutlined />}
               />,

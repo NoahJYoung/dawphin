@@ -21,6 +21,7 @@
 
   .listItem.selected {
     opacity: 0.5;
+    border-right: 2px solid blue;
     cursor: initial;
   }
 }
