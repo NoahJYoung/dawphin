@@ -1,5 +1,5 @@
 import { Clip } from "./Clip";
-import { action, makeObservable, observable } from "mobx";
+import { makeAutoObservable, observable } from "mobx";
 import { AudioEngine } from "..";
 import * as Tone from "tone";
 import audioBufferToWav from "audiobuffer-to-wav";
@@ -26,32 +26,7 @@ export class Track {
     public channel: Tone.Channel = new Tone.Channel(),
     public muted = channel.mute
   ) {
-    makeObservable(this, {
-      name: observable,
-      volume: observable,
-      pan: observable,
-      clips: observable,
-      color: observable,
-      muted: observable,
-      active: observable,
-      placeholderClipStart: observable,
-      effectsChain: observable,
-      setEffectsChain: action.bound,
-      setPlaceholderClipStart: action.bound,
-      setActive: action.bound,
-      setMuted: action.bound,
-      setSolo: action.bound,
-      setVolume: action.bound,
-      setPan: action.bound,
-      addClip: action.bound,
-      setClips: action.bound,
-      setName: action.bound,
-      setColor: action.bound,
-      selected: observable,
-      select: action.bound,
-      deselect: action.bound,
-      toggleSelect: action.bound,
-    });
+    makeAutoObservable(this);
 
     this.setPan(0);
     this.channel.connect(this.splitter);
@@ -64,7 +39,7 @@ export class Track {
     return this.audioEngine.fxFactory;
   }
 
-  play() {
+  play = () => {
     if (this.active && this.audioEngine.state === "recording") {
       return;
     }
@@ -81,7 +56,7 @@ export class Track {
         clip.schedule();
       }
     });
-  }
+  };
 
   setPlaceholderClipStart = (time: Tone.TimeClass | null) => {
     this.placeholderClipStart = time;
@@ -128,21 +103,21 @@ export class Track {
     this.setActive(!this.active);
   };
 
-  stop() {
+  stop = () => {
     this.clips.forEach((clip) => clip.stop());
-  }
+  };
 
-  setName(value: string) {
+  setName = (value: string) => {
     this.name = value;
-  }
+  };
 
-  setColor(color: string) {
+  setColor = (color: string) => {
     this.color = color;
-  }
+  };
 
-  select() {
+  select = () => {
     this.selected = true;
-  }
+  };
 
   selectAllClips = () => {
     this.clips.forEach((clip) => clip.setSelect(true));
@@ -211,35 +186,35 @@ export class Track {
     }
   };
 
-  deselect() {
+  deselect = () => {
     this.selected = false;
-  }
+  };
 
-  toggleSelect() {
+  toggleSelect = () => {
     this.selected = !this.selected;
-  }
+  };
 
-  mute() {
+  mute = () => {
     this.channel.mute = true;
-  }
+  };
 
-  unmute() {
+  unmute = () => {
     this.channel.mute = false;
-  }
+  };
 
-  toggleMute() {
+  toggleMute = () => {
     this.setMuted(!this.muted);
-  }
+  };
 
-  addClip(src: string, startSeconds: number) {
+  addClip = (src: string, startSeconds: number) => {
     const buffer = new Tone.ToneAudioBuffer(src);
     const clip = new Clip(this, src, buffer, Tone.Time(startSeconds, "s"));
     this.clips.push(clip);
 
     return clip.id;
-  }
+  };
 
-  setClips(clips: Clip[]) {
+  setClips = (clips: Clip[]) => {
     this.clips = clips;
-  }
+  };
 }

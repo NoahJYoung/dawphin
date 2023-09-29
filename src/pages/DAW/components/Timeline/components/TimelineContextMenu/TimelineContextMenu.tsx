@@ -33,7 +33,7 @@ export const TimelineContextMenu = observer(
 
     const canPaste = audioEngine.clipboard.length > 0;
 
-    const hasSelectedClips = !!audioEngine.selectedClips.length;
+    const hasSelectedClips = audioEngine.selectedClips.length;
 
     const cursorPositionSamples = Tone.Time(
       Tone.getTransport().seconds
@@ -73,7 +73,7 @@ export const TimelineContextMenu = observer(
         key: "5",
         onClick: audioEngine.joinSelectedClips,
         label: "Join",
-        disabled: !hasSelectedClips,
+        // disabled: !hasSelectedClips,
         icon: <MergeCellsOutlined />,
       },
       { type: "divider" },

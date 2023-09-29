@@ -1,4 +1,4 @@
-import { action, makeObservable, observable } from "mobx";
+import { makeAutoObservable } from "mobx";
 import * as Tone from "tone";
 import { v4 as uuidv4 } from "uuid";
 import { Track } from "../Track";
@@ -21,18 +21,7 @@ export class Clip {
     public startEventId: number | null = null,
     public stopEventId: number | null = null
   ) {
-    makeObservable(this, {
-      isSelected: observable,
-      normalized: observable,
-      setNormalized: action.bound,
-      start: observable,
-      end: observable,
-      setEnd: action.bound,
-      duration: observable,
-      setDuration: action.bound,
-      setPosition: action.bound,
-      setSelect: action.bound,
-    });
+    makeAutoObservable(this);
     this.id = uuidv4();
     this.loadAudio();
     this.player.connect(this.track.channel.output);
@@ -99,11 +88,11 @@ export class Clip {
     this.schedule();
   };
 
-  setSamples(samples: number) {
+  setSamples = (samples: number) => {
     this.samples = samples;
-  }
+  };
 
-  setPosition(samples: number) {
+  setPosition = (samples: number) => {
     if (this.duration && this.end) {
       if (samples > 0) {
         this.setStart(Tone.Time(samples, "samples"));
@@ -118,35 +107,35 @@ export class Clip {
       }
       this.schedule();
     }
-  }
+  };
 
-  setStart(time: Tone.TimeClass) {
+  setStart = (time: Tone.TimeClass) => {
     this.start = time;
-  }
+  };
 
-  setEnd(time: Tone.TimeClass) {
+  setEnd = (time: Tone.TimeClass) => {
     this.end = time;
-  }
+  };
 
-  setDuration(time: Tone.TimeClass) {
+  setDuration = (time: Tone.TimeClass) => {
     this.duration = time;
-  }
+  };
 
-  setSelect(value: boolean) {
+  setSelect = (value: boolean) => {
     this.isSelected = value;
-  }
+  };
 
-  setAudioBuffer(data: any) {
+  setAudioBuffer = (data: any) => {
     this.audioBuffer = data;
-  }
+  };
 
-  deleteClip() {
+  deleteClip = () => {
     URL.revokeObjectURL(this.audioSrc);
     this.player.dispose();
     this.clearEvents();
-  }
+  };
 
-  split() {
+  split = () => {
     const transportSeconds = Tone.getTransport().seconds;
     const cursorIsOverClip =
       transportSeconds > this.start.toSeconds() &&
@@ -181,12 +170,12 @@ export class Clip {
     }
 
     return null;
-  }
+  };
 
-  static concatenateBuffers(
+  static concatenateBuffers = (
     buffers: Tone.ToneAudioBuffer[],
     gapsInSeconds: number[] = []
-  ): Tone.ToneAudioBuffer {
+  ): Tone.ToneAudioBuffer => {
     const totalLength =
       buffers.reduce((sum, buffer) => sum + buffer.length, 0) +
       gapsInSeconds.reduce(
@@ -212,5 +201,5 @@ export class Clip {
     });
 
     return new Tone.ToneAudioBuffer(concatenatedBuffer);
-  }
+  };
 }

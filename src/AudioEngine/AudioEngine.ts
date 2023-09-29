@@ -1,5 +1,5 @@
 import { Track } from "./Track";
-import { action, makeObservable, observable } from "mobx";
+import { makeAutoObservable, observable } from "mobx";
 import * as Tone from "tone";
 import { Clip } from "./Track/Clip";
 import audioBufferToWav from "audiobuffer-to-wav";
@@ -12,8 +12,8 @@ interface ClipboardItem {
 }
 
 export class AudioEngine {
-  zoomLevels: number[] = [32, 64, 128, 256, 512, 1024, 2048, 4092];
-  quantizationValues: string[] = [
+  readonly zoomLevels: number[] = [32, 64, 128, 256, 512, 1024, 2048, 4092];
+  readonly quantizationValues: string[] = [
     "16n",
     "16n",
     "8n",
@@ -23,7 +23,7 @@ export class AudioEngine {
     "1n",
     "1n",
   ];
-  clipboard: (ClipboardItem | null)[] = [];
+  clipboard: (ClipboardItem | null)[] = observable.array([]);
   zoomIndex: number = 4;
   samplesPerPixel: number = this.zoomLevels[this.zoomIndex];
   state: string = "stopped";
@@ -31,10 +31,10 @@ export class AudioEngine {
   timeSignature = Tone.getTransport().timeSignature;
   currentTrackId = 1;
   totalMeasures: number = 200;
-  selectedClips: Clip[] = [];
+  selectedClips: Clip[] = observable.array([]);
   scrollXOffsetPixels: number = 0;
   selectedTracks: Track[] = observable.array([]);
-  activeTracks: Track[] = [];
+  activeTracks: Track[] = observable.array([]);
   snap: boolean = false;
   metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
@@ -44,33 +44,9 @@ export class AudioEngine {
     public masterControl: MasterControl,
     public fxFactory: FXFactory,
     public tracks: Track[] = observable.array([]),
-    public cursorPosition: number = 0,
-    public audioCtx = Tone.getContext()
+    public cursorPosition: number = 0
   ) {
-    makeObservable(this, {
-      state: observable,
-      setState: action.bound,
-      metronomeActive: observable,
-      setMetronome: action.bound,
-      snap: observable,
-      setSnap: action.bound,
-      tracks: observable,
-      samplesPerPixel: observable,
-      bpm: observable,
-      selectedTracks: observable,
-      selectedClips: observable,
-      setBpm: action.bound,
-      timeSignature: observable,
-      setTimeSignature: action.bound,
-      setZoom: action.bound,
-      createTrack: action.bound,
-      getSelectedTracks: action.bound,
-      deleteSelectedTracks: action.bound,
-      getSelectedClips: action.bound,
-      setSelectedClips: action.bound,
-      moveSelectedClips: action.bound,
-      deleteSelectedClips: action.bound,
-    });
+    makeAutoObservable(this);
     this.metronome = new Tone.PluckSynth().toDestination();
     this.setupMetronome();
   }
@@ -93,11 +69,13 @@ export class AudioEngine {
   };
 
   toggleMetronome = () => {
-    this.setMetronome(!this.metronomeActive);
-    if (!this.metronomeActive) {
-      this.metronome!.disconnect();
-    } else {
-      this.metronome!.toDestination();
+    if (this.metronome) {
+      this.setMetronome(!this.metronomeActive);
+      if (!this.metronomeActive) {
+        this.metronome.disconnect();
+      } else {
+        this.metronome.toDestination();
+      }
     }
   };
 
@@ -105,7 +83,7 @@ export class AudioEngine {
     this.snap = value;
   };
 
-  setZoom(direction: "zoomIn" | "zoomOut") {
+  setZoom = (direction: "zoomIn" | "zoomOut") => {
     if (direction === "zoomOut") {
       this.zoomIndex < this.zoomLevels.length - 1
         ? this.zoomIndex++
@@ -114,19 +92,19 @@ export class AudioEngine {
       this.zoomIndex > 0 ? this.zoomIndex-- : (this.zoomIndex = 0);
     }
     this.samplesPerPixel = this.zoomLevels[this.zoomIndex];
-  }
+  };
 
-  setBpm(bpm: number) {
+  setBpm = (bpm: number) => {
     Tone.getTransport().bpm.value = Math.round(bpm);
     this.bpm = Math.round(Tone.getTransport().bpm.value);
-  }
+  };
 
-  setTimeSignature(value: number | number[]) {
+  setTimeSignature = (value: number | number[]) => {
     Tone.getTransport().timeSignature = value;
     this.timeSignature = Tone.getTransport().timeSignature;
-  }
+  };
 
-  createTrack() {
+  createTrack = () => {
     const newTrack = new Track(
       this,
       this.currentTrackId,
@@ -134,23 +112,23 @@ export class AudioEngine {
     );
     this.tracks.push(newTrack);
     this.currentTrackId += 1;
-  }
+  };
 
-  getSelectedTracks() {
+  getSelectedTracks = () => {
     this.selectedTracks = observable.array(
-      [...this.tracks].filter((track) => !!track.selected)
+      [...this.tracks].filter((track) => track.selected)
     );
-  }
+  };
 
   getActiveTracks = () => {
-    this.activeTracks = [...this.tracks].filter((track) => !!track.active);
+    this.activeTracks = [...this.tracks].filter((track) => track.active);
   };
 
   deselectAllTracks = () => {
     this.tracks.forEach((track) => track.deselect());
   };
 
-  deleteSelectedTracks() {
+  deleteSelectedTracks = () => {
     this.getSelectedTracks();
     this.selectedTracks.forEach((track) => track.channel.dispose());
     const selectedTrackIds = this.selectedTracks.map((track) => track.id);
@@ -158,13 +136,13 @@ export class AudioEngine {
       (track) => !selectedTrackIds.includes(track.id)
     );
     this.selectedTracks = [];
-  }
+  };
 
-  setSelectedClips(clips: Clip[]) {
+  setSelectedClips = (clips: Clip[]) => {
     this.selectedClips = observable.array(clips);
-  }
+  };
 
-  getSelectedClips() {
+  getSelectedClips = () => {
     const selectedClips: Clip[] = [];
     this.tracks.forEach((track) => {
       track.clips.forEach((clip) => {
@@ -175,9 +153,9 @@ export class AudioEngine {
     });
 
     this.setSelectedClips(selectedClips);
-  }
+  };
 
-  moveSelectedClips(samples: number, direction: "right" | "left") {
+  moveSelectedClips = (samples: number, direction: "right" | "left") => {
     this.getSelectedClips();
     if (direction === "right") {
       this.selectedClips.forEach((clip) =>
@@ -190,25 +168,25 @@ export class AudioEngine {
         );
       }
     }
-  }
+  };
 
-  quantizeSelectedClips() {
+  quantizeSelectedClips = () => {
     this.selectedClips.forEach((clip) => {
       const quantizedTime = Tone.Time(
         clip.start.quantize(this.quantizationValues[this.zoomIndex])
       ).toSamples();
       clip.setPosition(quantizedTime);
     });
-  }
+  };
 
-  deleteSelectedClips() {
+  deleteSelectedClips = () => {
     this.getSelectedClips();
     const clipIds = this.selectedClips.map((clip) => clip.id);
     this.tracks.forEach((track) => {
       track.setClips(track.clips.filter((clip) => !clipIds.includes(clip.id)));
     });
     this.selectedClips.forEach((clip) => clip.deleteClip());
-  }
+  };
 
   setSelectedTracksColor = (color: string) => {
     this.selectedTracks.forEach((track) => track.setColor(color));
@@ -242,11 +220,11 @@ export class AudioEngine {
     this.tracks.forEach((track) => track.joinSelectedClips());
   };
 
-  deselectClips() {
+  deselectClips = () => {
     this.getSelectedClips();
     this.selectedClips.forEach((clip) => clip.setSelect(false));
     this.setSelectedClips([]);
-  }
+  };
 
   copyClips = () => {
     this.clipboard = this.selectedClips.map((clip) => {
@@ -331,29 +309,39 @@ export class AudioEngine {
   };
 
   record = async () => {
-    this.startTone();
+    await this.startTone();
     if (this.state !== "recording") {
       this.getActiveTracks();
-      // Temporary logic to test mic input, replace with input logic eventually
       const mic = new Tone.UserMedia();
-      await mic.open();
+
+      try {
+        await mic.open();
+      } catch (error) {
+        console.error("Microphone not accessible:", error);
+        return;
+      }
+
       this.play();
       this.setState("recording");
-      this.activeTracks.forEach((track) => {
-        mic.connect(track.recorder);
-        track.record();
-      });
+      this.connectMicToTracks(mic);
     } else {
       this.stop();
     }
   };
 
-  play = () => {
-    this.startTone();
+  private connectMicToTracks = (mic: Tone.UserMedia) => {
+    this.activeTracks.forEach((track) => {
+      mic.connect(track.recorder);
+      track.record();
+    });
+  };
+
+  play = async () => {
     if (this.state !== "playing") {
       this.setState("playing");
+      await this.startTone();
       this.tracks.forEach((track) => track.play());
-      Tone.getTransport().start();
+      Tone.Transport.start();
     }
   };
 
@@ -373,8 +361,10 @@ export class AudioEngine {
     this.setState("paused");
   };
 
-  startTone = () => {
-    console.log("starting audio context");
-    Tone.start();
+  startTone = async () => {
+    if (Tone.getContext().state !== "running") {
+      await Tone.start();
+      console.log("started audio context");
+    }
   };
 }
