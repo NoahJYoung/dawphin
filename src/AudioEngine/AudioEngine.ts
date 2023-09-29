@@ -245,7 +245,11 @@ export class AudioEngine {
 
   pasteClips = () => {
     if (this.selectedTracks.length > 0) {
-      this.clipboard.forEach((item, i) => {
+      const sortedClipboard = [...this.clipboard]
+        .filter((item): item is ClipboardItem => item !== null)
+        .sort((a, b) => a.start.toSeconds() - b.start.toSeconds());
+
+      sortedClipboard.forEach((item, i) => {
         if (item?.data) {
           if (i > 0) {
             const adjustedStart =

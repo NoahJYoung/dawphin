@@ -74,7 +74,7 @@ export const EQVisualizer = ({
         overflow: "auto",
       }}
     >
-      <svg width={width + margin} height={height + 2 * margin}>
+      <svg width={width} height={height + 2 * margin}>
         <line
           x1={margin}
           x2={width + margin}

@@ -121,6 +121,7 @@ export class Track {
 
   selectAllClips = () => {
     this.clips.forEach((clip) => clip.setSelect(true));
+    this.audioEngine.getSelectedTracks();
   };
 
   setEffectsChain = (effects: Tone.ToneAudioNode[]) => {
