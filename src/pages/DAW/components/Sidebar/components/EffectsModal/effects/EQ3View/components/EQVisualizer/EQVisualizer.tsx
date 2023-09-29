@@ -15,7 +15,6 @@ export const EQVisualizer = ({
   highValue,
   lowFrequency,
   highFrequency,
-  Q,
 }: EQVisualizerProps) => {
   const height = 200;
   const width = 400;

@@ -1,0 +1,1 @@
+export { calculatePlaceholderClipPosition } from "./calculatePlaceholderClipPosition";

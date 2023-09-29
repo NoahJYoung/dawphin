@@ -3,6 +3,7 @@ import React, {
   type Dispatch,
   type SetStateAction,
   useRef,
+  useState,
 } from "react";
 import {
   Playhead,
@@ -35,14 +36,17 @@ export const TimelineView = observer(
     containerRef,
   }: TimelineProps) => {
     const {
-      playheadX,
-      setPlayheadX,
       gridRef,
       topbarRef,
       playheadRef,
       gridWidth,
       sectionHeight,
+      rAFId,
+      setRAFId,
     } = useTimeline(audioEngine);
+    // const [rAFId, setRAFId] = useState<number | null>(null);
+
+    const playheadXRef = useRef(0);
 
     const mouseX = useRef(0);
 
@@ -64,7 +68,7 @@ export const TimelineView = observer(
       if (shouldAutoScroll && reachedScreenEnd) {
         containerRef.current!.scrollLeft! = width * Math.round(multiplier);
       }
-      setPlayheadX(x);
+      playheadXRef.current = x;
     };
 
     const moveCursor = () => {
@@ -83,6 +87,32 @@ export const TimelineView = observer(
       }
     };
 
+    const updatePlayheadWithRAF = () => {
+      updatePlayhead();
+      if (
+        audioEngine.state === "playing" ||
+        audioEngine.state === "recording"
+      ) {
+        setRAFId(requestAnimationFrame(updatePlayheadWithRAF));
+      }
+    };
+
+    useEffect(() => {
+      if (
+        audioEngine.state === "playing" ||
+        audioEngine.state === "recording"
+      ) {
+        setRAFId(requestAnimationFrame(updatePlayheadWithRAF));
+      } else if (rAFId !== null) {
+        cancelAnimationFrame(rAFId);
+        setRAFId(null);
+      }
+    }, [audioEngine.state]);
+
+    useEffect(() => {
+      audioEngine.updateTimelineUI = updatePlayhead;
+    }, []);
+
     useEffect(() => {
       if (gridRef.current) {
         const rect = gridRef.current.getBoundingClientRect();
@@ -97,19 +127,8 @@ export const TimelineView = observer(
       audioEngine.zoomIndex,
       audioEngine.samplesPerPixel,
       containerRef.current,
+      audioEngine.cursorPosition,
     ]);
-
-    useEffect(() => {
-      const id = Tone.getTransport().scheduleRepeat(() => {
-        updatePlayhead();
-      }, 0.01);
-
-      audioEngine.updateTimelineUI = updatePlayhead;
-
-      return () => {
-        Tone.getTransport().clear(id);
-      };
-    }, []);
 
     return (
       <TimelineContextMenu audioEngine={audioEngine}>
@@ -179,7 +198,7 @@ export const TimelineView = observer(
               playheadRef={playheadRef}
               moveCursor={moveCursor}
               width={gridWidth}
-              left={playheadX}
+              left={playheadXRef.current}
               gridHeight={sectionHeight}
             />
           </div>

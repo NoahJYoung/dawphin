@@ -10,7 +10,8 @@ import {
 import * as Tone from "tone";
 
 export const useTimeline = (audioEngine: AudioEngine) => {
-  const [playheadX, setPlayheadX] = useState(0);
+  const [rAFId, setRAFId] = useState<number | null>(null);
+
   const gridRef = useRef<SVGSVGElement>(null);
   const topbarRef = useRef<SVGSVGElement>(null);
   const playheadRef = useRef<SVGSVGElement>(null);
@@ -38,9 +39,9 @@ export const useTimeline = (audioEngine: AudioEngine) => {
     gridRef,
     topbarRef,
     playheadRef,
-    playheadX,
     gridWidth,
-    setPlayheadX,
     sectionHeight,
+    rAFId,
+    setRAFId,
   };
 };

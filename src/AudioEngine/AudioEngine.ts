@@ -105,6 +105,7 @@ export class AudioEngine {
   };
 
   createTrack = () => {
+    this.startTone();
     const newTrack = new Track(
       this,
       this.currentTrackId,
@@ -277,9 +278,11 @@ export class AudioEngine {
         this.pause();
         Tone.getTransport().pause();
         transport.ticks = time.toTicks();
+        this.cursorPosition = transport.ticks;
         this.play();
       } else {
         transport.ticks = time.toTicks();
+        this.cursorPosition = transport.ticks;
       }
       if (this.updateTimelineUI) {
         this.updateTimelineUI();

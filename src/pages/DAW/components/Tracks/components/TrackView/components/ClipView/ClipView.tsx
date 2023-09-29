@@ -6,6 +6,7 @@ import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import WaveSurfer from "wavesurfer.js";
 import * as Tone from "tone";
+import { calculateClipPosition } from "./helpers";
 
 interface ClipViewProps {
   clip: Clip;
@@ -121,18 +122,6 @@ export const ClipView = observer(
       wavesurfer?.zoom(pixelsPerSecond);
     }, [audioEngine.samplesPerPixel]);
 
-    const calculatePosition = () => {
-      const left = Math.round(
-        clip.start.toSamples() / audioEngine.samplesPerPixel
-      );
-      const top =
-        audioEngine.tracks.findIndex((track) => track.id === clip.track.id) *
-          (CLIP_HEIGHT + CLIP_TOP_PADDING) +
-        CLIP_TOP_PADDING / 2;
-
-      return { top, left };
-    };
-
     useEffect(() => {
       const container = document.querySelector(
         `#wave-container${clip.id} > div`
@@ -153,7 +142,12 @@ export const ClipView = observer(
     const clipWidth =
       (clip?.duration?.toSamples() || 1) / audioEngine.samplesPerPixel;
 
-    const { top, left } = calculatePosition();
+    const { top, left } = calculateClipPosition(
+      clip.track,
+      clip,
+      CLIP_HEIGHT,
+      CLIP_TOP_PADDING
+    );
 
     const backgroundAlpha = clip.isSelected ? 0.5 : 0.2;
 

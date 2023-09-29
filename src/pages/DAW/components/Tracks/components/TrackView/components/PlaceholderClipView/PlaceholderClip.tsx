@@ -1,9 +1,10 @@
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Track } from "src/AudioEngine/Track";
 import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import * as Tone from "tone";
+import { calculatePlaceholderClipPosition } from "./helpers";
 
 interface PlaceholderClipProps {
   track: Track;
@@ -12,41 +13,43 @@ interface PlaceholderClipProps {
 export const PlaceholderClip = observer(({ track }: PlaceholderClipProps) => {
   const audioEngine = track.audioEngine;
   const [clipWidth, setClipWidth] = useState(1);
+  const rAFId = useRef<number | null>(null);
 
   if (!track.placeholderClipStart) {
     return null;
   }
 
-  const calculatePosition = () => {
-    const left = Math.round(
-      track.placeholderClipStart!.toSamples() / audioEngine.samplesPerPixel
-    );
-    const top =
-      audioEngine.tracks.findIndex(
-        (audioEngineTrack) => audioEngineTrack.id === track.id
-      ) *
-        (CLIP_HEIGHT + CLIP_TOP_PADDING) +
-      CLIP_TOP_PADDING / 2;
-
-    return { top, left };
-  };
-
-  const { top, left } = calculatePosition();
+  const { top, left } = calculatePlaceholderClipPosition(
+    track,
+    CLIP_HEIGHT,
+    CLIP_TOP_PADDING
+  );
 
   const clipStartInPixels =
     track.placeholderClipStart!.toSamples() / audioEngine.samplesPerPixel;
 
-  useEffect(() => {
+  const updateWidthWithRAF = () => {
     if (audioEngine.state === "recording") {
-      Tone.getTransport().scheduleRepeat(() => {
-        const transportPositionInPixels =
-          Tone.Time(Tone.getTransport().seconds).toSamples() /
-          audioEngine.samplesPerPixel;
-        const newWidth = transportPositionInPixels - clipStartInPixels;
-        setClipWidth(newWidth);
-      }, 0.01);
+      const transportPositionInPixels =
+        Tone.Time(Tone.getTransport().seconds).toSamples() /
+        audioEngine.samplesPerPixel;
+      const newWidth = transportPositionInPixels - clipStartInPixels;
+      setClipWidth(Math.max(newWidth, 1));
+      rAFId.current = requestAnimationFrame(updateWidthWithRAF);
     }
-  }, [audioEngine.state]);
+  };
+
+  useEffect(() => {
+    if (audioEngine.state === "recording" && track.active) {
+      rAFId.current = requestAnimationFrame(updateWidthWithRAF);
+    }
+
+    return () => {
+      if (rAFId.current) {
+        cancelAnimationFrame(rAFId.current);
+      }
+    };
+  }, [audioEngine.state, track.active]);
 
   return (
     <div
