@@ -141,9 +141,16 @@ export class Track {
   };
 
   removeEffect = (index: number) => {
+    this.channel.disconnect(this.effectsChain[0]);
+    this.effectsChain.forEach((effect, i) => {
+      if (i < this.effectsChain.length) {
+        effect.disconnect(this.effectsChain[i + 1]);
+      }
+    });
     const filteredFX = [...this.effectsChain];
     filteredFX.splice(index, 1);
     this.setEffectsChain(filteredFX);
+    this.channel.chain(...this.effectsChain, Tone.getDestination());
   };
 
   joinSelectedClips = () => {
@@ -182,8 +189,6 @@ export class Track {
       });
 
       this.addClip(src, selectedClips[0].start.toSamples());
-      // const newClip = this.clips.find((clip) => clip.id === clipId);
-      // newClip && newClip.setSelect(true);
     }
   };
 

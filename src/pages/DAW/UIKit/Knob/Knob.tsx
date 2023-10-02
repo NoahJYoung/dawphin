@@ -11,17 +11,8 @@ interface KnobProps {
   color?: string;
   double?: boolean;
   suffix?: string;
+  step?: number;
 }
-
-const convertRange = (
-  oldMin: number,
-  oldMax: number,
-  newMin: number,
-  newMax: number,
-  oldValue: number
-) => {
-  return ((oldValue - oldMin) * (newMax - newMin)) / (oldMax - oldMin) + newMin;
-};
 
 export const Knob = ({
   value,
@@ -33,23 +24,33 @@ export const Knob = ({
   color = "blue",
   double = false,
   suffix,
+  step = 1,
 }: KnobProps) => {
   const startAngle = (360 - degrees) / 2;
   const endAngle = startAngle + degrees;
   const margin = size * 0.1;
 
+  const convertRange = (
+    oldMin: number,
+    oldMax: number,
+    newMin: number,
+    newMax: number,
+    oldValue: number
+  ) => {
+    return (
+      ((oldValue - oldMin) * (newMax - newMin)) / (oldMax - oldMin) + newMin
+    );
+  };
+
   const [deg, setDeg] = useState(
-    Math.floor(convertRange(min, max, startAngle, endAngle, value))
+    convertRange(min, max, startAngle, endAngle, value)
   );
 
   useEffect(() => {
-    if (onChange) {
-      const newValue = Math.floor(
-        ((deg - startAngle) * (max - min)) / (endAngle - startAngle) + min
-      );
-      onChange(newValue);
-    }
-  }, [deg, min, max, startAngle, endAngle, onChange]);
+    const newValue = convertRange(startAngle, endAngle, min, max, deg);
+
+    onChange(Math.round(newValue / step) * step);
+  }, [deg, min, max, startAngle, endAngle, onChange, step]);
 
   const startDrag = (e: React.MouseEvent | React.TouchEvent) => {
     if (e.type !== "touchMove") {
@@ -72,7 +73,8 @@ export const Knob = ({
         currentY = (e as MouseEvent).clientY;
       }
 
-      const currentDeg = getDeg(currentX, currentY, pts);
+      const currentDeg =
+        Math.round(getDeg(currentX, currentY, pts) / step) * step;
       setDeg(currentDeg);
     };
 
@@ -165,7 +167,7 @@ export const Knob = ({
       </svg>
 
       <p style={{ position: "absolute", margin: 0, fontSize: "0.65rem" }}>
-        {`${Math.round(value)} ${suffix ?? ""}`}
+        {`${value} ${suffix ?? ""}`}
       </p>
     </div>
   );

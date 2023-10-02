@@ -15,6 +15,7 @@ export const EQVisualizer = ({
   highValue,
   lowFrequency,
   highFrequency,
+  Q,
 }: EQVisualizerProps) => {
   const height = 200;
   const width = 400;
@@ -48,14 +49,17 @@ export const EQVisualizer = ({
   ) => {
     const left = freqToX(freq1);
     const right = freqToX(freq2);
-    const center = (left + right) / 2;
     const top = height + height / 2 - (calculateHeight(value) - margin / 2) * 2;
+
+    const controlPointDistance = (right - left) / (2 * Q); // Adjust control points based on Q
+    const controlPointX = left + controlPointDistance;
+    const controlPointY = top;
 
     return (
       <path
-        d={`M ${left} ${height / 2 + margin} Q ${center} ${top} ${right} ${
+        d={`M ${left} ${
           height / 2 + margin
-        }`}
+        } Q ${controlPointX} ${controlPointY} ${right} ${height / 2 + margin}`}
         fill={color}
         fillOpacity="0.1"
         stroke={color}

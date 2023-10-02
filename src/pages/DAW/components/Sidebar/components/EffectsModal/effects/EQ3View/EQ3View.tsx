@@ -17,6 +17,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
 
   const [lowFrequency, setLowFrequency] = useState(EQ3.lowFrequency.value);
   const [highFrequency, setHighFrequency] = useState(EQ3.highFrequency.value);
+  const [QValue, setQValue] = useState(EQ3.Q.value);
 
   return (
     <div className={styles.EQ3Container}>
@@ -27,7 +28,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
         highValue={highValue}
         lowFrequency={Number(lowFrequency)}
         highFrequency={Number(highFrequency)}
-        Q={1}
+        Q={QValue}
       />
 
       <div className={styles.knobsContainer}>

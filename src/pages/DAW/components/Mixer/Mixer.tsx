@@ -21,7 +21,12 @@ export const Mixer = observer(({ audioEngine }: MixerProps) => {
       }}
     >
       {audioEngine.tracks.map((track, i) => (
-        <ChannelStrip key={track.id} trackNumber={i + 1} track={track} />
+        <ChannelStrip
+          audioEngine={audioEngine}
+          key={track.id}
+          trackNumber={i + 1}
+          track={track}
+        />
       ))}
     </div>
   );

@@ -56,7 +56,15 @@ export const TrackPanelMenu = ({ track }: TrackPanelMenuProps) => {
 
   return (
     <Dropdown dropdownRender={() => menu} trigger={["click"]}>
-      <Button icon={<EllipsisOutlined />} type="text" />
+      <Button
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        icon={<EllipsisOutlined />}
+        type="text"
+      />
     </Dropdown>
   );
 };

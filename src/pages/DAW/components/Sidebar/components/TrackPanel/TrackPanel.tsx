@@ -155,35 +155,7 @@ export const TrackPanel = observer(
               alignItems: "center",
             }}
           >
-            <div
-              style={{
-                display: expanded ? "flex" : "none",
-                gap: "0.5rem",
-                alignItems: "center",
-              }}
-            >
-              <TrackPanelMenu track={track} />
-              {/* <>
-                  <input
-                    value={""}
-                    type="file"
-                    id={`fileInput${track.id}`}
-                    style={{ display: "none" }}
-                    accept="audio/*"
-                    onChange={handleFileChange}
-                  />
-                  <label
-                    htmlFor={`fileInput${track.id}`}
-                    className={`${styles.folderButton} custom-file-label`}
-                  >
-                    <EllipsisOutlined
-                      style={{ color: "#aaa", padding: "0.25rem" }}
-                    />
-                  </label>
-                </> */}
-              {/* </TrackPanelMenu> */}
-            </div>
-
+            <TrackPanelMenu track={track} />
             <div
               style={{
                 display: expanded ? "flex" : "none",

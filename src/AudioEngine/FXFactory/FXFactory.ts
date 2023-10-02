@@ -10,6 +10,7 @@ export class FXFactory {
   effectId: number = 0;
   public effects: EffectType[] = [
     { name: "EQ3", factory: () => new Tone.EQ3() },
+    { name: "Compressor", factory: () => new Tone.Compressor() },
     { name: "Reverb", factory: () => new Tone.Reverb() },
   ];
 

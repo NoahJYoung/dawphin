@@ -2,19 +2,18 @@ import { useState } from "react";
 import { Modal } from "antd";
 import { Track } from "src/AudioEngine/Track";
 import * as Tone from "tone";
-import { EQ3View } from "./effects";
+import { CompressorView, EQ3View } from "./effects";
 import { MasterControl } from "src/AudioEngine/MasterControl";
 import { ListBoxes } from "./components/ListBoxes";
 import { v4 as uuidv4 } from "uuid";
+import { AudioEngine } from "src/AudioEngine";
+
 import styles from "./EffectsModal.module.scss";
 
-interface EffectsModalProps {
-  track: Track | MasterControl;
-  open: boolean;
-  onCancel: () => void;
-}
-
-const getEffectInstances = (track: Track | MasterControl) => {
+const getEffectInstances = (
+  track: Track | MasterControl,
+  audioEngine: AudioEngine
+) => {
   if (track.effectsChain.length) {
     return track.effectsChain.map((effect, i) => {
       if (effect.name === "EQ3") {
@@ -24,12 +23,33 @@ const getEffectInstances = (track: Track | MasterControl) => {
       if (effect.name === "Reverb") {
         return <div key={uuidv4()}>reverbView</div>;
       }
+
+      if (effect.name === "Compressor") {
+        return (
+          <CompressorView
+            audioEngine={audioEngine}
+            compressor={effect as Tone.Compressor}
+          />
+        );
+      }
     });
   }
   return [];
 };
 
-export const EffectsModal = ({ track, open, onCancel }: EffectsModalProps) => {
+interface EffectsModalProps {
+  track: Track | MasterControl;
+  open: boolean;
+  onCancel: () => void;
+  audioEngine: AudioEngine;
+}
+
+export const EffectsModal = ({
+  track,
+  open,
+  onCancel,
+  audioEngine,
+}: EffectsModalProps) => {
   const [effectViewIndex, setEffectViewIndex] = useState<number>(0);
 
   return (
@@ -51,7 +71,7 @@ export const EffectsModal = ({ track, open, onCancel }: EffectsModalProps) => {
           track={track}
         />
         <div className={styles.effectViewContainer}>
-          {getEffectInstances(track)[effectViewIndex]}
+          {getEffectInstances(track, audioEngine)[effectViewIndex]}
         </div>
       </div>
     </Modal>
