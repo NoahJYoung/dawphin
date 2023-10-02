@@ -119,6 +119,7 @@ export class AudioEngine {
     this.selectedTracks = observable.array(
       [...this.tracks].filter((track) => track.selected)
     );
+    return this.selectedTracks;
   };
 
   getActiveTracks = () => {
@@ -315,6 +316,44 @@ export class AudioEngine {
     }
   };
 
+  muteSelectedTracks = () => {
+    this.getSelectedTracks();
+    this.selectedTracks.forEach((track) => track.setMuted(true));
+  };
+
+  unmuteSelectedTracks = () => {
+    this.getSelectedTracks();
+    this.selectedTracks.forEach((track) => track.setMuted(false));
+  };
+
+  soloSelectedTracks = () => {
+    this.getSelectedTracks();
+    this.selectedTracks.forEach((track) => track.setSolo(true));
+  };
+
+  unsoloSelectedTracks = () => {
+    this.getSelectedTracks();
+    this.selectedTracks.forEach((track) => track.setSolo(false));
+  };
+
+  muteUnsoloedTracks = () => {
+    const soloedTracks = [...this.tracks].filter((track) => track.solo);
+    if (soloedTracks.length > 0) {
+      this.tracks.forEach((track) => {
+        if (!track.solo) {
+          track.setMuted(true);
+        }
+      });
+    }
+  };
+
+  private connectMicToTracks = (mic: Tone.UserMedia) => {
+    this.activeTracks.forEach((track) => {
+      mic.connect(track.recorder);
+      track.record();
+    });
+  };
+
   record = async () => {
     await this.startTone();
     if (this.state !== "recording") {
@@ -334,13 +373,6 @@ export class AudioEngine {
     } else {
       this.stop();
     }
-  };
-
-  private connectMicToTracks = (mic: Tone.UserMedia) => {
-    this.activeTracks.forEach((track) => {
-      mic.connect(track.recorder);
-      track.record();
-    });
   };
 
   play = async () => {
@@ -371,7 +403,6 @@ export class AudioEngine {
   startTone = async () => {
     if (Tone.getContext().state !== "running") {
       await Tone.start();
-      console.log("started audio context");
     }
   };
 }

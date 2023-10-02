@@ -92,6 +92,13 @@ export class Track {
   setSolo = (state: boolean) => {
     this.channel.solo = state;
     this.solo = this.channel.solo;
+    if (this.solo && this.muted) {
+      this.setMuted(false);
+    }
+  };
+
+  toggleSolo = () => {
+    this.setSolo(!this.solo);
   };
 
   setActive = (newState: boolean) => {

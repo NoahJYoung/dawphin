@@ -101,7 +101,6 @@ export const CompressorMeters = observer(
         }
 
         const compression = compressor.reduction;
-        console.log(compression);
         const outputLevel = outputMeter.getValue() as number;
 
         drawCompressionMeter(inputCanvasRef, compression);

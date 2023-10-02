@@ -35,6 +35,23 @@ export const ChannelStrip = observer(
       track.select();
     };
 
+    const handleMute = () => {
+      if (track.muted) {
+        audioEngine.unmuteSelectedTracks();
+      } else {
+        audioEngine.muteSelectedTracks();
+      }
+    };
+
+    const handleSolo = () => {
+      if (track.solo) {
+        audioEngine.unsoloSelectedTracks();
+      } else {
+        audioEngine.soloSelectedTracks();
+        audioEngine.muteUnsoloedTracks();
+      }
+    };
+
     const activeOuterRgb = "rgb(200, 0, 0)";
     const inactiveOuterRgb = "rgb(150, 0, 0)";
     const activeInnerRgb = "rgb(250, 100, 100)";
@@ -185,9 +202,7 @@ export const ChannelStrip = observer(
               style={{ display: "flex", flexDirection: "column", gap: "5px" }}
             >
               <Button
-                onClick={() => {
-                  track.toggleMute();
-                }}
+                onClick={handleMute}
                 type="text"
                 style={{
                   width: "1.5rem",
@@ -207,7 +222,7 @@ export const ChannelStrip = observer(
                 M
               </Button>
               <Button
-                onClick={() => track.setSolo(!track.solo)}
+                onClick={handleSolo}
                 type="text"
                 style={{
                   width: "1.5rem",

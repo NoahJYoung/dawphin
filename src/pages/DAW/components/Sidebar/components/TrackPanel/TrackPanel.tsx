@@ -1,15 +1,13 @@
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Button, ColorPicker } from "antd";
-import { FolderOpenOutlined, EllipsisOutlined } from "@ant-design/icons";
 import { Input } from "antd";
 import type { AudioEngine } from "src/AudioEngine";
 import { CLIP_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "src/pages/DAW/constants";
 import { RecordIcon } from "src/pages/DAW/icons";
-import * as Tone from "tone";
+import { TrackPanelMenu } from "./components";
 
 import styles from "./TrackPanel.module.scss";
-import { TrackPanelMenu } from "./components";
 
 export const TrackPanel = observer(
   ({
@@ -22,7 +20,22 @@ export const TrackPanel = observer(
     audioEngine: AudioEngine;
     expanded: boolean;
   }) => {
-    const transport = Tone.getTransport();
+    const handleMute = () => {
+      if (track.muted) {
+        audioEngine.unmuteSelectedTracks();
+      } else {
+        audioEngine.muteSelectedTracks();
+      }
+    };
+
+    const handleSolo = () => {
+      if (track.solo) {
+        audioEngine.unsoloSelectedTracks();
+      } else {
+        audioEngine.soloSelectedTracks();
+        audioEngine.muteUnsoloedTracks();
+      }
+    };
 
     const handleClick = (e: React.MouseEvent) => {
       if (!e.ctrlKey) {
@@ -164,9 +177,7 @@ export const TrackPanel = observer(
               }}
             >
               <Button
-                onClick={() => {
-                  track.toggleMute();
-                }}
+                onClick={handleMute}
                 type="text"
                 style={{
                   width: "1.5rem",
@@ -185,7 +196,7 @@ export const TrackPanel = observer(
                 M
               </Button>
               <Button
-                onClick={() => track.setSolo(!track.solo)}
+                onClick={handleSolo}
                 type="text"
                 style={{
                   width: "1.5rem",
