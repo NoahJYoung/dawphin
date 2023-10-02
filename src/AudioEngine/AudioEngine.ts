@@ -29,7 +29,7 @@ export class AudioEngine {
   state: string = "stopped";
   bpm: number = Tone.getTransport().bpm.value;
   timeSignature = Tone.getTransport().timeSignature;
-  currentTrackId = 1;
+  private currentTrackId = 1;
   totalMeasures: number = 200;
   selectedClips: Clip[] = observable.array([]);
   scrollXOffsetPixels: number = 0;
@@ -39,12 +39,12 @@ export class AudioEngine {
   metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
   updateTimelineUI: (() => void) | null = null;
+  public cursorPosition: number = 0;
 
   constructor(
     public masterControl: MasterControl,
     public fxFactory: FXFactory,
-    public tracks: Track[] = observable.array([]),
-    public cursorPosition: number = 0
+    public tracks: Track[] = observable.array([])
   ) {
     makeAutoObservable(this);
     this.metronome = new Tone.PluckSynth().toDestination();

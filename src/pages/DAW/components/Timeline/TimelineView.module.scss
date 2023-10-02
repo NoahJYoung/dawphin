@@ -1,7 +1,32 @@
+@import "src/styles/variables.scss";
+
 .timelineView {
   position: relative;
   padding-right: 1px;
   overflow: auto;
+
+  .gridContainer {
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 5px;
+  }
+
+  .topBarContainer {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    background: $surface-0;
+    border-bottom: 1px solid #444;
+    border-top: 1px solid #444;
+  }
+
+  .playheadContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
 }
 
 @media (max-width: 480px) {

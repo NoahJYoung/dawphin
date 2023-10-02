@@ -181,9 +181,9 @@ export class Track {
         this.setClips(clipsCopy);
       });
 
-      const clipId = this.addClip(src, selectedClips[0].start.toSamples());
-      const newClip = this.clips.find((clip) => clip.id === clipId);
-      newClip && newClip.setSelect(true);
+      this.addClip(src, selectedClips[0].start.toSamples());
+      // const newClip = this.clips.find((clip) => clip.id === clipId);
+      // newClip && newClip.setSelect(true);
     }
   };
 

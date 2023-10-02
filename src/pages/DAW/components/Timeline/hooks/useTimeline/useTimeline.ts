@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { AudioEngine } from "src/AudioEngine";
 import { getTimeSignature } from "../../helpers";
 import {
@@ -9,12 +9,71 @@ import {
 } from "src/pages/DAW/constants";
 import * as Tone from "tone";
 
-export const useTimeline = (audioEngine: AudioEngine) => {
+export const useTimeline = (
+  audioEngine: AudioEngine,
+  containerRef: React.MutableRefObject<HTMLDivElement | null>,
+  trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>,
+  setTimelineRect: (rect: DOMRect) => void
+) => {
   const [rAFId, setRAFId] = useState<number | null>(null);
 
   const gridRef = useRef<SVGSVGElement>(null);
   const topbarRef = useRef<SVGSVGElement>(null);
   const playheadRef = useRef<SVGSVGElement>(null);
+  const playheadXRef = useRef(0);
+
+  const updatePlayhead = () => {
+    const x = Math.round(
+      (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
+        audioEngine.samplesPerPixel
+    );
+    const width = containerRef.current?.clientWidth || 0;
+    const multiplier = x / width;
+    const reachedScreenEnd = x % width >= width - 100;
+    const shouldAutoScroll =
+      audioEngine.state !== "stopped" && audioEngine.state !== "paused";
+    if (shouldAutoScroll && reachedScreenEnd) {
+      containerRef.current!.scrollLeft! = width * Math.round(multiplier);
+    }
+    playheadXRef.current = x;
+  };
+
+  const updatePlayheadWithRAF = () => {
+    updatePlayhead();
+    if (audioEngine.state === "playing" || audioEngine.state === "recording") {
+      setRAFId(requestAnimationFrame(updatePlayheadWithRAF));
+    }
+  };
+
+  useEffect(() => {
+    if (audioEngine.state === "playing" || audioEngine.state === "recording") {
+      setRAFId(requestAnimationFrame(updatePlayheadWithRAF));
+    } else if (rAFId !== null) {
+      cancelAnimationFrame(rAFId);
+      setRAFId(null);
+    }
+  }, [audioEngine.state]);
+
+  useEffect(() => {
+    audioEngine.updateTimelineUI = updatePlayhead;
+  }, []);
+
+  useEffect(() => {
+    if (gridRef.current) {
+      const rect = gridRef.current.getBoundingClientRect();
+      setTimelineRect(rect);
+      updatePlayhead();
+    }
+  }, [
+    audioEngine.timeSignature,
+    playheadRef.current,
+    audioEngine.bpm,
+    audioEngine.tracks.length,
+    audioEngine.zoomIndex,
+    audioEngine.samplesPerPixel,
+    containerRef.current,
+    audioEngine.cursorPosition,
+  ]);
 
   const gridWidth = useMemo(() => {
     const beatsPerSecond = Tone.getTransport().bpm.value / 60;
@@ -25,6 +84,36 @@ export const useTimeline = (audioEngine: AudioEngine) => {
 
     return widthInPixels;
   }, [audioEngine.samplesPerPixel, audioEngine.totalMeasures, audioEngine.bpm]);
+
+  const mouseX = useRef(0);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const divRect = e.currentTarget.getBoundingClientRect();
+    mouseX.current = e.clientX - divRect.left;
+  };
+
+  const handleClick = () => {
+    if (gridRef.current) {
+      const pixels = mouseX.current + (containerRef?.current?.scrollLeft || 0);
+      const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
+      if (audioEngine.snap) {
+        const quantizedTime = Tone.Time(
+          time.quantize(audioEngine.quantizationValues[audioEngine.zoomIndex])
+        );
+        audioEngine.setPosition(quantizedTime);
+      } else {
+        audioEngine.setPosition(time);
+      }
+    }
+  };
+
+  const handleScroll = (e: React.UIEvent) => {
+    const target = e.target as HTMLDivElement;
+    audioEngine.scrollXOffsetPixels = target.scrollLeft;
+    if (trackPanelsRef?.current) {
+      trackPanelsRef.current.scrollTop = target.scrollTop;
+    }
+  };
 
   const sectionHeight = useMemo(() => {
     const calculatedHeight =
@@ -41,7 +130,9 @@ export const useTimeline = (audioEngine: AudioEngine) => {
     playheadRef,
     gridWidth,
     sectionHeight,
-    rAFId,
-    setRAFId,
+    playheadXRef,
+    handleMouseMove,
+    handleClick,
+    handleScroll,
   };
 };

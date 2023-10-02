@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  type Dispatch,
-  type SetStateAction,
-  useRef,
-  useState,
-} from "react";
+import React, { type Dispatch, type SetStateAction } from "react";
 import {
   Playhead,
   TimelineContextMenu,
@@ -13,7 +7,6 @@ import {
 } from "./components";
 import type { AudioEngine } from "src/AudioEngine";
 import { observer } from "mobx-react-lite";
-import * as Tone from "tone";
 import { useTimeline } from "./hooks";
 import { CLIP_HEIGHT, TOPBAR_HEIGHT } from "../../constants";
 
@@ -41,118 +34,22 @@ export const TimelineView = observer(
       playheadRef,
       gridWidth,
       sectionHeight,
-      rAFId,
-      setRAFId,
-    } = useTimeline(audioEngine);
-    // const [rAFId, setRAFId] = useState<number | null>(null);
-
-    const playheadXRef = useRef(0);
-
-    const mouseX = useRef(0);
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-      const divRect = e.currentTarget.getBoundingClientRect();
-      mouseX.current = e.clientX - divRect.left;
-    };
-
-    const updatePlayhead = () => {
-      const x = Math.round(
-        (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
-          audioEngine.samplesPerPixel
-      );
-      const width = containerRef.current?.clientWidth || 0;
-      const multiplier = x / width;
-      const reachedScreenEnd = x % width >= width - 100;
-      const shouldAutoScroll =
-        audioEngine.state !== "stopped" && audioEngine.state !== "paused";
-      if (shouldAutoScroll && reachedScreenEnd) {
-        containerRef.current!.scrollLeft! = width * Math.round(multiplier);
-      }
-      playheadXRef.current = x;
-    };
-
-    const moveCursor = () => {
-      if (gridRef.current) {
-        const pixels =
-          mouseX.current + (containerRef?.current?.scrollLeft || 0);
-        const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
-        if (audioEngine.snap) {
-          const quantizedTime = Tone.Time(
-            time.quantize(audioEngine.quantizationValues[audioEngine.zoomIndex])
-          );
-          audioEngine.setPosition(quantizedTime);
-        } else {
-          audioEngine.setPosition(time);
-        }
-      }
-    };
-
-    const updatePlayheadWithRAF = () => {
-      updatePlayhead();
-      if (
-        audioEngine.state === "playing" ||
-        audioEngine.state === "recording"
-      ) {
-        setRAFId(requestAnimationFrame(updatePlayheadWithRAF));
-      }
-    };
-
-    useEffect(() => {
-      if (
-        audioEngine.state === "playing" ||
-        audioEngine.state === "recording"
-      ) {
-        setRAFId(requestAnimationFrame(updatePlayheadWithRAF));
-      } else if (rAFId !== null) {
-        cancelAnimationFrame(rAFId);
-        setRAFId(null);
-      }
-    }, [audioEngine.state]);
-
-    useEffect(() => {
-      audioEngine.updateTimelineUI = updatePlayhead;
-    }, []);
-
-    useEffect(() => {
-      if (gridRef.current) {
-        const rect = gridRef.current.getBoundingClientRect();
-        setTimelineRect(rect);
-        updatePlayhead();
-      }
-    }, [
-      audioEngine.timeSignature,
-      playheadRef.current,
-      audioEngine.bpm,
-      audioEngine.tracks.length,
-      audioEngine.zoomIndex,
-      audioEngine.samplesPerPixel,
-      containerRef.current,
-      audioEngine.cursorPosition,
-    ]);
+      playheadXRef,
+      handleMouseMove,
+      handleClick,
+      handleScroll,
+    } = useTimeline(audioEngine, containerRef, trackPanelsRef, setTimelineRect);
 
     return (
       <TimelineContextMenu audioEngine={audioEngine}>
         <div
           className={`${styles.timelineView} styled-scrollbar`}
           ref={containerRef}
-          onClick={moveCursor}
+          onClick={handleClick}
           onMouseMove={handleMouseMove}
-          onScroll={(e) => {
-            const target = e.target as HTMLDivElement;
-            audioEngine.scrollXOffsetPixels = target.scrollLeft;
-            if (trackPanelsRef?.current) {
-              trackPanelsRef.current.scrollTop = target.scrollTop;
-            }
-          }}
+          onScroll={handleScroll}
         >
-          <div
-            onClick={moveCursor}
-            style={{
-              zIndex: -1,
-              pointerEvents: "none",
-              borderRadius: "5px",
-            }}
-          >
+          <div className={styles.gridContainer} onClick={handleClick}>
             <TimelineGrid
               audioEngine={audioEngine}
               gridRef={gridRef}
@@ -163,15 +60,10 @@ export const TimelineView = observer(
             />
           </div>
           <div
+            className={styles.topBarContainer}
             style={{
-              position: "sticky",
-              top: 0,
-              zIndex: 4,
               height: TOPBAR_HEIGHT,
               width: gridWidth,
-              background: "#191919",
-              borderBottom: "1px solid #444",
-              borderTop: "1px solid #444",
             }}
           >
             <TopBar
@@ -183,20 +75,16 @@ export const TimelineView = observer(
           </div>
           <div>{children}</div>
           <div
-            onClick={moveCursor}
+            className={styles.playheadContainer}
+            onClick={handleClick}
             style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
               width: gridWidth,
               height: sectionHeight,
-              pointerEvents: "none",
-              zIndex: 5,
             }}
           >
             <Playhead
               playheadRef={playheadRef}
-              moveCursor={moveCursor}
+              onClick={handleClick}
               width={gridWidth}
               left={playheadXRef.current}
               gridHeight={sectionHeight}

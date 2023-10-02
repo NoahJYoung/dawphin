@@ -2,20 +2,20 @@ interface PlayheadProps {
   left: number;
   width: number;
   gridHeight: number;
-  moveCursor: (e: React.MouseEvent) => void;
+  onClick: (e: React.MouseEvent) => void;
   playheadRef: React.LegacyRef<SVGSVGElement>;
 }
 
 export const Playhead = ({
   left,
   width,
-  moveCursor,
+  onClick,
   gridHeight,
   playheadRef,
 }: PlayheadProps) => (
   <svg
     ref={playheadRef}
-    onClick={moveCursor}
+    onClick={onClick}
     style={{
       zIndex: 5,
       position: "absolute",
