@@ -11,7 +11,6 @@ import {
 } from "@ant-design/icons";
 import type { AudioEngine } from "src/AudioEngine";
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
 import * as Tone from "tone";
 
 interface TimelineContextMenuProps {
@@ -21,19 +20,19 @@ interface TimelineContextMenuProps {
 
 export const TimelineContextMenu = observer(
   ({ children, audioEngine }: TimelineContextMenuProps) => {
-    const canCopy = useMemo(() => {
-      if (audioEngine.selectedClips.length > 0) {
-        return audioEngine.selectedClips.every(
-          (selectedClip) =>
-            selectedClip.track.id === audioEngine.selectedClips[0].track.id
-        );
-      }
-      return false;
-    }, [audioEngine.selectedClips.length]);
+    // const canCopy = useMemo(() => {
+    //   if (audioEngine.selectedClips.length > 0) {
+    //     return audioEngine.selectedClips.every(
+    //       (selectedClip) =>
+    //         selectedClip.track.id === audioEngine.selectedClips[0].track.id
+    //     );
+    //   }
+    //   return false;
+    // }, [audioEngine.selectedClips.length]);
 
-    const canPaste = audioEngine.clipboard.length > 0;
+    // const canPaste = audioEngine.clipboard.length > 0;
 
-    const hasSelectedClips = audioEngine.selectedClips.length;
+    // const hasSelectedClips = audioEngine.selectedClips.length;
 
     const cursorPositionSamples = Tone.Time(
       Tone.getTransport().seconds

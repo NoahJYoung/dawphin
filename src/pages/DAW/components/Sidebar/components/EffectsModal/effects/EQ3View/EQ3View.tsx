@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Knob } from "src/pages/DAW/UIKit";
 import * as Tone from "tone";
 

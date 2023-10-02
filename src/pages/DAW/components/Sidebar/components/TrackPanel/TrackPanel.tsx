@@ -1,14 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Button, ColorPicker } from "antd";
-import { FolderOpenOutlined, EllipsisOutlined } from "@ant-design/icons";
 import { Input } from "antd";
 import type { AudioEngine } from "src/AudioEngine";
 import { CLIP_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "src/pages/DAW/constants";
 import { RecordIcon } from "src/pages/DAW/icons";
-import * as Tone from "tone";
 
-import styles from "./TrackPanel.module.scss";
 import { TrackPanelMenu } from "./components";
 
 export const TrackPanel = observer(
@@ -22,8 +19,6 @@ export const TrackPanel = observer(
     audioEngine: AudioEngine;
     expanded: boolean;
   }) => {
-    const transport = Tone.getTransport();
-
     const handleClick = (e: React.MouseEvent) => {
       if (!e.ctrlKey) {
         audioEngine.deselectAllTracks();
