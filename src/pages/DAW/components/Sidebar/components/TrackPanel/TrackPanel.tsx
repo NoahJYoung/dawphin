@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Button, ColorPicker } from "antd";
-import { FolderOpenOutlined } from "@ant-design/icons";
+import { FolderOpenOutlined, EllipsisOutlined } from "@ant-design/icons";
 import { Input } from "antd";
 import type { AudioEngine } from "src/AudioEngine";
 import { CLIP_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "src/pages/DAW/constants";
@@ -9,6 +9,7 @@ import { RecordIcon } from "src/pages/DAW/icons";
 import * as Tone from "tone";
 
 import styles from "./TrackPanel.module.scss";
+import { TrackPanelMenu } from "./components";
 
 export const TrackPanel = observer(
   ({
@@ -22,14 +23,6 @@ export const TrackPanel = observer(
     expanded: boolean;
   }) => {
     const transport = Tone.getTransport();
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files) {
-        const selectedFile = event.target.files[0];
-        const src = URL.createObjectURL(selectedFile);
-        track.addClip(src, transport.seconds);
-      }
-    };
 
     const handleClick = (e: React.MouseEvent) => {
       if (!e.ctrlKey) {
@@ -169,22 +162,26 @@ export const TrackPanel = observer(
                 alignItems: "center",
               }}
             >
-              <input
-                value={""}
-                type="file"
-                id={`fileInput${track.id}`}
-                style={{ display: "none" }}
-                accept="audio/*"
-                onChange={handleFileChange}
-              />
-              <label
-                htmlFor={`fileInput${track.id}`}
-                className={`${styles.folderButton} custom-file-label`}
-              >
-                <FolderOpenOutlined
-                  style={{ color: "#aaa", padding: "0.25rem" }}
-                />
-              </label>
+              <TrackPanelMenu track={track} />
+              {/* <>
+                  <input
+                    value={""}
+                    type="file"
+                    id={`fileInput${track.id}`}
+                    style={{ display: "none" }}
+                    accept="audio/*"
+                    onChange={handleFileChange}
+                  />
+                  <label
+                    htmlFor={`fileInput${track.id}`}
+                    className={`${styles.folderButton} custom-file-label`}
+                  >
+                    <EllipsisOutlined
+                      style={{ color: "#aaa", padding: "0.25rem" }}
+                    />
+                  </label>
+                </> */}
+              {/* </TrackPanelMenu> */}
             </div>
 
             <div

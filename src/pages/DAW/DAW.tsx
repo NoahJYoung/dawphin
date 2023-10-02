@@ -8,7 +8,6 @@ import {
   Sidebar,
   TransportView,
 } from "./components";
-
 import { MasterFader } from "./components/MasterFader";
 
 import styles from "./DAW.module.scss";
