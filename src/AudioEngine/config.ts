@@ -1,6 +1,6 @@
 import { MasterControl } from "./MasterControl";
 import { AudioEngine } from ".";
-import { FXFactory } from "./FXFactory/FXFactory";
+import { FXFactory } from "./Effects";
 import { Timeline } from "./Timeline";
 import { TrackFactory } from "./Track";
 import { ClipFactory } from "./Track/Clip";

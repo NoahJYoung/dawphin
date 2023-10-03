@@ -10,16 +10,7 @@ interface MixerProps {
 
 export const Mixer = observer(({ audioEngine }: MixerProps) => {
   return (
-    <div
-      className={`${styles.mixer} styled-scrollbar`}
-      style={{
-        maxWidth: "100%",
-        overflow: "auto",
-        height: "300px",
-        display: "flex",
-        gap: "4px",
-      }}
-    >
+    <div className={`${styles.mixer} styled-scrollbar`}>
       {audioEngine.tracks.map((track, i) => (
         <ChannelStrip
           audioEngine={audioEngine}

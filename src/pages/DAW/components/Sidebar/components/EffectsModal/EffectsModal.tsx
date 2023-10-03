@@ -55,6 +55,9 @@ export const EffectsModal = ({
   return (
     <Modal
       className={styles.modal}
+      style={{ border: "1px solid #111", borderRadius: "5px" }}
+      mask={false}
+      maskClosable={false}
       title={track.name}
       footer={null}
       onCancel={onCancel}

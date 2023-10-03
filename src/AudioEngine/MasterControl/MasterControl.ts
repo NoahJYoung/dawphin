@@ -1,6 +1,6 @@
 import { observable, makeObservable, action } from "mobx";
 import * as Tone from "tone";
-import { FXFactory } from "../FXFactory";
+import { FXFactory } from "../Effects/FXFactory";
 
 export class MasterControl {
   public name = "Master";

@@ -1,5 +1,9 @@
 .mixer {
+  display: flex;
+  height: 300px;
+  max-width: 100%;
+  overflow: auto;
   padding: 5px;
   padding-top: 0;
-  gap: "10px";
+  gap: 4px;
 }

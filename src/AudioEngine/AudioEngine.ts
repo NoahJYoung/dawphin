@@ -4,7 +4,7 @@ import * as Tone from "tone";
 import { Clip } from "./Track/Clip";
 import audioBufferToWav from "audiobuffer-to-wav";
 import { MasterControl } from "./MasterControl";
-import { FXFactory } from "./FXFactory";
+import { FXFactory } from "./Effects";
 import { Timeline } from "./Timeline";
 
 interface ClipboardItem {

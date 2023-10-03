@@ -63,12 +63,7 @@ export const CompressorView = ({
       <h2>{compressor.name}</h2>
       <CompressorMeters audioEngine={audioEngine} compressor={compressor} />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-        }}
-      >
+      <div className={styles.knobContainer}>
         <CompressorKnob
           value={attack}
           label="Attack"
