@@ -199,15 +199,26 @@ export const ClipView = observer(
               fontSize: "0.75rem",
             }}
           >{`${clip.track.name} | ${clip.start.toBarsBeatsSixteenths()}`}</p>
-          {/* {clip.fadeIn && (
+          {clip.fadeIn && (
             <FadeCurve
               lengthInSamples={clip.fadeIn.toSamples()}
               height={CLIP_HEIGHT}
-              color={"rgba(125, 125, 125, 0.25)"}
+              color={color}
               samplesPerPixel={audioEngine.timeline.samplesPerPixel}
               direction="in"
+              clipDurationInSamples={clip.duration?.toSamples() || 0}
             />
-          )} */}
+          )}
+          {clip.fadeOut && (
+            <FadeCurve
+              lengthInSamples={clip.fadeOut.toSamples()}
+              height={CLIP_HEIGHT}
+              color={color}
+              samplesPerPixel={audioEngine.timeline.samplesPerPixel}
+              clipDurationInSamples={clip.duration?.toSamples() || 0}
+              direction="out"
+            />
+          )}
         </div>
         <audio src={clip.audioSrc} ref={audioRef} />
       </>

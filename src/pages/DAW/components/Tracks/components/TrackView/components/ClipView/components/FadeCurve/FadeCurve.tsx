@@ -6,6 +6,7 @@ interface FadeCurveProps {
   color: string;
   samplesPerPixel: number;
   direction: "in" | "out";
+  clipDurationInSamples: number;
 }
 
 export const FadeCurve = ({
@@ -14,23 +15,43 @@ export const FadeCurve = ({
   color,
   samplesPerPixel,
   direction,
+  clipDurationInSamples,
 }: FadeCurveProps) => {
-  const width = lengthInSamples / samplesPerPixel;
+  const width = Math.round(lengthInSamples / samplesPerPixel);
+  const endOfClip = Math.round(clipDurationInSamples / samplesPerPixel);
 
-  const curveControlPoint = 0; // Adjust this value to change the curvature
+  let controlX, controlY, startX, startY, endX, endY;
 
-  const pathD =
+  if (direction === "in") {
+    controlX = width / 4;
+    controlY = height / 4;
+    startX = 0;
+    startY = height;
+    endX = width;
+    endY = 0;
+  } else {
+    controlX = endOfClip - width / 4;
+    controlY = 0;
+    startX = endOfClip - width;
+    startY = 0;
+    endX = endOfClip;
+    endY = height;
+  }
+
+  const curvePath = `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
+  const fillPath =
     direction === "in"
-      ? `M0,${height} C${curveControlPoint}, ${height} ${curveControlPoint}, 0 ${width},0 L${width},${height} Z`
-      : `M0,0 C${curveControlPoint},0 ${curveControlPoint},${height} ${width},${height} L0,${height} Z`;
+      ? `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY} L${endX},0 L${startX},0 Z`
+      : `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY} L${endX},0 L${endOfClip},0 L${endOfClip},${startY} Z`;
 
   return (
     <svg
-      width={width}
+      width={endOfClip}
       height={height}
-      style={{ overflow: "visible", zIndex: -5 }}
+      style={{ position: "absolute", left: 0, zIndex: "1000" }}
     >
-      <path d={pathD} fill={color} />
+      <path d={fillPath} fill="rgba(0, 0, 0, 0.5)" />
+      <path d={curvePath} stroke={color} strokeWidth="1" fill="none" />
     </svg>
   );
 };

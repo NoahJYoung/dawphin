@@ -22,7 +22,7 @@ export const Toolbar = observer(
           height: TOPBAR_HEIGHT,
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "space-evenly",
           padding: "4px 0 4px 0",
         }}
       >
