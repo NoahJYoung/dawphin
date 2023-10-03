@@ -1,4 +1,4 @@
-import { Clip } from "./Clip";
+import { Clip, ClipFactory } from "./Clip";
 import { makeAutoObservable, observable } from "mobx";
 import { AudioEngine } from "..";
 import * as Tone from "tone";
@@ -18,6 +18,7 @@ export class Track {
 
   constructor(
     public audioEngine: AudioEngine,
+    private clipFactory: ClipFactory,
     public id: number,
     public name: string,
     public clips: Clip[] = observable.array([]),
@@ -220,8 +221,7 @@ export class Track {
   };
 
   addClip = (src: string, startSeconds: number) => {
-    const buffer = new Tone.ToneAudioBuffer(src);
-    const clip = new Clip(this, src, buffer, Tone.Time(startSeconds, "s"));
+    const clip = this.clipFactory.createClip(this, src, startSeconds);
     this.clips.push(clip);
 
     return clip.id;

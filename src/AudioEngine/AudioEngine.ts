@@ -1,4 +1,4 @@
-import { Track } from "./Track";
+import { Track, TrackFactory } from "./Track";
 import { makeAutoObservable, observable } from "mobx";
 import * as Tone from "tone";
 import { Clip } from "./Track/Clip";
@@ -17,7 +17,6 @@ export class AudioEngine {
   state: string = "stopped";
   bpm: number = Tone.getTransport().bpm.value;
   timeSignature = Tone.getTransport().timeSignature;
-  private currentTrackId = 1;
   selectedClips: Clip[] = observable.array([]);
   selectedTracks: Track[] = observable.array([]);
   activeTracks: Track[] = observable.array([]);
@@ -29,6 +28,7 @@ export class AudioEngine {
     public masterControl: MasterControl,
     public fxFactory: FXFactory,
     public timeline: Timeline,
+    private trackFactory: TrackFactory,
     public tracks: Track[] = observable.array([])
   ) {
     makeAutoObservable(this);
@@ -77,13 +77,8 @@ export class AudioEngine {
 
   createTrack = () => {
     this.startTone();
-    const newTrack = new Track(
-      this,
-      this.currentTrackId,
-      `Track ${this.tracks.length + 1}`
-    );
+    const newTrack = this.trackFactory.createTrack(this);
     this.tracks.push(newTrack);
-    this.currentTrackId += 1;
   };
 
   getSelectedTracks = () => {
