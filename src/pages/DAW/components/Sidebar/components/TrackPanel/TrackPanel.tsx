@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
-import { Button, ColorPicker } from "antd";
+import { Button, ColorPicker, InputRef } from "antd";
 import { Input } from "antd";
 import type { AudioEngine } from "src/AudioEngine";
 import { CLIP_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "src/pages/DAW/constants";
@@ -8,6 +8,7 @@ import { RecordIcon } from "src/pages/DAW/icons";
 import { TrackPanelMenu } from "./components";
 
 import styles from "./TrackPanel.module.scss";
+import { useRef } from "react";
 
 export const TrackPanel = observer(
   ({
@@ -20,6 +21,8 @@ export const TrackPanel = observer(
     audioEngine: AudioEngine;
     expanded: boolean;
   }) => {
+    const inputRef = useRef<InputRef | null>(null);
+
     const handleMute = () => {
       if (track.muted) {
         audioEngine.unmuteSelectedTracks();
@@ -50,6 +53,12 @@ export const TrackPanel = observer(
         audioEngine.deselectClips();
       }
       track.selectAllClips();
+    };
+
+    const handlePressEnter = () => {
+      if (inputRef.current) {
+        inputRef.current.blur();
+      }
     };
 
     const activeOuterRgb = "rgb(200, 0, 0)";
@@ -126,7 +135,9 @@ export const TrackPanel = observer(
             />
             <Input
               onChange={(e) => track.setName(e.target.value)}
+              ref={inputRef}
               value={track.name}
+              onPressEnter={handlePressEnter}
               style={{
                 display: "flex",
                 background: "transparent",

@@ -7,6 +7,7 @@ import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import WaveSurfer from "wavesurfer.js";
 import * as Tone from "tone";
 import { calculateClipPosition } from "./helpers";
+import { FadeCurve } from "./components";
 
 interface ClipViewProps {
   clip: Clip;
@@ -198,6 +199,15 @@ export const ClipView = observer(
               fontSize: "0.75rem",
             }}
           >{`${clip.track.name} | ${clip.start.toBarsBeatsSixteenths()}`}</p>
+          {/* {clip.fadeIn && (
+            <FadeCurve
+              lengthInSamples={clip.fadeIn.toSamples()}
+              height={CLIP_HEIGHT}
+              color={"rgba(125, 125, 125, 0.25)"}
+              samplesPerPixel={audioEngine.timeline.samplesPerPixel}
+              direction="in"
+            />
+          )} */}
         </div>
         <audio src={clip.audioSrc} ref={audioRef} />
       </>

@@ -1,0 +1,1 @@
+export { FadeCurve } from "./FadeCurve";

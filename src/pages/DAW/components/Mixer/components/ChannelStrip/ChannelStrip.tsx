@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Input, Slider } from "antd";
+import React, { useRef, useState } from "react";
+import { Button, Input, InputRef, Slider } from "antd";
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Knob } from "src/pages/DAW/UIKit";
@@ -18,6 +18,7 @@ interface ChannelStripProps {
 export const ChannelStrip = observer(
   ({ track, audioEngine }: ChannelStripProps) => {
     const [effectsModalOpen, setEffectsModalOpen] = useState(false);
+    const inputRef = useRef<InputRef | null>(null);
 
     const closeEffectsModal = () => {
       setEffectsModalOpen(false);
@@ -49,6 +50,12 @@ export const ChannelStrip = observer(
       } else {
         audioEngine.soloSelectedTracks();
         audioEngine.muteUnsoloedTracks();
+      }
+    };
+
+    const handlePressEnter = () => {
+      if (inputRef.current) {
+        inputRef.current.blur();
       }
     };
 
@@ -123,6 +130,7 @@ export const ChannelStrip = observer(
             />
 
             <Input
+              ref={inputRef}
               onChange={(e) => track.setName(e.target.value)}
               value={track.name}
               style={{

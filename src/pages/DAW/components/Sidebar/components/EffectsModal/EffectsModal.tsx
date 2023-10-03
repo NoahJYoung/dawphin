@@ -15,9 +15,9 @@ const getEffectInstances = (
   audioEngine: AudioEngine
 ) => {
   if (track.effectsChain.length) {
-    return track.effectsChain.map((effect, i) => {
+    return track.effectsChain.map((effect) => {
       if (effect.name === "EQ3") {
-        return <EQ3View key={i} EQ3={effect as Tone.EQ3} />;
+        return <EQ3View key={uuidv4()} EQ3={effect as Tone.EQ3} />;
       }
 
       if (effect.name === "Reverb") {
@@ -27,6 +27,7 @@ const getEffectInstances = (
       if (effect.name === "Compressor") {
         return (
           <CompressorView
+            key={uuidv4()}
             audioEngine={audioEngine}
             compressor={effect as Tone.Compressor}
           />
