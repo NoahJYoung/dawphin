@@ -48,7 +48,10 @@ export const DAW = () => {
           audioEngine={audioEngineInstance}
         />
         <div className={styles.bottomPanelInner}>
-          <MasterFader masterControl={audioEngine.masterControl} />
+          <MasterFader
+            audioEngine={audioEngine}
+            masterControl={audioEngine.masterControl}
+          />
           <Mixer audioEngine={audioEngineInstance} />
         </div>
       </div>

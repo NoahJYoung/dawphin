@@ -26,7 +26,7 @@ export const TimelineGrid = observer(
     topbarHeight,
   }: TimelineGridProps) => {
     const { totalBeats, samplesPerBeat } = calculateGridlineValues(audioEngine);
-    const measuresOnly = audioEngine.samplesPerPixel >= 2048;
+    const measuresOnly = audioEngine.timeline.samplesPerPixel >= 2048;
 
     return (
       <svg
@@ -62,15 +62,16 @@ export const TimelineGrid = observer(
         })}
         {Array.from({ length: totalBeats + 1 }).map((_, i) => {
           const sample = i * samplesPerBeat;
-          let x = sample / audioEngine.samplesPerPixel;
+          let x = sample / audioEngine.timeline.samplesPerPixel;
 
           if (measuresOnly) {
             x *= getTimeSignature(audioEngine);
           }
           const eighthNotes =
-            zoomToGridlineMap[audioEngine.samplesPerPixel].eighthNotes;
+            zoomToGridlineMap[audioEngine.timeline.samplesPerPixel].eighthNotes;
           const sixteenthNotes =
-            zoomToGridlineMap[audioEngine.samplesPerPixel].sixteenthNotes;
+            zoomToGridlineMap[audioEngine.timeline.samplesPerPixel]
+              .sixteenthNotes;
 
           return (
             <g key={i}>

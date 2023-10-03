@@ -7,7 +7,8 @@ export const calculatePlaceholderClipPosition = (
 ) => {
   const audioEngine = track.audioEngine;
   const left = Math.round(
-    track.placeholderClipStart!.toSamples() / audioEngine.samplesPerPixel
+    track.placeholderClipStart!.toSamples() /
+      audioEngine.timeline.samplesPerPixel
   );
   const top =
     audioEngine.tracks.findIndex(

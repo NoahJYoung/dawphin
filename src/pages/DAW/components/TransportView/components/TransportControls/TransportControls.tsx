@@ -23,21 +23,21 @@ interface TransportControlsProps {
 export const TransportControls = observer(
   ({ audioEngine, containerRef, openModal }: TransportControlsProps) => {
     const handleZoomIn = () => {
-      audioEngine.setZoom("zoomIn");
+      audioEngine.timeline.setZoom("zoomIn");
       if (
         containerRef.current?.scrollLeft ||
         containerRef.current?.scrollLeft === 0
       ) {
         const transportPos =
           (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
-          audioEngine.samplesPerPixel;
+          audioEngine.timeline.samplesPerPixel;
         const offset = containerRef.current.clientWidth / 2;
         containerRef.current.scrollLeft = transportPos - offset;
       }
     };
 
     const handleZoomOut = () => {
-      audioEngine.setZoom("zoomOut");
+      audioEngine.timeline.setZoom("zoomOut");
       if (containerRef.current?.scrollLeft) {
         if (
           containerRef.current?.scrollLeft ||
@@ -45,7 +45,7 @@ export const TransportControls = observer(
         ) {
           const transportPos =
             (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
-            audioEngine.samplesPerPixel;
+            audioEngine.timeline.samplesPerPixel;
           const offset = containerRef.current.clientWidth / 2;
           containerRef.current.scrollLeft = transportPos - offset;
         }
@@ -65,7 +65,7 @@ export const TransportControls = observer(
               }}
             />
           }
-          onClick={audioEngine.toStart}
+          onClick={audioEngine.timeline.toStart}
         />
         <Button
           style={{
@@ -123,7 +123,7 @@ export const TransportControls = observer(
               }}
             />
           }
-          onClick={audioEngine.toEnd}
+          onClick={audioEngine.timeline.toEnd}
         />
         <Button
           style={{

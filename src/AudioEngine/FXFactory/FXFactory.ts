@@ -3,15 +3,15 @@ import { makeObservable, observable } from "mobx";
 
 type EffectType = {
   name: string;
-  factory: () => Tone.ToneAudioNode;
+  create: () => Tone.ToneAudioNode;
 };
 
 export class FXFactory {
   effectId: number = 0;
   public effects: EffectType[] = [
-    { name: "EQ3", factory: () => new Tone.EQ3() },
-    { name: "Compressor", factory: () => new Tone.Compressor() },
-    { name: "Reverb", factory: () => new Tone.Reverb() },
+    { name: "EQ3", create: () => new Tone.EQ3() },
+    { name: "Compressor", create: () => new Tone.Compressor() },
+    { name: "Reverb", create: () => new Tone.Reverb() },
   ];
 
   constructor() {
@@ -23,7 +23,7 @@ export class FXFactory {
   createEffect = (name: string): Tone.ToneAudioNode | undefined => {
     const selectedEffect = this.effects.find((effect) => effect.name === name);
     if (selectedEffect) {
-      return selectedEffect.factory();
+      return selectedEffect.create();
     } else {
       console.error(`Effect named "${name}" not found.`);
       return undefined;

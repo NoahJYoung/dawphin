@@ -26,13 +26,14 @@ export const PlaceholderClip = observer(({ track }: PlaceholderClipProps) => {
   );
 
   const clipStartInPixels =
-    track.placeholderClipStart!.toSamples() / audioEngine.samplesPerPixel;
+    track.placeholderClipStart!.toSamples() /
+    audioEngine.timeline.samplesPerPixel;
 
   const updateWidthWithRAF = () => {
     if (audioEngine.state === "recording") {
       const transportPositionInPixels =
         Tone.Time(Tone.getTransport().seconds).toSamples() /
-        audioEngine.samplesPerPixel;
+        audioEngine.timeline.samplesPerPixel;
       const newWidth = transportPositionInPixels - clipStartInPixels;
       setClipWidth(Math.max(newWidth, 1));
       rAFId.current = requestAnimationFrame(updateWidthWithRAF);

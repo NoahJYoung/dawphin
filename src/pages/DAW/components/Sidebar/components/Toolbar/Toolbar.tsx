@@ -47,10 +47,12 @@ export const Toolbar = observer(
         <Button
           className={`${styles.toolbarButton} ${
             expanded ? "" : styles.hidden
-          } ${audioEngine.snap ? styles.active : ""}`}
+          } ${audioEngine.timeline.snap ? styles.active : ""}`}
           type="text"
           icon={<TableOutlined className={styles.buttonIcon} />}
-          onClick={() => audioEngine.setSnap(!audioEngine.snap)}
+          onClick={() =>
+            audioEngine.timeline.setSnap(!audioEngine.timeline.snap)
+          }
         />
 
         <Button

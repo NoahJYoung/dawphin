@@ -5,6 +5,7 @@ import { Clip } from "./Track/Clip";
 import audioBufferToWav from "audiobuffer-to-wav";
 import { MasterControl } from "./MasterControl";
 import { FXFactory } from "./FXFactory";
+import { Timeline } from "./Timeline";
 
 interface ClipboardItem {
   data: Blob;
@@ -12,43 +13,28 @@ interface ClipboardItem {
 }
 
 export class AudioEngine {
-  readonly zoomLevels: number[] = [32, 64, 128, 256, 512, 1024, 2048, 4092];
-  readonly quantizationValues: string[] = [
-    "16n",
-    "16n",
-    "8n",
-    "8n",
-    "4n",
-    "4n",
-    "1n",
-    "1n",
-  ];
   clipboard: (ClipboardItem | null)[] = observable.array([]);
-  zoomIndex: number = 4;
-  samplesPerPixel: number = this.zoomLevels[this.zoomIndex];
   state: string = "stopped";
   bpm: number = Tone.getTransport().bpm.value;
   timeSignature = Tone.getTransport().timeSignature;
   private currentTrackId = 1;
-  totalMeasures: number = 200;
   selectedClips: Clip[] = observable.array([]);
-  scrollXOffsetPixels: number = 0;
   selectedTracks: Track[] = observable.array([]);
   activeTracks: Track[] = observable.array([]);
-  snap: boolean = false;
   metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
-  updateTimelineUI: (() => void) | null = null;
   public cursorPosition: number = 0;
 
   constructor(
     public masterControl: MasterControl,
     public fxFactory: FXFactory,
+    public timeline: Timeline,
     public tracks: Track[] = observable.array([])
   ) {
     makeAutoObservable(this);
     this.metronome = new Tone.PluckSynth().toDestination();
     this.setupMetronome();
+    this.timeline.linkAudioEngine(this);
   }
 
   setState(
@@ -77,21 +63,6 @@ export class AudioEngine {
         this.metronome.toDestination();
       }
     }
-  };
-
-  setSnap = (value: boolean) => {
-    this.snap = value;
-  };
-
-  setZoom = (direction: "zoomIn" | "zoomOut") => {
-    if (direction === "zoomOut") {
-      this.zoomIndex < this.zoomLevels.length - 1
-        ? this.zoomIndex++
-        : (this.zoomIndex = this.zoomLevels.length - 1);
-    } else {
-      this.zoomIndex > 0 ? this.zoomIndex-- : (this.zoomIndex = 0);
-    }
-    this.samplesPerPixel = this.zoomLevels[this.zoomIndex];
   };
 
   setBpm = (bpm: number) => {
@@ -175,7 +146,9 @@ export class AudioEngine {
   quantizeSelectedClips = () => {
     this.selectedClips.forEach((clip) => {
       const quantizedTime = Tone.Time(
-        clip.start.quantize(this.quantizationValues[this.zoomIndex])
+        clip.start.quantize(
+          this.timeline.quantizationValues[this.timeline.zoomIndex]
+        )
       ).toSamples();
       clip.setPosition(quantizedTime);
     });
@@ -285,34 +258,9 @@ export class AudioEngine {
         transport.ticks = time.toTicks();
         this.cursorPosition = transport.ticks;
       }
-      if (this.updateTimelineUI) {
-        this.updateTimelineUI();
+      if (this.timeline.updateTimelineUI) {
+        this.timeline.updateTimelineUI();
       }
-    }
-  };
-
-  toStart = () => {
-    this.startTone();
-    const initialState = this.state;
-    if (this.updateTimelineUI) {
-      this.pause();
-      Tone.getTransport().position = "0:0:0";
-      this.updateTimelineUI();
-    }
-    if (initialState !== "playing") {
-      this.stop();
-    } else {
-      this.play();
-    }
-  };
-
-  toEnd = () => {
-    this.startTone();
-    if (this.updateTimelineUI) {
-      this.pause();
-      Tone.getTransport().position = `${this.totalMeasures}:0:0`;
-      this.updateTimelineUI();
-      this.pause();
     }
   };
 
@@ -389,8 +337,8 @@ export class AudioEngine {
     Tone.getTransport().stop();
     this.tracks.forEach((track) => track.stop());
     this.setState("stopped");
-    if (this.updateTimelineUI) {
-      this.updateTimelineUI();
+    if (this.timeline.updateTimelineUI) {
+      this.timeline.updateTimelineUI();
     }
   };
 

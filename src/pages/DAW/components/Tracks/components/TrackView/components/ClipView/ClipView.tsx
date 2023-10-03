@@ -29,7 +29,7 @@ export const ClipView = observer(
         setPeaks(wavesurfer.exportPeaks());
       }
       const sampleRate = 44100;
-      const pixelsPerSample = audioEngine.samplesPerPixel;
+      const pixelsPerSample = audioEngine.timeline.samplesPerPixel;
       const pixelsPerSecond = Math.round(sampleRate / pixelsPerSample);
       if (overviewRef?.current && clip.end) {
         const wavesurfer = WaveSurfer.create({
@@ -73,7 +73,7 @@ export const ClipView = observer(
 
     const handleDrag = (e: React.DragEvent) => {
       const dragValue = 2.5;
-      const movementValue = dragValue * audioEngine.samplesPerPixel;
+      const movementValue = dragValue * audioEngine.timeline.samplesPerPixel;
       if (overviewRef.current && timelineRect) {
         if (e.clientX !== prevX.current) {
           if (e.clientX > prevX.current) {
@@ -100,7 +100,7 @@ export const ClipView = observer(
         const avgClientX = (touch1.clientX + touch2.clientX) / 2;
 
         const dragValue = 10;
-        const movementValue = dragValue * audioEngine.samplesPerPixel;
+        const movementValue = dragValue * audioEngine.timeline.samplesPerPixel;
 
         if (overviewRef.current && timelineRect) {
           if (avgClientX !== prevX.current) {
@@ -117,10 +117,10 @@ export const ClipView = observer(
 
     useEffect(() => {
       const sampleRate = Tone.getContext().sampleRate;
-      const pixelsPerSample = audioEngine.samplesPerPixel;
+      const pixelsPerSample = audioEngine.timeline.samplesPerPixel;
       const pixelsPerSecond = Math.round(sampleRate / pixelsPerSample);
       wavesurfer?.zoom(pixelsPerSecond);
-    }, [audioEngine.samplesPerPixel]);
+    }, [audioEngine.timeline.samplesPerPixel]);
 
     useEffect(() => {
       const container = document.querySelector(
@@ -140,7 +140,7 @@ export const ClipView = observer(
     }, [overviewRef.current]);
 
     const clipWidth =
-      (clip?.duration?.toSamples() || 1) / audioEngine.samplesPerPixel;
+      (clip?.duration?.toSamples() || 1) / audioEngine.timeline.samplesPerPixel;
 
     const { top, left } = calculateClipPosition(
       clip.track,
@@ -159,14 +159,14 @@ export const ClipView = observer(
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={() => {
-            if (audioEngine.snap) {
+            if (audioEngine.timeline.snap) {
               audioEngine.quantizeSelectedClips();
             }
           }}
           onDrag={handleDrag}
           onDragStart={handleDragStart}
           onDragEnd={() => {
-            if (audioEngine.snap) {
+            if (audioEngine.timeline.snap) {
               audioEngine.quantizeSelectedClips();
             }
           }}

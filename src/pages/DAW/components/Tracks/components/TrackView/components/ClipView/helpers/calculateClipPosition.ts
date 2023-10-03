@@ -8,7 +8,9 @@ export const calculateClipPosition = (
   topPadding: number
 ) => {
   const audioEngine = track.audioEngine;
-  const left = Math.round(clip.start.toSamples() / audioEngine.samplesPerPixel);
+  const left = Math.round(
+    clip.start.toSamples() / audioEngine.timeline.samplesPerPixel
+  );
   const top =
     audioEngine.tracks.findIndex((track) => track.id === clip.track.id) *
       (clipHeight + topPadding) +

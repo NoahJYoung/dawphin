@@ -25,7 +25,7 @@ export const useTimeline = (
   const updatePlayhead = () => {
     const x = Math.round(
       (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
-        audioEngine.samplesPerPixel
+        audioEngine.timeline.samplesPerPixel
     );
     const width = containerRef.current?.clientWidth || 0;
     const multiplier = x / width;
@@ -55,7 +55,7 @@ export const useTimeline = (
   }, [audioEngine.state]);
 
   useEffect(() => {
-    audioEngine.updateTimelineUI = updatePlayhead;
+    audioEngine.timeline.updateTimelineUI = updatePlayhead;
   }, []);
 
   useEffect(() => {
@@ -69,8 +69,8 @@ export const useTimeline = (
     playheadRef.current,
     audioEngine.bpm,
     audioEngine.tracks.length,
-    audioEngine.zoomIndex,
-    audioEngine.samplesPerPixel,
+    audioEngine.timeline.zoomIndex,
+    audioEngine.timeline.samplesPerPixel,
     containerRef.current,
     audioEngine.cursorPosition,
   ]);
@@ -79,11 +79,15 @@ export const useTimeline = (
     const beatsPerSecond = Tone.getTransport().bpm.value / 60;
     const samplesPerBeat = Tone.getContext().sampleRate / beatsPerSecond;
     const samplesPerMeasure = samplesPerBeat * getTimeSignature(audioEngine);
-    const totalSamples = samplesPerMeasure * audioEngine.totalMeasures;
-    const widthInPixels = totalSamples / audioEngine.samplesPerPixel;
+    const totalSamples = samplesPerMeasure * audioEngine.timeline.totalMeasures;
+    const widthInPixels = totalSamples / audioEngine.timeline.samplesPerPixel;
 
     return widthInPixels;
-  }, [audioEngine.samplesPerPixel, audioEngine.totalMeasures, audioEngine.bpm]);
+  }, [
+    audioEngine.timeline.samplesPerPixel,
+    audioEngine.timeline.totalMeasures,
+    audioEngine.bpm,
+  ]);
 
   const mouseX = useRef(0);
 
@@ -95,10 +99,17 @@ export const useTimeline = (
   const handleClick = () => {
     if (gridRef.current) {
       const pixels = mouseX.current + (containerRef?.current?.scrollLeft || 0);
-      const time = Tone.Time(pixels * audioEngine.samplesPerPixel, "samples");
-      if (audioEngine.snap) {
+      const time = Tone.Time(
+        pixels * audioEngine.timeline.samplesPerPixel,
+        "samples"
+      );
+      if (audioEngine.timeline.snap) {
         const quantizedTime = Tone.Time(
-          time.quantize(audioEngine.quantizationValues[audioEngine.zoomIndex])
+          time.quantize(
+            audioEngine.timeline.quantizationValues[
+              audioEngine.timeline.zoomIndex
+            ]
+          )
         );
         audioEngine.setPosition(quantizedTime);
       } else {
@@ -109,7 +120,7 @@ export const useTimeline = (
 
   const handleScroll = (e: React.UIEvent) => {
     const target = e.target as HTMLDivElement;
-    audioEngine.scrollXOffsetPixels = target.scrollLeft;
+    audioEngine.timeline.scrollXOffsetPixels = target.scrollLeft;
     if (trackPanelsRef?.current) {
       trackPanelsRef.current.scrollTop = target.scrollTop;
     }
