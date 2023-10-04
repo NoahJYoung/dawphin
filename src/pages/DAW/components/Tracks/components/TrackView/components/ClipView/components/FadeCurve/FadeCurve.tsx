@@ -39,7 +39,7 @@ export const FadeCurve = observer(
       startY = 0;
       endX = endOfClip;
       endY = height;
-      rectX = startX;
+      rectX = startX - 10;
       rectY = startY;
     }
 

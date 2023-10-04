@@ -106,13 +106,6 @@ export const TimelineContextMenu = observer(
         // disabled: audioEngine.selectedClips.length !== 1,
         icon: <ArrowRightOutlined />,
       },
-      {
-        key: "9",
-        onClick: () => openFadeModal(),
-        label: "Fade in/out",
-        // disabled: audioEngine.selectedClips.length !== 1,
-        // icon: <ArrowRightOutlined />,
-      },
     ];
 
     return (

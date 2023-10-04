@@ -18,6 +18,12 @@
     width: 100%;
     padding: 5px;
 
+    .bottomPanelMiddle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .bottomPanelInner {
       display: flex;
       gap: 5px;
@@ -46,6 +52,10 @@
     .bottomPanelOuter {
       height: 45vh;
 
+      .bottomPanelMiddle {
+        flex-direction: row;
+      }
+
       .bottomPanelInner {
         height: 100%;
         overflow: auto;
@@ -62,6 +72,11 @@
     .bottomPanelOuter {
       height: 50vh;
       overflow: hidden;
+
+      .bottomPanelMiddle {
+        flex-direction: column;
+        padding: 0.25rem 0 0.25rem 0;
+      }
 
       .bottomPanelInner {
         height: 100%;

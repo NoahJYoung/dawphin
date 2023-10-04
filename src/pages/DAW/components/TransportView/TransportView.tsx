@@ -34,7 +34,6 @@ export const TransportView = observer(
           gap: "1rem",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: "5px",
         }}
       >
         <TransportControls
