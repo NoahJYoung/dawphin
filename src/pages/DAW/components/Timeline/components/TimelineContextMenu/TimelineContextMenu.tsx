@@ -11,8 +11,9 @@ import {
 } from "@ant-design/icons";
 import type { AudioEngine } from "src/AudioEngine";
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import * as Tone from "tone";
+import { FadeModal } from "../FadeModal";
 
 interface TimelineContextMenuProps {
   children: React.ReactNode;
@@ -21,19 +22,24 @@ interface TimelineContextMenuProps {
 
 export const TimelineContextMenu = observer(
   ({ children, audioEngine }: TimelineContextMenuProps) => {
-    const canCopy = useMemo(() => {
-      if (audioEngine.selectedClips.length > 0) {
-        return audioEngine.selectedClips.every(
-          (selectedClip) =>
-            selectedClip.track.id === audioEngine.selectedClips[0].track.id
-        );
-      }
-      return false;
-    }, [audioEngine.selectedClips.length]);
+    const [fadeModalOpen, setFadeModalOpen] = useState(false);
 
-    const canPaste = audioEngine.clipboard.length > 0;
+    const openFadeModal = () => setFadeModalOpen(true);
+    const closeFadeModal = () => setFadeModalOpen(false);
 
-    const hasSelectedClips = audioEngine.selectedClips.length;
+    // const canCopy = useMemo(() => {
+    //   if (audioEngine.selectedClips.length > 0) {
+    //     return audioEngine.selectedClips.every(
+    //       (selectedClip) =>
+    //         selectedClip.track.id === audioEngine.selectedClips[0].track.id
+    //     );
+    //   }
+    //   return false;
+    // }, [audioEngine.selectedClips.length]);
+
+    // const canPaste = audioEngine.clipboard.length > 0;
+
+    // const hasSelectedClips = audioEngine.selectedClips.length;
 
     const cursorPositionSamples = Tone.Time(
       Tone.getTransport().seconds
@@ -100,12 +106,22 @@ export const TimelineContextMenu = observer(
         // disabled: audioEngine.selectedClips.length !== 1,
         icon: <ArrowRightOutlined />,
       },
+      {
+        key: "9",
+        onClick: () => openFadeModal(),
+        label: "Fade in/out",
+        // disabled: audioEngine.selectedClips.length !== 1,
+        // icon: <ArrowRightOutlined />,
+      },
     ];
 
     return (
-      <Dropdown menu={{ items }} trigger={["contextMenu"]}>
-        {children}
-      </Dropdown>
+      <>
+        <Dropdown menu={{ items }} trigger={["contextMenu"]}>
+          {children}
+        </Dropdown>
+        <FadeModal open={fadeModalOpen} audioEngine={audioEngine} />
+      </>
     );
   }
 );

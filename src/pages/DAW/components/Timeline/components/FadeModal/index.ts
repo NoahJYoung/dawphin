@@ -1,0 +1,1 @@
+export { FadeModal } from "./FadeModal";

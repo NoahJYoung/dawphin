@@ -8,6 +8,7 @@ import WaveSurfer from "wavesurfer.js";
 import * as Tone from "tone";
 import { calculateClipPosition } from "./helpers";
 import { FadeCurve } from "./components";
+import { ExpandAltOutlined } from "@ant-design/icons";
 
 interface ClipViewProps {
   clip: Clip;
@@ -24,6 +25,7 @@ export const ClipView = observer(
     const prevX = useRef(0);
     const overviewRef = useRef(null);
     const audioRef = useRef(null);
+    const [fadeMode, setFadeMode] = useState<"in" | "out" | null>(null);
 
     useEffect(() => {
       if (wavesurfer) {
@@ -57,6 +59,7 @@ export const ClipView = observer(
 
     const handleClick = (e: React.MouseEvent) => {
       const initialState = clip.isSelected;
+
       if (!e.ctrlKey) {
         audioEngine.deselectClips();
         clip.setSelect(true);
@@ -70,19 +73,67 @@ export const ClipView = observer(
       const transparentImage = new Image();
       transparentImage.src = "";
       e.dataTransfer.setDragImage(transparentImage, 0, 0);
+
+      const clickX = e.clientX;
+      const clickY = e.clientY;
+      const clipRect = e.currentTarget.getBoundingClientRect();
+
+      const fadeInEndPosition =
+        clip.fadeIn.toSamples() / audioEngine.timeline.samplesPerPixel +
+        clipRect.left;
+      const fadeOutStartPosition =
+        clipRect.right -
+        clip.fadeOut.toSamples() / audioEngine.timeline.samplesPerPixel;
+
+      if (clickY - clipRect.top < 25) {
+        if (Math.abs(clickX - fadeInEndPosition) < 10) {
+          setFadeMode("in");
+        } else if (Math.abs(clickX - fadeOutStartPosition) < 10) {
+          setFadeMode("out");
+        } else {
+          setFadeMode(null);
+        }
+      } else {
+        setFadeMode(null);
+      }
+    };
+
+    const handleMouseUp = (e: React.MouseEvent) => {
+      setFadeMode(null);
     };
 
     const handleDrag = (e: React.DragEvent) => {
       const dragValue = 2.5;
       const movementValue = dragValue * audioEngine.timeline.samplesPerPixel;
+
       if (overviewRef.current && timelineRect) {
-        if (e.clientX !== prevX.current) {
-          if (e.clientX > prevX.current) {
-            audioEngine.moveSelectedClips(movementValue, "right");
-          } else {
-            audioEngine.moveSelectedClips(movementValue, "left");
+        if (!fadeMode) {
+          if (e.clientX !== prevX.current) {
+            if (e.clientX > prevX.current) {
+              audioEngine.moveSelectedClips(movementValue, "right");
+            } else {
+              audioEngine.moveSelectedClips(movementValue, "left");
+            }
+            prevX.current = e.clientX;
           }
-          prevX.current = e.clientX;
+        } else if (fadeMode === "in") {
+          if (e.clientX !== prevX.current) {
+            if (e.clientX > prevX.current) {
+              audioEngine.setFadeInOnSelectedClips(movementValue, "right");
+            } else {
+              audioEngine.setFadeInOnSelectedClips(movementValue, "left");
+            }
+            prevX.current = e.clientX;
+          }
+        } else {
+          if (e.clientX !== prevX.current) {
+            if (e.clientX > prevX.current) {
+              audioEngine.setFadeOutOnSelectedClips(movementValue, "right");
+            } else {
+              audioEngine.setFadeOutOnSelectedClips(movementValue, "left");
+            }
+            prevX.current = e.clientX;
+          }
         }
       }
     };
@@ -156,9 +207,10 @@ export const ClipView = observer(
       <>
         <div
           id={`wave-container${clip.id}`}
-          draggable
+          draggable={fadeMode === null}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
+          onMouseUp={handleMouseUp}
           onTouchEnd={() => {
             if (audioEngine.timeline.snap) {
               audioEngine.quantizeSelectedClips();
@@ -197,28 +249,29 @@ export const ClipView = observer(
               position: "absolute",
               fontWeight: "bold",
               fontSize: "0.75rem",
+              zIndex: -1,
+              userSelect: "none",
             }}
-          >{`${clip.track.name} | ${clip.start.toBarsBeatsSixteenths()}`}</p>
-          {clip.fadeIn && (
-            <FadeCurve
-              lengthInSamples={clip.fadeIn.toSamples()}
-              height={CLIP_HEIGHT}
-              color={color}
-              samplesPerPixel={audioEngine.timeline.samplesPerPixel}
-              direction="in"
-              clipDurationInSamples={clip.duration?.toSamples() || 0}
-            />
-          )}
-          {clip.fadeOut && (
-            <FadeCurve
-              lengthInSamples={clip.fadeOut.toSamples()}
-              height={CLIP_HEIGHT}
-              color={color}
-              samplesPerPixel={audioEngine.timeline.samplesPerPixel}
-              clipDurationInSamples={clip.duration?.toSamples() || 0}
-              direction="out"
-            />
-          )}
+          >
+            {`${clip.track.name} | ${clip.start.toBarsBeatsSixteenths()}`}
+          </p>
+
+          <FadeCurve
+            lengthInSamples={clip.fadeIn.toSamples()}
+            height={CLIP_HEIGHT}
+            color={color}
+            samplesPerPixel={audioEngine.timeline.samplesPerPixel}
+            direction="in"
+            clipDurationInSamples={clip.duration?.toSamples() || 0}
+          />
+          <FadeCurve
+            lengthInSamples={clip.fadeOut.toSamples()}
+            height={CLIP_HEIGHT}
+            color={color}
+            samplesPerPixel={audioEngine.timeline.samplesPerPixel}
+            clipDurationInSamples={clip.duration?.toSamples() || 0}
+            direction="out"
+          />
         </div>
         <audio src={clip.audioSrc} ref={audioRef} />
       </>

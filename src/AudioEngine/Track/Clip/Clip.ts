@@ -10,8 +10,8 @@ export class Clip {
   samples: number = 0;
   waveformData: any;
   normalized: boolean = false;
-  fadeIn: Tone.TimeClass | null = null;
-  fadeOut: Tone.TimeClass | null = null;
+  fadeIn: Tone.TimeClass = Tone.Time(0);
+  fadeOut: Tone.TimeClass = Tone.Time(0);
 
   constructor(
     public track: Track,
@@ -124,13 +124,21 @@ export class Clip {
   };
 
   setFadeIn = (time: Tone.TimeClass) => {
-    this.player.fadeIn = time.toSeconds();
+    if (time.toSamples() > 0) {
+      this.player.fadeIn = time.toSeconds();
+    } else {
+      this.player.fadeIn = 0;
+    }
     this.fadeIn = Tone.Time(this.player.fadeIn);
   };
 
   setFadeOut = (time: Tone.TimeClass) => {
-    this.player.fadeOut = time.toSeconds();
-    this.fadeIn = Tone.Time(this.player.fadeOut);
+    if (time.toSamples() > 0) {
+      this.player.fadeOut = time.toSeconds();
+    } else {
+      this.player.fadeOut = 0;
+    }
+    this.fadeOut = Tone.Time(this.player.fadeOut);
   };
 
   setSelect = (value: boolean) => {

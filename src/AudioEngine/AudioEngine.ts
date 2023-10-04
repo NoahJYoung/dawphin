@@ -149,6 +149,39 @@ export class AudioEngine {
     });
   };
 
+  setFadeInOnSelectedClips = (samples: number, direction: "left" | "right") => {
+    this.getSelectedClips();
+    this.selectedClips.forEach((clip) => {
+      if (direction === "right") {
+        clip.setFadeIn(
+          Tone.Time((clip.fadeIn?.toSamples() || 0) + samples, "samples")
+        );
+      } else {
+        clip.setFadeIn(
+          Tone.Time((clip.fadeIn?.toSamples() || 0) - samples, "samples")
+        );
+      }
+    });
+  };
+
+  setFadeOutOnSelectedClips = (
+    samples: number,
+    direction: "left" | "right"
+  ) => {
+    this.getSelectedClips();
+    this.selectedClips.forEach((clip) => {
+      if (direction === "right") {
+        clip.setFadeOut(
+          Tone.Time((clip.fadeOut?.toSamples() || 0) - samples, "samples")
+        );
+      } else {
+        clip.setFadeOut(
+          Tone.Time((clip.fadeOut?.toSamples() || 0) + samples, "samples")
+        );
+      }
+    });
+  };
+
   deleteSelectedClips = () => {
     this.getSelectedClips();
     const clipIds = this.selectedClips.map((clip) => clip.id);
