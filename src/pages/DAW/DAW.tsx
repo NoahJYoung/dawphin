@@ -91,6 +91,7 @@ export const DAW = () => {
             audioEngine={audioEngine}
             masterControl={audioEngine.masterControl}
           />
+          {/* TODO: Create a component switch component, so as to not leave this IIF in the middle of here */}
           <>
             {(() => {
               switch (bottomPanelView) {

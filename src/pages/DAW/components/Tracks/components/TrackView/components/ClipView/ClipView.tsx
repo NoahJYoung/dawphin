@@ -219,6 +219,7 @@ export const ClipView = observer(
           onDrag={handleDrag}
           onDragStart={handleDragStart}
           onDragEnd={() => {
+            setFadeMode(null);
             if (audioEngine.timeline.snap) {
               audioEngine.quantizeSelectedClips();
             }
