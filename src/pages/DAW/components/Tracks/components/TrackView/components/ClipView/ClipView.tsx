@@ -258,20 +258,13 @@ export const ClipView = observer(
           </p>
 
           <FadeCurve
-            lengthInSamples={clip.fadeIn.toSamples()}
-            height={CLIP_HEIGHT}
-            color={color}
-            samplesPerPixel={audioEngine.timeline.samplesPerPixel}
-            direction="in"
-            clipDurationInSamples={clip.duration?.toSamples() || 0}
-          />
-          <FadeCurve
-            lengthInSamples={clip.fadeOut.toSamples()}
+            key={"fadeIn"}
+            fadeInLengthInSamples={clip.fadeIn.toSamples()}
+            fadeOutLengthInSamples={clip.fadeOut.toSamples()}
             height={CLIP_HEIGHT}
             color={color}
             samplesPerPixel={audioEngine.timeline.samplesPerPixel}
             clipDurationInSamples={clip.duration?.toSamples() || 0}
-            direction="out"
           />
         </div>
         <audio src={clip.audioSrc} ref={audioRef} />

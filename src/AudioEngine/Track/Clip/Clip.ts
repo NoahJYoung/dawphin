@@ -124,10 +124,12 @@ export class Clip {
   };
 
   setFadeIn = (time: Tone.TimeClass) => {
-    if (time.toSamples() > 0) {
-      this.player.fadeIn = time.toSeconds();
-    } else {
+    if (time.toSamples() < 0) {
       this.player.fadeIn = 0;
+    } else if (time.toSamples() > this.duration!.toSamples()) {
+      this.player.fadeIn = this.duration!.toSeconds();
+    } else {
+      this.player.fadeIn = time.toSeconds();
     }
     this.fadeIn = Tone.Time(this.player.fadeIn);
   };
