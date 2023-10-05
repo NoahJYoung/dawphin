@@ -10,23 +10,26 @@ export class Clip {
   samples: number = 0;
   waveformData: any;
   normalized: boolean = false;
-  fadeIn: Tone.TimeClass = Tone.Time(0);
-  fadeOut: Tone.TimeClass = Tone.Time(0);
+  public isSelected: boolean = false;
+  public player = new Tone.Player();
+  public startEventId: number | null = null;
+  public stopEventId: number | null = null;
 
   constructor(
     public track: Track,
     public audioSrc: string,
     public audioBuffer: Tone.ToneAudioBuffer,
     public start: Tone.TimeClass,
-    public isSelected: boolean = false,
-    public player = new Tone.Player(),
-    public startEventId: number | null = null,
-    public stopEventId: number | null = null
+    public fadeIn: Tone.TimeClass = Tone.Time(0),
+    public fadeOut: Tone.TimeClass = Tone.Time(0)
   ) {
     makeAutoObservable(this);
     this.id = uuidv4();
     this.loadAudio();
     this.player.connect(this.track.channel.output);
+
+    this.setFadeIn(fadeIn);
+    this.setFadeOut(fadeOut);
   }
 
   play = (time: number, seekTime?: number) => {
@@ -126,7 +129,7 @@ export class Clip {
   setFadeIn = (time: Tone.TimeClass) => {
     if (time.toSamples() < 0) {
       this.player.fadeIn = 0;
-    } else if (time.toSamples() > this.duration!.toSamples()) {
+    } else if (this.duration && time.toSamples() > this.duration!.toSamples()) {
       this.player.fadeIn = this.duration!.toSeconds();
     } else {
       this.player.fadeIn = time.toSeconds();

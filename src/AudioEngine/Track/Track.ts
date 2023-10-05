@@ -220,8 +220,19 @@ export class Track {
     this.setMuted(!this.muted);
   };
 
-  addClip = (src: string, startSeconds: number) => {
-    const clip = this.clipFactory.createClip(this, src, startSeconds);
+  addClip = (
+    src: string,
+    startSeconds: number,
+    fadeInSamples?: number,
+    fadeOutSamples?: number
+  ) => {
+    const clip = this.clipFactory.createClip(
+      this,
+      src,
+      startSeconds,
+      fadeInSamples,
+      fadeOutSamples
+    );
     this.clips.push(clip);
 
     return clip.id;

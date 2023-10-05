@@ -10,6 +10,8 @@ import { Timeline } from "./Timeline";
 interface ClipboardItem {
   data: Blob;
   start: Tone.TimeClass;
+  fadeInSamples: number;
+  fadeOutSamples: number;
 }
 
 export class AudioEngine {
@@ -232,10 +234,14 @@ export class AudioEngine {
   copyClips = () => {
     this.clipboard = this.selectedClips.map((clip) => {
       const buffer = clip.audioBuffer.get();
+      const fadeInSamples = clip.fadeIn.toSamples();
+      const fadeOutSamples = clip.fadeOut.toSamples();
       if (buffer) {
         return {
           data: new Blob([audioBufferToWav(buffer)], { type: "audio/wav" }),
           start: clip.start,
+          fadeInSamples,
+          fadeOutSamples,
         };
       }
       return null;
@@ -258,13 +264,21 @@ export class AudioEngine {
             const adjustedStart =
               item.start.toSeconds() + Tone.getTransport().seconds;
             this.selectedTracks.forEach((track) =>
-              track.addClip(URL.createObjectURL(item.data), adjustedStart)
+              track.addClip(
+                URL.createObjectURL(item.data),
+                adjustedStart,
+                item.fadeInSamples,
+                item.fadeOutSamples
+              )
             );
           } else {
+            console.log("fade samples", item.fadeInSamples);
             this.selectedTracks.forEach((track) =>
               track.addClip(
                 URL.createObjectURL(item.data),
-                Tone.getTransport().seconds
+                Tone.getTransport().seconds,
+                item.fadeInSamples,
+                item.fadeOutSamples
               )
             );
           }

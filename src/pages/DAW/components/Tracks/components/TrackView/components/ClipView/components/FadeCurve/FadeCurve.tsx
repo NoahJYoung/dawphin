@@ -87,7 +87,7 @@ export const FadeCurve = observer(
           stroke={color}
           strokeWidth={1}
           fill={isFadeInHovering ? color : "none"}
-          style={{ opacity: 0.85, pointerEvents: "all" }}
+          style={{ opacity: 0.85, pointerEvents: "all", cursor: "pointer" }}
         />
 
         <rect
@@ -100,7 +100,7 @@ export const FadeCurve = observer(
           stroke={color}
           strokeWidth={1}
           fill={isFadeOutHovering ? color : "none"}
-          style={{ opacity: 0.85, pointerEvents: "all" }}
+          style={{ opacity: 0.85, pointerEvents: "all", cursor: "pointer" }}
         />
       </svg>
     );
