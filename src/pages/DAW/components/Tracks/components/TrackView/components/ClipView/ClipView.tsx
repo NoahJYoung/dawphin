@@ -8,7 +8,6 @@ import WaveSurfer from "wavesurfer.js";
 import * as Tone from "tone";
 import { calculateClipPosition } from "./helpers";
 import { FadeCurve } from "./components";
-import { ExpandAltOutlined } from "@ant-design/icons";
 
 interface ClipViewProps {
   clip: Clip;

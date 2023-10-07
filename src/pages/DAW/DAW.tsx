@@ -14,6 +14,7 @@ import { MasterFader } from "./components/MasterFader";
 
 import styles from "./DAW.module.scss";
 import { PianoRoll } from "./components/MidiEditor";
+import { InstrumentsView } from "./components/InstrumentsView";
 
 enum BottomPanelView {
   MIXER = "mixer",
@@ -86,7 +87,7 @@ export const DAW = () => {
           />
         </div>
 
-        <div className={styles.bottomPanelInner}>
+        <div className={`${styles.bottomPanelInner} styled-scrollbar`}>
           <MasterFader
             audioEngine={audioEngine}
             masterControl={audioEngine.masterControl}
@@ -102,7 +103,7 @@ export const DAW = () => {
                   return <PianoRoll notes={[]} />;
 
                 case BottomPanelView.KEYBOARD:
-                  return <h1>KEYBOARD</h1>;
+                  return <InstrumentsView />;
 
                 default:
                   return null;
