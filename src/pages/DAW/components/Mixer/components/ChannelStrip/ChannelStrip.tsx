@@ -4,7 +4,12 @@ import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Knob } from "src/pages/DAW/UIKit";
 import { Meter } from "./components";
-import { KeyboardIcon, MicrophoneIcon, RecordIcon } from "src/pages/DAW/icons";
+import {
+  KeyboardIcon,
+  MicrophoneIcon,
+  RecordIcon,
+  WaveformIcon,
+} from "src/pages/DAW/icons";
 
 import styles from "./ChannelStrip.module.scss";
 import { EffectsModal } from "../../../Sidebar/components";
@@ -67,8 +72,10 @@ export const ChannelStrip = observer(
 
     const activeInputStyles = {
       color: "rgb(125, 0, 250)",
-      border: "1px solid rgb(125, 0, 250)",
-      padding: "0.25rem",
+      padding: 0,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     };
 
     return (
@@ -182,24 +189,61 @@ export const ChannelStrip = observer(
               style={
                 track.inputMode === "mic"
                   ? activeInputStyles
-                  : { padding: "0.25rem" }
+                  : {
+                      padding: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }
               }
               onClick={() => track.setInputMode("mic")}
+              icon={<AudioOutlined />}
               type="text"
-            >
-              M
-            </Button>
+            />
+
             <Button
               style={
                 track.inputMode === "keyboard"
                   ? activeInputStyles
-                  : { padding: "0.25rem" }
+                  : {
+                      padding: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }
               }
               onClick={() => track.setInputMode("keyboard")}
               type="text"
-            >
-              K
-            </Button>
+              icon={
+                <KeyboardIcon
+                  color={
+                    track.inputMode === "keyboard" ? "rgb(125, 0, 250)" : "#aaa"
+                  }
+                />
+              }
+            />
+
+            <Button
+              style={
+                track.inputMode === "keyboard"
+                  ? activeInputStyles
+                  : {
+                      padding: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }
+              }
+              onClick={() => track.setInputMode("sampler")}
+              type="text"
+              icon={
+                <WaveformIcon
+                  color={
+                    track.inputMode === "sampler" ? "rgb(125, 0, 250)" : "#aaa"
+                  }
+                />
+              }
+            />
           </div>
           <div
             style={{

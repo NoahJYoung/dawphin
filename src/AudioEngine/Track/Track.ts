@@ -15,7 +15,7 @@ export class Track {
   public recorder = new Tone.Recorder();
   public placeholderClipStart: Tone.TimeClass | null = null;
   public effectsChain: Tone.ToneAudioNode[] = [];
-  public inputMode: "mic" | "keyboard" = "mic";
+  public inputMode: "mic" | "keyboard" | "sampler" = "mic";
 
   constructor(
     public audioEngine: AudioEngine,
@@ -137,7 +137,7 @@ export class Track {
     this.effectsChain = effects;
   };
 
-  setInputMode = (inputMode: "mic" | "keyboard") => {
+  setInputMode = (inputMode: "mic" | "keyboard" | "sampler") => {
     this.inputMode = inputMode;
   };
 

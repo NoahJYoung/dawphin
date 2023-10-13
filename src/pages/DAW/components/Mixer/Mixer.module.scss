@@ -1,9 +1,17 @@
 .mixer {
   display: flex;
-  height: 320px;
+  height: 330px;
   max-width: 100%;
   overflow: auto;
-  padding: 5px;
-  padding-top: 0;
+  padding-right: 5px;
   gap: 4px;
+
+  .channels {
+    max-width: 100%;
+    overflow-x: auto;
+    display: flex;
+    gap: 4px;
+    padding: 5px;
+    padding-top: 0;
+  }
 }

@@ -8,34 +8,19 @@ import {
   Sidebar,
   TransportView,
 } from "./components";
-import { Radio } from "antd";
-
-import { MasterFader } from "./components/MasterFader";
+import { Button } from "antd";
 
 import styles from "./DAW.module.scss";
 import { PianoRoll } from "./components/MidiEditor";
 import { InstrumentsView } from "./components/InstrumentsView";
+import { KeyboardIcon } from "./icons";
+import { SlidersOutlined } from "@ant-design/icons";
 
 enum BottomPanelView {
   MIXER = "mixer",
   KEYBOARD = "keyboard",
   MIDI_EDITOR = "midiEditor",
 }
-
-const viewOptions = [
-  {
-    label: "Mixer",
-    value: "mixer",
-  },
-  {
-    label: "Keyboard",
-    value: "keyboard",
-  },
-  {
-    label: "MIDI Editor",
-    value: "midiEditor",
-  },
-];
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
@@ -77,14 +62,55 @@ export const DAW = () => {
             audioEngine={audioEngineInstance}
           />
 
-          <Radio.Group
-            optionType="button"
-            buttonStyle="solid"
-            style={{ width: "fit-content" }}
-            value={bottomPanelView}
-            options={viewOptions}
-            onChange={(e) => setBottomPanelView(e.target.value)}
-          />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-evenly",
+              width: "100%",
+              maxWidth: "200px",
+            }}
+          >
+            <Button
+              type="text"
+              onClick={() => setBottomPanelView(BottomPanelView.MIXER)}
+              style={{
+                height: 36,
+                width: 36,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              icon={
+                <SlidersOutlined
+                  style={{
+                    fontSize: "2rem",
+                    color:
+                      bottomPanelView === "mixer" ? "rgb(125, 0, 250)" : "#555",
+                  }}
+                />
+              }
+            />
+            <Button
+              type="text"
+              style={{
+                height: 36,
+                width: 36,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onClick={() => setBottomPanelView(BottomPanelView.KEYBOARD)}
+              icon={
+                <KeyboardIcon
+                  size={24}
+                  color={
+                    bottomPanelView === "keyboard" ? "rgb(125, 0, 250)" : "#555"
+                  }
+                />
+              }
+            />
+          </div>
         </div>
 
         <div className={`${styles.bottomPanelInner} styled-scrollbar`}>

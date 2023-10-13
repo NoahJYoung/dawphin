@@ -1,25 +1,41 @@
 import React from "react";
 
-export const KeyboardIcon: React.FC = () => {
+interface KeyboardIconProps {
+  color: string;
+  size?: number; // Added size property
+}
+
+export const KeyboardIcon = ({ color, size = 18 }: KeyboardIconProps) => {
+  // Default size if not provided
   return (
     <svg
-      width="50"
-      height="20"
-      viewBox="0 0 50 20"
+      style={{ alignSelf: "center" }}
+      width={size} // Set width based on size
+      height={(size * 20) / 18} // Set height based on size, maintaining aspect ratio
+      viewBox="0 0 18 20" // Added for scalability
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect x="0" y="0.5" width="50" height="19" stroke="black" />
-      <rect x="9.75" y="0.5" width="10" height="19" stroke="black" />
-      <rect x="6" y="0.5" width="5" height="12" stroke="black" fill="black" />
       <rect
-        x="14.625"
+        x="0"
         y="0.5"
-        width="5"
-        height="12"
-        stroke="black"
-        fill="black"
+        width="18"
+        height="19"
+        rx="2"
+        ry="2"
+        stroke={color}
+        strokeWidth={1}
       />
+      <rect
+        x="6"
+        y="0.5"
+        width="6"
+        height="19"
+        stroke={color}
+        strokeWidth={1}
+      />
+      <rect x="4" y="0.5" width="4" height="12" stroke={color} fill={color} />
+      <rect x="10" y="0.5" width="4" height="12" stroke={color} fill={color} />
     </svg>
   );
 };

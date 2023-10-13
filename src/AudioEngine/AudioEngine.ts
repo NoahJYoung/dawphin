@@ -388,12 +388,13 @@ export class AudioEngine {
     this.startTone();
     Tone.getTransport().stop();
     this.tracks.forEach((track) => track.stop());
-    this.setState("stopped");
     if (this.state === "recording") {
       this.keyboard.osc.disconnect();
-      this.keyboard.synth.disconnect();
       this.mic.disconnect();
+      this.keyboard.synth.disconnect();
+      this.keyboard.synth.toDestination();
     }
+    this.setState("stopped");
     if (this.timeline.updateTimelineUI) {
       this.timeline.updateTimelineUI();
     }

@@ -16,14 +16,16 @@ export const Mixer = observer(({ audioEngine }: MixerProps) => {
         audioEngine={audioEngine}
         masterControl={audioEngine.masterControl}
       />
-      {audioEngine.tracks.map((track, i) => (
-        <ChannelStrip
-          audioEngine={audioEngine}
-          key={track.id}
-          trackNumber={i + 1}
-          track={track}
-        />
-      ))}
+      <div className={`${styles.channels} styled-scrollbar`}>
+        {audioEngine.tracks.map((track, i) => (
+          <ChannelStrip
+            audioEngine={audioEngine}
+            key={track.id}
+            trackNumber={i + 1}
+            track={track}
+          />
+        ))}
+      </div>
     </div>
   );
 });
