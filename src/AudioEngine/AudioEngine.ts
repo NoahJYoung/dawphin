@@ -6,6 +6,7 @@ import audioBufferToWav from "audiobuffer-to-wav";
 import { MasterControl } from "./MasterControl";
 import { FXFactory } from "./Effects";
 import { Timeline } from "./Timeline";
+import { Keyboard } from "./Keyboard";
 
 interface ClipboardItem {
   data: Blob;
@@ -24,6 +25,8 @@ export class AudioEngine {
   activeTracks: Track[] = observable.array([]);
   metronomeActive: boolean = true;
   metronome: Tone.PluckSynth | null = null;
+
+  mic: Tone.UserMedia = new Tone.UserMedia();
   public cursorPosition: number = 0;
 
   constructor(
@@ -31,6 +34,7 @@ export class AudioEngine {
     public fxFactory: FXFactory,
     public timeline: Timeline,
     private trackFactory: TrackFactory,
+    public keyboard: Keyboard,
     public tracks: Track[] = observable.array([])
   ) {
     makeAutoObservable(this);
@@ -339,7 +343,14 @@ export class AudioEngine {
 
   private connectMicToTracks = (mic: Tone.UserMedia) => {
     this.activeTracks.forEach((track) => {
-      mic.connect(track.recorder);
+      if (track.inputMode === "mic") {
+        mic.connect(track.recorder);
+      } else if (track.inputMode === "keyboard") {
+        // synth.disconnect();
+        this.keyboard.osc.connect(track.recorder);
+        this.keyboard.osc.start();
+        this.keyboard.synth.connect(track.recorder);
+      }
       track.record();
     });
   };
@@ -348,10 +359,9 @@ export class AudioEngine {
     await this.startTone();
     if (this.state !== "recording") {
       this.getActiveTracks();
-      const mic = new Tone.UserMedia();
 
       try {
-        await mic.open();
+        await this.mic.open();
       } catch (error) {
         console.error("Microphone not accessible:", error);
         return;
@@ -359,7 +369,7 @@ export class AudioEngine {
 
       this.play();
       this.setState("recording");
-      this.connectMicToTracks(mic);
+      this.connectMicToTracks(this.mic);
     } else {
       this.stop();
     }
@@ -379,6 +389,11 @@ export class AudioEngine {
     Tone.getTransport().stop();
     this.tracks.forEach((track) => track.stop());
     this.setState("stopped");
+    if (this.state === "recording") {
+      this.keyboard.osc.disconnect();
+      this.keyboard.synth.disconnect();
+      this.mic.disconnect();
+    }
     if (this.timeline.updateTimelineUI) {
       this.timeline.updateTimelineUI();
     }

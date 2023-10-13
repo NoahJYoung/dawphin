@@ -1,12 +1,21 @@
+import { useState } from "react";
 import { keys } from "./helpers";
 import { Key } from "./components";
-import styles from "./Keyboard.module.scss";
+import { AudioEngine } from "src/AudioEngine";
 
-export const Keyboard = () => {
+import styles from "./KeyboardView.module.scss";
+
+interface KeyboardViewProps {
+  audioEngine: AudioEngine;
+}
+
+export const KeyboardView = ({ audioEngine }: KeyboardViewProps) => {
+  const [baseOctave] = useState(2);
   return (
     <div className={`${styles.keyboard} styled-scrollbar`}>
       {keys.map((key, i, arr) => {
         let leftPosition = 0;
+        const fullNoteName = `${key.note}${baseOctave + key.relativeOctave}`;
 
         if (key.type === "black") {
           leftPosition =
@@ -19,9 +28,11 @@ export const Keyboard = () => {
         return (
           <Key
             style={{ left: leftPosition }}
-            octave={0}
+            octave={baseOctave}
             keyData={key}
             key={key.note + i}
+            fullNoteName={fullNoteName}
+            polySynth={audioEngine.keyboard.synth}
           />
         );
       })}

@@ -1,38 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Key as KeyData } from "../../helpers";
+import * as Tone from "tone";
+
 import styles from "./Key.module.scss";
 
 interface KeyProps {
   keyData: KeyData;
   octave: number;
   style?: Record<string, any>;
+  fullNoteName: string;
+  polySynth: Tone.PolySynth;
 }
 
-export const Key = ({ keyData, octave, style }: KeyProps) => {
-  const fullNoteName = `${keyData.note}${octave + keyData.relativeOctave}`;
+const pressedKeys = new Set<string>();
+
+export const Key = ({ keyData, style, fullNoteName, polySynth }: KeyProps) => {
   const [active, setActive] = useState(false);
 
-  const attack = () => {
+  const attack = useCallback(() => {
+    if (pressedKeys.has(fullNoteName)) return;
+    pressedKeys.add(fullNoteName);
     setActive(true);
-  };
+    polySynth.triggerAttack(fullNoteName, Tone.immediate() + 0.01);
+  }, [polySynth, fullNoteName]);
 
-  const release = () => {
+  const release = useCallback(() => {
+    if (!pressedKeys.has(fullNoteName)) return;
+    pressedKeys.delete(fullNoteName);
     setActive(false);
-  };
+    polySynth.triggerRelease(fullNoteName, Tone.immediate() + 0.01);
+  }, [polySynth, fullNoteName]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!e.repeat) {
-        if (e.key === keyData.key) {
-          attack();
-        }
+      if (e.repeat || active) return;
+      if (e.key === keyData.key) {
+        attack();
       }
     };
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (!e.repeat) {
-        if (e.key === keyData.key) {
-          release();
-        }
+      if (e.repeat) return;
+      if (e.key === keyData.key) {
+        release();
       }
     };
 
@@ -48,6 +57,8 @@ export const Key = ({ keyData, octave, style }: KeyProps) => {
     <div
       onMouseDown={attack}
       onMouseUp={release}
+      onTouchStart={attack}
+      onTouchEnd={release}
       style={style}
       className={`${styles.key} ${styles[keyData.type]} ${
         active ? styles.active : ""

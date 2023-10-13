@@ -1,1 +1,1 @@
-export { Keyboard } from "./Keyboard";
+export { KeyboardView } from "./KeyboardView";

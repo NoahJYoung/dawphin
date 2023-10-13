@@ -1,9 +1,14 @@
-import { Keyboard } from "./components";
+import { AudioEngine } from "src/AudioEngine";
+import { KeyboardView } from "./components";
 
-export const InstrumentsView = () => {
+interface InstrumentViewProps {
+  audioEngine: AudioEngine;
+}
+
+export const InstrumentsView = ({ audioEngine }: InstrumentViewProps) => {
   return (
     <>
-      <Keyboard />
+      <KeyboardView audioEngine={audioEngine} />
     </>
   );
 };

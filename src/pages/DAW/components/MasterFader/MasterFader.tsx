@@ -30,7 +30,6 @@ export const MasterFader = observer(
         className={styles.mixer}
         style={{
           width: "120px",
-          height: "300px",
           paddingRight: "5px",
           paddingTop: 0,
         }}
@@ -44,7 +43,6 @@ export const MasterFader = observer(
             flexDirection: "column",
             alignItems: "center",
             height: "100%",
-            maxHeight: "310px",
             minWidth: "120px",
           }}
         >

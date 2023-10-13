@@ -88,10 +88,6 @@ export const DAW = () => {
         </div>
 
         <div className={`${styles.bottomPanelInner} styled-scrollbar`}>
-          <MasterFader
-            audioEngine={audioEngine}
-            masterControl={audioEngine.masterControl}
-          />
           {/* TODO: Create a component switch component, so as to not leave this IIF in the middle of here */}
           <>
             {(() => {
@@ -103,7 +99,7 @@ export const DAW = () => {
                   return <PianoRoll notes={[]} />;
 
                 case BottomPanelView.KEYBOARD:
-                  return <InstrumentsView />;
+                  return <InstrumentsView audioEngine={audioEngineInstance} />;
 
                 default:
                   return null;

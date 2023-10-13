@@ -1,14 +1,15 @@
 import React, { useRef, useState } from "react";
-import { Button, Input, InputRef, Slider } from "antd";
+import { Button, Input, InputRef, Select, Slider } from "antd";
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Knob } from "src/pages/DAW/UIKit";
 import { Meter } from "./components";
-import { RecordIcon } from "src/pages/DAW/icons";
+import { KeyboardIcon, MicrophoneIcon, RecordIcon } from "src/pages/DAW/icons";
 
 import styles from "./ChannelStrip.module.scss";
 import { EffectsModal } from "../../../Sidebar/components";
 import { AudioEngine } from "src/AudioEngine";
+import { AudioOutlined } from "@ant-design/icons";
 interface ChannelStripProps {
   track: Track;
   trackNumber: number;
@@ -63,6 +64,13 @@ export const ChannelStrip = observer(
     const inactiveOuterRgb = "rgb(150, 0, 0)";
     const activeInnerRgb = "rgb(250, 100, 100)";
     const inactiveInnerRgb = "rgb(200, 100, 100)";
+
+    const activeInputStyles = {
+      color: "rgb(125, 0, 250)",
+      border: "1px solid rgb(125, 0, 250)",
+      padding: "0.25rem",
+    };
+
     return (
       <div
         onClick={handleSelect}
@@ -132,6 +140,7 @@ export const ChannelStrip = observer(
             <Input
               ref={inputRef}
               onChange={(e) => track.setName(e.target.value)}
+              onPressEnter={handlePressEnter}
               value={track.name}
               style={{
                 display: "flex",
@@ -167,6 +176,30 @@ export const ChannelStrip = observer(
               double
               color="rgb(0, 0, 250)"
             />
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+            <Button
+              style={
+                track.inputMode === "mic"
+                  ? activeInputStyles
+                  : { padding: "0.25rem" }
+              }
+              onClick={() => track.setInputMode("mic")}
+              type="text"
+            >
+              M
+            </Button>
+            <Button
+              style={
+                track.inputMode === "keyboard"
+                  ? activeInputStyles
+                  : { padding: "0.25rem" }
+              }
+              onClick={() => track.setInputMode("keyboard")}
+              type="text"
+            >
+              K
+            </Button>
           </div>
           <div
             style={{
