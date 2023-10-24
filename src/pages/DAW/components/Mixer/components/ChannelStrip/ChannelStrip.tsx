@@ -41,19 +41,32 @@ export const ChannelStrip = observer(
     };
 
     const handleMute = () => {
-      if (track.muted) {
-        audioEngine.unmuteSelectedTracks();
+      if (track.selected) {
+        if (track.muted) {
+          audioEngine.unmuteSelectedTracks();
+        } else {
+          audioEngine.muteSelectedTracks();
+        }
       } else {
-        audioEngine.muteSelectedTracks();
+        track.muted ? track.setMuted(false) : track.setMuted(true);
       }
     };
 
     const handleSolo = () => {
-      if (track.solo) {
-        audioEngine.unsoloSelectedTracks();
+      if (track.selected) {
+        if (track.solo) {
+          audioEngine.unsoloSelectedTracks();
+        } else {
+          audioEngine.soloSelectedTracks();
+          audioEngine.muteUnsoloedTracks();
+        }
       } else {
-        audioEngine.soloSelectedTracks();
-        audioEngine.muteUnsoloedTracks();
+        if (track.solo) {
+          track.setSolo(false);
+        } else {
+          track.setSolo(true);
+          audioEngine.muteUnsoloedTracks();
+        }
       }
     };
 
