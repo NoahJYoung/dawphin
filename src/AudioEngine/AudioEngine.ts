@@ -341,13 +341,15 @@ export class AudioEngine {
     }
   };
 
-  private connectMicToTracks = (mic: Tone.UserMedia) => {
+  private connectInputToTracks = (mic: Tone.UserMedia) => {
     this.activeTracks.forEach((track) => {
       if (track.inputMode === "mic") {
         mic.connect(track.recorder);
       } else if (track.inputMode === "keyboard") {
         this.keyboard.osc.connect(track.recorder);
-        this.keyboard.osc.start();
+        if (this.keyboard.osc.state !== "started") {
+          this.keyboard.osc.start();
+        }
         this.keyboard.synth.connect(track.recorder);
       }
       track.record();
@@ -358,7 +360,6 @@ export class AudioEngine {
     await this.startTone();
     if (this.state !== "recording") {
       this.getActiveTracks();
-
       try {
         await this.mic.open();
       } catch (error) {
@@ -368,7 +369,7 @@ export class AudioEngine {
 
       this.play();
       this.setState("recording");
-      this.connectMicToTracks(this.mic);
+      this.connectInputToTracks(this.mic);
     } else {
       this.stop();
     }
