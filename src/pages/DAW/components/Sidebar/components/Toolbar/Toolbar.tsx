@@ -1,9 +1,10 @@
-import { PlusOutlined, TableOutlined, LeftOutlined } from "@ant-design/icons";
+import { PlusOutlined, LeftOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { observer } from "mobx-react-lite";
 import { AudioEngine } from "src/AudioEngine";
 import { TOPBAR_HEIGHT } from "src/pages/DAW/constants";
-import { MetronomeIcon } from "src/pages/DAW/icons";
+import { PiMetronomeBold } from "react-icons/pi";
+import { BsGrid3X2 } from "react-icons/bs";
 
 import styles from "./Toolbar.module.scss";
 
@@ -22,7 +23,7 @@ export const Toolbar = observer(
           height: TOPBAR_HEIGHT,
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-evenly",
+          justifyContent: "space-between",
           padding: "4px 0 4px 0",
         }}
       >
@@ -32,15 +33,16 @@ export const Toolbar = observer(
           icon={<PlusOutlined className={styles.buttonIcon} />}
           onClick={audioEngine.createTrack}
         />
+
         <Button
           className={`${styles.toolbarButton} ${expanded ? "" : styles.hidden}`}
           type="text"
           onClick={audioEngine.toggleMetronome}
           icon={
-            <MetronomeIcon
-              color={audioEngine.metronomeActive ? "blue" : "#aaa"}
-              width="1.25rem"
-              height="1.25rem"
+            <PiMetronomeBold
+              className={`${styles.buttonIcon} ${
+                audioEngine.metronomeActive ? styles.active : ""
+              }`}
             />
           }
         />
@@ -49,7 +51,13 @@ export const Toolbar = observer(
             expanded ? "" : styles.hidden
           } ${audioEngine.timeline.snap ? styles.active : ""}`}
           type="text"
-          icon={<TableOutlined className={styles.buttonIcon} />}
+          icon={
+            <BsGrid3X2
+              className={`${styles.buttonIcon} ${
+                audioEngine.timeline.snap ? styles.active : ""
+              }`}
+            />
+          }
           onClick={() =>
             audioEngine.timeline.setSnap(!audioEngine.timeline.snap)
           }

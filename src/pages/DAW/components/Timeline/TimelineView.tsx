@@ -48,6 +48,7 @@ export const TimelineView = observer(
           onClick={handleClick}
           onMouseMove={handleMouseMove}
           onScroll={handleScroll}
+          onDragOver={(e) => e.preventDefault()}
         >
           <div className={styles.gridContainer} onClick={handleClick}>
             <TimelineGrid

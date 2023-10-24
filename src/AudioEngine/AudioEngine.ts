@@ -346,7 +346,6 @@ export class AudioEngine {
       if (track.inputMode === "mic") {
         mic.connect(track.recorder);
       } else if (track.inputMode === "keyboard") {
-        // synth.disconnect();
         this.keyboard.osc.connect(track.recorder);
         this.keyboard.osc.start();
         this.keyboard.synth.connect(track.recorder);

@@ -1,15 +1,13 @@
 import React, { useRef, useState } from "react";
-import { Button, Input, InputRef, Select, Slider } from "antd";
+import { Button, Input, InputRef, Slider, Tooltip } from "antd";
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Knob } from "src/pages/DAW/UIKit";
 import { Meter } from "./components";
-import {
-  KeyboardIcon,
-  MicrophoneIcon,
-  RecordIcon,
-  WaveformIcon,
-} from "src/pages/DAW/icons";
+import { PiPianoKeysFill, PiWaveformBold } from "react-icons/pi";
+import { GoMute } from "react-icons/go";
+import { RecordIcon } from "src/pages/DAW/icons";
+import { FaHeadphonesAlt } from "react-icons/fa";
 
 import styles from "./ChannelStrip.module.scss";
 import { EffectsModal } from "../../../Sidebar/components";
@@ -71,7 +69,7 @@ export const ChannelStrip = observer(
     const inactiveInnerRgb = "rgb(200, 100, 100)";
 
     const activeInputStyles = {
-      color: "rgb(125, 0, 250)",
+      color: track.color,
       padding: 0,
       display: "flex",
       alignItems: "center",
@@ -185,65 +183,74 @@ export const ChannelStrip = observer(
             />
           </div>
           <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-            <Button
-              style={
-                track.inputMode === "mic"
-                  ? activeInputStyles
-                  : {
-                      padding: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }
-              }
-              onClick={() => track.setInputMode("mic")}
-              icon={<AudioOutlined />}
-              type="text"
-            />
+            <Tooltip mouseEnterDelay={0.75} title="Microphone">
+              <Button
+                style={
+                  track.inputMode === "mic"
+                    ? activeInputStyles
+                    : {
+                        padding: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }
+                }
+                onClick={() => track.setInputMode("mic")}
+                icon={<AudioOutlined />}
+                type="text"
+              />
+            </Tooltip>
 
-            <Button
-              style={
-                track.inputMode === "keyboard"
-                  ? activeInputStyles
-                  : {
-                      padding: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }
-              }
-              onClick={() => track.setInputMode("keyboard")}
-              type="text"
-              icon={
-                <KeyboardIcon
-                  color={
-                    track.inputMode === "keyboard" ? "rgb(125, 0, 250)" : "#aaa"
-                  }
-                />
-              }
-            />
-
-            <Button
-              style={
-                track.inputMode === "keyboard"
-                  ? activeInputStyles
-                  : {
-                      padding: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }
-              }
-              onClick={() => track.setInputMode("sampler")}
-              type="text"
-              icon={
-                <WaveformIcon
-                  color={
-                    track.inputMode === "sampler" ? "rgb(125, 0, 250)" : "#aaa"
-                  }
-                />
-              }
-            />
+            <Tooltip mouseEnterDelay={0.75} title="Keyboard">
+              <Button
+                style={
+                  track.inputMode === "keyboard"
+                    ? activeInputStyles
+                    : {
+                        padding: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }
+                }
+                onClick={() => track.setInputMode("keyboard")}
+                type="text"
+                icon={
+                  <PiPianoKeysFill
+                    style={{
+                      fontSize: "1.5rem",
+                      color:
+                        track.inputMode === "keyboard" ? track.color : "#aaa",
+                    }}
+                  />
+                }
+              />
+            </Tooltip>
+            <Tooltip mouseEnterDelay={0.75} title="Sample pad">
+              <Button
+                style={
+                  track.inputMode === "sampler"
+                    ? activeInputStyles
+                    : {
+                        padding: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }
+                }
+                onClick={() => track.setInputMode("sampler")}
+                type="text"
+                icon={
+                  <PiWaveformBold
+                    style={{
+                      fontSize: "1.5rem",
+                      color:
+                        track.inputMode === "sampler" ? track.color : "#aaa",
+                    }}
+                  />
+                }
+              />
+            </Tooltip>
           </div>
           <div
             style={{
@@ -284,68 +291,62 @@ export const ChannelStrip = observer(
               }}
             />
             <div
-              style={{ display: "flex", flexDirection: "column", gap: "5px" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "5px",
+              }}
             >
               <Button
                 onClick={handleMute}
                 type="text"
+                icon={
+                  <GoMute
+                    style={{
+                      fontSize: "1.25rem",
+                      color: track.muted ? "red" : "#aaa",
+                    }}
+                  />
+                }
                 style={{
-                  width: "1.5rem",
-                  height: "1.5rem",
-                  borderRadius: "6px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  border: `1px solid ${track.muted ? "red" : "#aaa"}`,
-                  color: track.muted ? "red" : "#aaa",
-                  padding: 0,
-                  paddingTop: 1,
-                  fontSize: "0.75rem",
-                  fontWeight: "bold",
                 }}
-              >
-                M
-              </Button>
+              />
+
               <Button
                 onClick={handleSolo}
                 type="text"
+                icon={
+                  <FaHeadphonesAlt
+                    style={{
+                      fontSize: "1.25rem",
+                      color: track.solo ? "yellow" : "#aaa",
+                    }}
+                  />
+                }
                 style={{
-                  width: "1.5rem",
-                  height: "1.5rem",
-                  borderRadius: "6px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  border: `1px solid ${track.solo ? "yellow" : "#aaa"}`,
-                  color: track.solo ? "yellow" : "#aaa",
-                  padding: 0,
-                  paddingTop: 1,
-                  fontSize: "0.75rem",
-                  fontWeight: "bold",
                 }}
-              >
-                <p>S</p>
-              </Button>
+              />
 
               <Button
                 onClick={toggleEffectsModal}
                 type="text"
                 style={{
-                  width: "1.5rem",
-                  height: "1.5rem",
-                  borderRadius: "6px",
+                  width: "2rem",
+                  height: "2rem",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  border: `1px solid #aaa`,
-                  color: "#aaa",
-                  padding: 0,
-                  paddingTop: 1,
-                  fontSize: "0.75rem",
-                  fontWeight: "bold",
                 }}
               >
-                <p>FX</p>
+                FX
               </Button>
             </div>
           </div>

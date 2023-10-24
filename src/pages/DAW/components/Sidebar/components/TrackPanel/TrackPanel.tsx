@@ -6,9 +6,9 @@ import type { AudioEngine } from "src/AudioEngine";
 import { CLIP_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "src/pages/DAW/constants";
 import { RecordIcon } from "src/pages/DAW/icons";
 import { TrackPanelMenu } from "./components";
-
-import styles from "./TrackPanel.module.scss";
 import { useRef } from "react";
+import { FaHeadphonesAlt } from "react-icons/fa";
+import { GoMute } from "react-icons/go";
 
 export const TrackPanel = observer(
   ({
@@ -24,19 +24,32 @@ export const TrackPanel = observer(
     const inputRef = useRef<InputRef | null>(null);
 
     const handleMute = () => {
-      if (track.muted) {
-        audioEngine.unmuteSelectedTracks();
+      if (track.selected) {
+        if (track.muted) {
+          audioEngine.unmuteSelectedTracks();
+        } else {
+          audioEngine.muteSelectedTracks();
+        }
       } else {
-        audioEngine.muteSelectedTracks();
+        track.muted ? track.setMuted(false) : track.setMuted(true);
       }
     };
 
     const handleSolo = () => {
-      if (track.solo) {
-        audioEngine.unsoloSelectedTracks();
+      if (track.selected) {
+        if (track.solo) {
+          audioEngine.unsoloSelectedTracks();
+        } else {
+          audioEngine.soloSelectedTracks();
+          audioEngine.muteUnsoloedTracks();
+        }
       } else {
-        audioEngine.soloSelectedTracks();
-        audioEngine.muteUnsoloedTracks();
+        if (track.solo) {
+          track.setSolo(false);
+        } else {
+          track.setSolo(true);
+          audioEngine.muteUnsoloedTracks();
+        }
       }
     };
 
@@ -190,41 +203,38 @@ export const TrackPanel = observer(
               <Button
                 onClick={handleMute}
                 type="text"
+                icon={
+                  <GoMute
+                    style={{
+                      fontSize: "1.25rem",
+                      color: track.muted ? "red" : "#aaa",
+                    }}
+                  />
+                }
                 style={{
-                  width: "1.5rem",
-                  height: "1.5rem",
-                  borderRadius: "6px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  border: `1px solid ${track.muted ? "red" : "#aaa"}`,
-                  color: track.muted ? "red" : "#aaa",
-                  padding: 0,
-                  fontSize: "0.75rem",
-                  fontWeight: "bold",
                 }}
-              >
-                M
-              </Button>
+              />
+
               <Button
                 onClick={handleSolo}
                 type="text"
+                icon={
+                  <FaHeadphonesAlt
+                    style={{
+                      fontSize: "1.25rem",
+                      color: track.solo ? "yellow" : "#aaa",
+                    }}
+                  />
+                }
                 style={{
-                  width: "1.5rem",
-                  height: "1.5rem",
-                  borderRadius: "6px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  border: `1px solid ${track.solo ? "yellow" : "#aaa"}`,
-                  color: track.solo ? "yellow" : "#aaa",
-                  padding: 0,
-                  fontSize: "0.75rem",
-                  fontWeight: "bold",
                 }}
-              >
-                S
-              </Button>
+              />
             </div>
           </div>
         </div>

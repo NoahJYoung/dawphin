@@ -93,6 +93,7 @@ export const FadeCurve = observer(
         <rect
           onMouseEnter={() => setIsFadeOutHovering(true)}
           onMouseLeave={() => !isDragging && setIsFadeOutHovering(false)}
+          onDragOver={(e) => e.preventDefault()}
           x={fadeOutRectX}
           y={fadeOutRectY}
           width={10}

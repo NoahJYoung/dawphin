@@ -49,7 +49,7 @@ export const Knob = ({
   useEffect(() => {
     const newValue = convertRange(startAngle, endAngle, min, max, deg);
 
-    onChange(Math.round(newValue / step) * step);
+    onChange(Math.round((newValue / step) * step));
   }, [deg, min, max, startAngle, endAngle, onChange, step]);
 
   const startDrag = (e: React.MouseEvent | React.TouchEvent) => {

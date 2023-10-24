@@ -13,7 +13,8 @@ const clipFactory = new ClipFactory();
 const master = new MasterControl(fxFactory);
 const trackFactory = new TrackFactory(clipFactory);
 
-const poly = new Tone.PolySynth(Tone.AMSynth).toDestination();
+const poly = new Tone.PolySynth(Tone.FMSynth).toDestination();
+poly.maxPolyphony = 8;
 const keyboard = new Keyboard(poly);
 
 export const audioEngineInstance = new AudioEngine(

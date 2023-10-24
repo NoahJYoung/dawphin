@@ -5,9 +5,9 @@ import { Clip } from "src/AudioEngine/Track/Clip";
 import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import WaveSurfer from "wavesurfer.js";
-import * as Tone from "tone";
 import { calculateClipPosition } from "./helpers";
 import { FadeCurve } from "./components";
+import * as Tone from "tone";
 
 interface ClipViewProps {
   clip: Clip;
@@ -30,7 +30,7 @@ export const ClipView = observer(
       if (wavesurfer) {
         setPeaks(wavesurfer.exportPeaks());
       }
-      const sampleRate = 44100;
+      const sampleRate = Tone.getContext().sampleRate;
       const pixelsPerSample = audioEngine.timeline.samplesPerPixel;
       const pixelsPerSecond = Math.round(sampleRate / pixelsPerSample);
       if (overviewRef?.current && clip.end) {
@@ -97,14 +97,14 @@ export const ClipView = observer(
       }
     };
 
-    const handleMouseUp = (e: React.MouseEvent) => {
+    const handleMouseUp = () => {
       setFadeMode(null);
     };
 
     const handleDrag = (e: React.DragEvent) => {
       const dragValue = 2.5;
       const movementValue = dragValue * audioEngine.timeline.samplesPerPixel;
-
+      e.preventDefault();
       if (overviewRef.current && timelineRect) {
         if (!fadeMode) {
           if (e.clientX !== prevX.current) {
@@ -117,6 +117,10 @@ export const ClipView = observer(
           }
         } else if (fadeMode === "in") {
           if (e.clientX !== prevX.current) {
+            if (!clip.isSelected) {
+              audioEngine.deselectClips();
+              clip.setSelect(true);
+            }
             if (e.clientX > prevX.current) {
               audioEngine.setFadeInOnSelectedClips(movementValue, "right");
             } else {
@@ -125,6 +129,10 @@ export const ClipView = observer(
             prevX.current = e.clientX;
           }
         } else {
+          if (!clip.isSelected) {
+            audioEngine.deselectClips();
+            clip.setSelect(true);
+          }
           if (e.clientX !== prevX.current) {
             if (e.clientX > prevX.current) {
               audioEngine.setFadeOutOnSelectedClips(movementValue, "right");
@@ -138,6 +146,7 @@ export const ClipView = observer(
     };
 
     const handleTouchStart = (e: React.TouchEvent) => {
+      e.preventDefault();
       if (e.touches.length === 2) {
         prevX.current = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       }
@@ -243,6 +252,7 @@ export const ClipView = observer(
           onClick={handleClick}
         >
           <p
+            onDragOver={(e) => e.preventDefault()}
             style={{
               margin: 0,
               color: convertRgbToRgba("rgb(0, 0, 0)", 0.5),

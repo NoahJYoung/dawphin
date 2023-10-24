@@ -9,7 +9,12 @@
   align-items: center;
 
   .buttonIcon {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
+    color: $text-light;
+  }
+
+  .buttonIcon.active {
+    color: $primary-purple;
   }
 }
 
@@ -24,11 +29,11 @@
 }
 
 .active {
-  color: $primary-blue;
+  color: $primary-purple;
 }
 
 .active:hover {
-  color: $primary-blue !important;
+  color: $primary-purple !important;
 }
 
 .rotate {

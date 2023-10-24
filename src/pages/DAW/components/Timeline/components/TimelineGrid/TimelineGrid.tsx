@@ -30,13 +30,16 @@ export const TimelineGrid = observer(
 
     return (
       <svg
+        onDragOver={(e) => e.preventDefault()}
         ref={gridRef}
         style={{
           position: "absolute",
           pointerEvents: "none",
+          cursor: "none",
         }}
         width={gridWidth}
         height={gridHeight}
+        cursor="none"
       >
         <rect
           x="0"

@@ -17,19 +17,27 @@ const pressedKeys = new Set<string>();
 export const Key = ({ keyData, style, fullNoteName, polySynth }: KeyProps) => {
   const [active, setActive] = useState(false);
 
-  const attack = useCallback(() => {
-    if (pressedKeys.has(fullNoteName)) return;
-    pressedKeys.add(fullNoteName);
-    setActive(true);
-    polySynth.triggerAttack(fullNoteName, Tone.immediate() + 0.01);
-  }, [polySynth, fullNoteName]);
+  const attack = useCallback(
+    (e?: React.MouseEvent | React.TouchEvent) => {
+      e && e.preventDefault();
+      if (pressedKeys.has(fullNoteName)) return;
+      pressedKeys.add(fullNoteName);
+      setActive(true);
+      polySynth.triggerAttack(fullNoteName, Tone.immediate() + 0.01);
+    },
+    [polySynth, fullNoteName]
+  );
 
-  const release = useCallback(() => {
-    if (!pressedKeys.has(fullNoteName)) return;
-    pressedKeys.delete(fullNoteName);
-    setActive(false);
-    polySynth.triggerRelease(fullNoteName, Tone.immediate() + 0.01);
-  }, [polySynth, fullNoteName]);
+  const release = useCallback(
+    (e?: React.MouseEvent | React.TouchEvent) => {
+      e && e.preventDefault();
+      if (!pressedKeys.has(fullNoteName)) return;
+      pressedKeys.delete(fullNoteName);
+      setActive(false);
+      polySynth.triggerRelease(fullNoteName, Tone.immediate() + 0.01);
+    },
+    [polySynth, fullNoteName]
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

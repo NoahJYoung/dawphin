@@ -63,7 +63,7 @@ export const EQVisualizer = ({
         fill={color}
         fillOpacity="0.1"
         stroke={color}
-        strokeWidth="2"
+        strokeWidth="1"
       />
     );
   };

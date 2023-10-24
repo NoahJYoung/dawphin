@@ -201,7 +201,7 @@ export class Track {
         this.setClips(clipsCopy);
       });
 
-      this.addClip(src, selectedClips[0].start.toSamples());
+      this.addClip(src, selectedClips[0].start.toSeconds());
     }
   };
 
@@ -238,6 +238,7 @@ export class Track {
       fadeInSamples,
       fadeOutSamples
     );
+
     this.clips.push(clip);
 
     return clip.id;

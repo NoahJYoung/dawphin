@@ -13,8 +13,8 @@ import { Button } from "antd";
 import styles from "./DAW.module.scss";
 import { PianoRoll } from "./components/MidiEditor";
 import { InstrumentsView } from "./components/InstrumentsView";
-import { KeyboardIcon } from "./icons";
 import { SlidersOutlined } from "@ant-design/icons";
+import { PiPianoKeysFill } from "react-icons/pi";
 
 enum BottomPanelView {
   MIXER = "mixer",
@@ -68,7 +68,7 @@ export const DAW = () => {
               alignItems: "center",
               justifyContent: "space-evenly",
               width: "100%",
-              maxWidth: "200px",
+              maxWidth: "150px",
             }}
           >
             <Button
@@ -102,11 +102,14 @@ export const DAW = () => {
               }}
               onClick={() => setBottomPanelView(BottomPanelView.KEYBOARD)}
               icon={
-                <KeyboardIcon
-                  size={24}
-                  color={
-                    bottomPanelView === "keyboard" ? "rgb(125, 0, 250)" : "#555"
-                  }
+                <PiPianoKeysFill
+                  style={{
+                    fontSize: "2rem",
+                    color:
+                      bottomPanelView === "keyboard"
+                        ? "rgb(150, 0, 250)"
+                        : "#aaa",
+                  }}
                 />
               }
             />

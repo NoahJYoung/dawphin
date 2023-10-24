@@ -16,9 +16,11 @@ export const Playhead = ({
   <svg
     ref={playheadRef}
     onClick={onClick}
+    onDragOver={(e) => e.preventDefault()}
     style={{
       zIndex: 5,
       position: "absolute",
+      cursor: "none",
     }}
     width={width.toString()}
     height={gridHeight.toString()}
@@ -28,7 +30,7 @@ export const Playhead = ({
       y="0"
       width="2"
       height={gridHeight}
-      fill="blue"
+      fill="#aaa"
     />
   </svg>
 );
