@@ -7,7 +7,7 @@ export class TrackFactory {
 
   constructor(private clipFactory: ClipFactory) {}
 
-  createTrack(engine: AudioEngine): Track {
+  createTrack = (engine: AudioEngine): Track => {
     const newTrack = new Track(
       engine,
       this.clipFactory,
@@ -16,5 +16,5 @@ export class TrackFactory {
     );
     this.currentTrackId += 1;
     return newTrack;
-  }
+  };
 }

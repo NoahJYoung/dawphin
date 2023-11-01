@@ -127,9 +127,11 @@ export const useTimeline = (
   };
 
   const sectionHeight = useMemo(() => {
+    const clipFullHeight = CLIP_HEIGHT + CLIP_TOP_PADDING;
     const calculatedHeight =
-      (CLIP_HEIGHT + CLIP_TOP_PADDING) * audioEngine.tracks.length +
-      (SCROLLBAR_HEIGHT + 10);
+      clipFullHeight * audioEngine.tracks.length +
+      SCROLLBAR_HEIGHT +
+      clipFullHeight;
     return calculatedHeight > MIN_GRID_HEIGHT
       ? calculatedHeight
       : MIN_GRID_HEIGHT;

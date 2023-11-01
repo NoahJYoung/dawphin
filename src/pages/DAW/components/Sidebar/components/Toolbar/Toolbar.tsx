@@ -4,7 +4,10 @@ import { observer } from "mobx-react-lite";
 import { AudioEngine } from "src/AudioEngine";
 import { TOPBAR_HEIGHT } from "src/pages/DAW/constants";
 import { PiMetronomeBold } from "react-icons/pi";
-import { BsGrid3X2 } from "react-icons/bs";
+import { BiSolidMagnet } from "react-icons/bi";
+import { FiDownload } from "react-icons/fi";
+import { FaSave } from "react-icons/fa";
+import { IoMdExit } from "react-icons/io";
 
 import styles from "./Toolbar.module.scss";
 
@@ -30,13 +33,6 @@ export const Toolbar = observer(
         <Button
           className={`${styles.toolbarButton} ${expanded ? "" : styles.hidden}`}
           type="text"
-          icon={<PlusOutlined className={styles.buttonIcon} />}
-          onClick={audioEngine.createTrack}
-        />
-
-        <Button
-          className={`${styles.toolbarButton} ${expanded ? "" : styles.hidden}`}
-          type="text"
           onClick={audioEngine.toggleMetronome}
           icon={
             <PiMetronomeBold
@@ -52,7 +48,7 @@ export const Toolbar = observer(
           } ${audioEngine.timeline.snap ? styles.active : ""}`}
           type="text"
           icon={
-            <BsGrid3X2
+            <BiSolidMagnet
               className={`${styles.buttonIcon} ${
                 audioEngine.timeline.snap ? styles.active : ""
               }`}
@@ -61,6 +57,28 @@ export const Toolbar = observer(
           onClick={() =>
             audioEngine.timeline.setSnap(!audioEngine.timeline.snap)
           }
+        />
+
+        <Button
+          className={`${styles.toolbarButton} ${expanded ? "" : styles.hidden}`}
+          type="text"
+          onClick={() => {}}
+          icon={<FiDownload className={styles.buttonIcon} />}
+        />
+
+        <Button
+          className={`${styles.toolbarButton} ${expanded ? "" : styles.hidden}`}
+          type="text"
+          onClick={() => {}}
+          icon={<FaSave className={styles.buttonIcon} />}
+          disabled
+        />
+
+        <Button
+          className={`${styles.toolbarButton} ${expanded ? "" : styles.hidden}`}
+          type="text"
+          onClick={() => {}}
+          icon={<IoMdExit className={styles.buttonIcon} />}
         />
 
         <Button

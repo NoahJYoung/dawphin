@@ -193,6 +193,7 @@ export const ChannelStrip = observer(
               max={100}
               double
               color="rgb(0, 0, 250)"
+              round
             />
           </div>
           <div style={{ display: "flex", justifyContent: "space-evenly" }}>

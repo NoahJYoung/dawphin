@@ -8,6 +8,8 @@ import { EffectsModal } from "../Sidebar/components";
 import styles from "./MasterFader.module.scss";
 import { MasterControl } from "src/AudioEngine/MasterControl";
 import { AudioEngine } from "src/AudioEngine";
+import { FaHeadphonesAlt } from "react-icons/fa";
+import { GoMute } from "react-icons/go";
 interface MasterFaderProps {
   masterControl: MasterControl;
   audioEngine: AudioEngine;
@@ -157,70 +159,62 @@ export const MasterFader = observer(
                 }}
               />
               <div
-                style={{ display: "flex", flexDirection: "column", gap: "5px" }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "5px",
+                }}
               >
-                <Button
-                  onClick={() => {
-                    // masterControl.toggleMute();
-                  }}
-                  type="text"
-                  style={{
-                    width: "1.5rem",
-                    height: "1.5rem",
-                    borderRadius: "6px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    border: `1px solid #aaa`,
-                    color: "#aaa",
-                    padding: 0,
-                    paddingTop: 1,
-                    fontSize: "0.75rem",
-                    fontWeight: "bold",
-                  }}
-                >
-                  M
-                </Button>
                 <Button
                   onClick={() => {}}
                   type="text"
+                  icon={
+                    <GoMute
+                      style={{
+                        fontSize: "1.25rem",
+                        // color: audioEngine.masterControl.muted ? "red" : "#aaa",
+                      }}
+                    />
+                  }
                   style={{
-                    width: "1.5rem",
-                    height: "1.5rem",
-                    borderRadius: "6px",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    border: `1px solid #aaa`,
-                    color: "#aaa",
-                    padding: 0,
-                    paddingTop: 1,
-                    fontSize: "0.75rem",
-                    fontWeight: "bold",
                   }}
-                >
-                  <p>S</p>
-                </Button>
+                />
+
+                <Button
+                  onClick={() => {}}
+                  type="text"
+                  icon={
+                    <FaHeadphonesAlt
+                      style={{
+                        fontSize: "1.25rem",
+                        // color: track.solo ? "yellow" : "#aaa",
+                      }}
+                    />
+                  }
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                />
 
                 <Button
                   onClick={toggleEffectsModal}
                   type="text"
                   style={{
-                    width: "1.5rem",
-                    height: "1.5rem",
-                    borderRadius: "6px",
+                    width: "2rem",
+                    height: "2rem",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    border: `1px solid #aaa`,
-                    color: "#aaa",
-                    padding: 0,
-                    paddingTop: 1,
-                    fontSize: "0.75rem",
-                    fontWeight: "bold",
                   }}
                 >
-                  <p>FX</p>
+                  FX
                 </Button>
               </div>
             </div>

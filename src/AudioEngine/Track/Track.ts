@@ -65,10 +65,12 @@ export class Track {
   };
 
   record = async () => {
-    const startSeconds = Tone.getTransport().seconds;
-    this.recorder.start();
+    const transport = Tone.getTransport();
+    const startSeconds = transport.seconds;
+
     this.setPlaceholderClipStart(Tone.Time(startSeconds));
-    Tone.getTransport().once("stop", async () => {
+    this.recorder.start();
+    transport.once("stop", async () => {
       const blob = await this.recorder.stop();
       const url = URL.createObjectURL(blob);
       this.setPlaceholderClipStart(null);
@@ -149,7 +151,6 @@ export class Track {
     });
 
     this.setEffectsChain([...this.effectsChain, effect]);
-
     this.channel.chain(...this.effectsChain, Tone.getDestination());
   };
 
@@ -169,11 +170,8 @@ export class Track {
   joinSelectedClips = () => {
     const selectedClips = this.clips.filter((clip) => clip.isSelected);
     if (selectedClips.length < 2) return;
-
     selectedClips.sort((a, b) => a.start.toSeconds() - b.start.toSeconds());
-
     const gapsInSeconds = [];
-
     for (let i = 0; i < selectedClips.length - 1; i++) {
       const currentClipEnd = selectedClips[i].end?.toSeconds() || 0;
       const nextClipStart = selectedClips[i + 1].start.toSeconds();

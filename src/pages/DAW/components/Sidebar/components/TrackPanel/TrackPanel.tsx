@@ -9,6 +9,7 @@ import { TrackPanelMenu } from "./components";
 import { useRef } from "react";
 import { FaHeadphonesAlt } from "react-icons/fa";
 import { GoMute } from "react-icons/go";
+import { Color } from "antd/es/color-picker";
 
 export const TrackPanel = observer(
   ({
@@ -71,6 +72,17 @@ export const TrackPanel = observer(
     const handlePressEnter = () => {
       if (inputRef.current) {
         inputRef.current.blur();
+      }
+    };
+
+    const handleColorChange = (color: Color) => {
+      const r = color.toRgb().r;
+      const g = color.toRgb().g;
+      const b = color.toRgb().b;
+      if (track.selected) {
+        audioEngine.setSelectedTracksColor(`rgb(${r},${g},${b})`);
+      } else {
+        track.setColor(`rgb(${r},${g},${b})`);
       }
     };
 
@@ -169,7 +181,6 @@ export const TrackPanel = observer(
             <ColorPicker
               size={"small"}
               format="rgb"
-              placement="topRight"
               style={{
                 background: "transparent",
                 border: "none",
@@ -177,12 +188,7 @@ export const TrackPanel = observer(
               }}
               disabledAlpha
               value={track.color}
-              onChange={(e) => {
-                const r = e.toRgb().r;
-                const g = e.toRgb().g;
-                const b = e.toRgb().b;
-                track.setColor(`rgb(${r},${g},${b})`);
-              }}
+              onChange={handleColorChange}
             />
           </div>
           <div

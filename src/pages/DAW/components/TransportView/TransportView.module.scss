@@ -1,12 +1,12 @@
 @import "src/styles/variables.scss";
 
-@media (max-width: 480px) {
+@media (max-width: 668px) {
   .hideOnSmallScreens {
     display: none;
   }
 }
 
-@media (min-width: 481px) {
+@media (min-width: 669px) {
   .hideOnMediumScreens {
     display: none;
   }

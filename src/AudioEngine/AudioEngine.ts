@@ -72,13 +72,16 @@ export class AudioEngine {
   };
 
   setBpm = (bpm: number) => {
-    Tone.getTransport().bpm.value = Math.round(bpm);
-    this.bpm = Math.round(Tone.getTransport().bpm.value);
+    const transport = Tone.getTransport();
+
+    transport.bpm.value = Math.round(bpm);
+    this.bpm = Math.round(transport.bpm.value);
   };
 
   setTimeSignature = (value: number | number[]) => {
-    Tone.getTransport().timeSignature = value;
-    this.timeSignature = Tone.getTransport().timeSignature;
+    const transport = Tone.getTransport();
+    transport.timeSignature = value;
+    this.timeSignature = transport.timeSignature;
   };
 
   createTrack = () => {
@@ -257,6 +260,7 @@ export class AudioEngine {
   };
 
   pasteClips = () => {
+    const transport = Tone.getTransport();
     if (this.selectedTracks.length > 0) {
       const sortedClipboard = [...this.clipboard]
         .filter((item): item is ClipboardItem => item !== null)
@@ -265,8 +269,7 @@ export class AudioEngine {
       sortedClipboard.forEach((item, i) => {
         if (item?.data) {
           if (i > 0) {
-            const adjustedStart =
-              item.start.toSeconds() + Tone.getTransport().seconds;
+            const adjustedStart = item.start.toSeconds() + transport.seconds;
             this.selectedTracks.forEach((track) =>
               track.addClip(
                 URL.createObjectURL(item.data),
@@ -280,7 +283,7 @@ export class AudioEngine {
             this.selectedTracks.forEach((track) =>
               track.addClip(
                 URL.createObjectURL(item.data),
-                Tone.getTransport().seconds,
+                transport.seconds,
                 item.fadeInSamples,
                 item.fadeOutSamples
               )
@@ -293,10 +296,11 @@ export class AudioEngine {
 
   setPosition = (time: Tone.TimeClass) => {
     const transport = Tone.getTransport();
+
     if (this.state !== "recording") {
       if (this.state === "playing") {
         this.pause();
-        Tone.getTransport().pause();
+        transport.pause();
         transport.ticks = time.toTicks();
         this.cursorPosition = transport.ticks;
         this.play();

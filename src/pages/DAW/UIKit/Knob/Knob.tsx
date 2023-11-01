@@ -12,6 +12,7 @@ interface KnobProps {
   double?: boolean;
   suffix?: string;
   step?: number;
+  round?: boolean;
 }
 
 export const Knob = ({
@@ -25,6 +26,7 @@ export const Knob = ({
   double = false,
   suffix,
   step = 1,
+  round,
 }: KnobProps) => {
   const startAngle = (360 - degrees) / 2;
   const endAngle = startAngle + degrees;
@@ -49,7 +51,7 @@ export const Knob = ({
   useEffect(() => {
     const newValue = convertRange(startAngle, endAngle, min, max, deg);
 
-    onChange(Math.round((newValue / step) * step));
+    onChange((newValue / step) * step);
   }, [deg, min, max, startAngle, endAngle, onChange, step]);
 
   const startDrag = (e: React.MouseEvent | React.TouchEvent) => {
@@ -75,6 +77,7 @@ export const Knob = ({
 
       const currentDeg =
         Math.round(getDeg(currentX, currentY, pts) / step) * step;
+
       setDeg(currentDeg);
     };
 
@@ -166,8 +169,17 @@ export const Knob = ({
         />
       </svg>
 
-      <p style={{ position: "absolute", margin: 0, fontSize: "0.65rem" }}>
-        {`${value} ${suffix ?? ""}`}
+      <p
+        style={{
+          position: "absolute",
+          margin: 0,
+          fontSize: "0.65rem",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {`${round ? Math.round(value) : Math.round(value * 100) / 100} ${
+          suffix ?? ""
+        }`}
       </p>
     </div>
   );

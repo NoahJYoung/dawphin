@@ -97,6 +97,7 @@ export const CompressorView = ({
           label="Threshold"
           min={-100}
           max={0}
+          round
           suffix="db"
           onChange={handleThresholdChange}
         />

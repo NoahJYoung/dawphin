@@ -16,6 +16,7 @@ interface CompressorKnobProps {
   max?: number;
   step?: number;
   suffix?: string;
+  round?: boolean;
 }
 
 export const CompressorKnob = ({
@@ -26,6 +27,7 @@ export const CompressorKnob = ({
   step,
   onChange,
   suffix,
+  round,
 }: CompressorKnobProps) => {
   return (
     <span style={knobContainerStyles}>
@@ -39,6 +41,7 @@ export const CompressorKnob = ({
         value={value}
         step={step}
         suffix={suffix}
+        round={round}
       />
     </span>
   );

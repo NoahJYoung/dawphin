@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Knob } from "src/pages/DAW/UIKit";
 import * as Tone from "tone";
 
@@ -47,6 +47,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
                 EQ3.low.value = e.valueOf();
                 setLowValue(EQ3.low.value);
               }}
+              round
             />
           </span>
 
@@ -64,6 +65,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
                 EQ3.mid.value = e.valueOf();
                 setMidValue(EQ3.mid.value);
               }}
+              round
             />
           </span>
 
@@ -81,6 +83,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
                 EQ3.high.value = e.valueOf();
                 setHighValue(EQ3.high.value);
               }}
+              round
             />
           </span>
         </div>
@@ -98,6 +101,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
                 EQ3.lowFrequency.value = e.valueOf();
                 setLowFrequency(EQ3.lowFrequency.value);
               }}
+              round
             />
           </span>
 
@@ -114,6 +118,7 @@ export const EQ3View = observer(({ EQ3 }: EQ3Props) => {
                 EQ3.highFrequency.value = e.valueOf();
                 setHighFrequency(EQ3.highFrequency.value);
               }}
+              round
             />
           </span>
         </div>

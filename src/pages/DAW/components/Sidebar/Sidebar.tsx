@@ -1,7 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import { AudioEngine } from "src/AudioEngine";
-import { Toolbar, TrackPanel, SidebarContextMenu } from "./components";
+import {
+  Toolbar,
+  TrackPanel,
+  SidebarContextMenu,
+  AddTrackButton,
+} from "./components";
 import {
   SCROLLBAR_HEIGHT,
   MIN_GRID_HEIGHT,
@@ -26,9 +31,11 @@ export const Sidebar = observer(
     const toggleExpanded = () => setExpanded(!expanded);
 
     const sectionHeight = useMemo(() => {
+      const clipFullHeight = CLIP_HEIGHT + CLIP_TOP_PADDING;
       const calculatedHeight =
-        (CLIP_HEIGHT + CLIP_TOP_PADDING) * audioEngine.tracks.length +
-        SCROLLBAR_HEIGHT;
+        clipFullHeight * audioEngine.tracks.length +
+        SCROLLBAR_HEIGHT +
+        clipFullHeight;
       return calculatedHeight > MIN_GRID_HEIGHT
         ? calculatedHeight
         : MIN_GRID_HEIGHT;
@@ -65,6 +72,7 @@ export const Sidebar = observer(
                   expanded={expanded}
                 />
               ))}
+              <AddTrackButton audioEngine={audioEngine} />
             </div>
           </div>
         </div>
