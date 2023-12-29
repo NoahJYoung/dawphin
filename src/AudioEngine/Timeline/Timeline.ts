@@ -1,7 +1,9 @@
 import { makeAutoObservable } from "mobx";
 import * as Tone from "tone";
 import { AudioEngine } from "..";
+import { injectable } from "inversify";
 
+@injectable()
 export class Timeline {
   public cursorPosition: number = 0;
   readonly zoomLevels: number[] = [32, 64, 128, 256, 512, 1024, 2048, 4092];

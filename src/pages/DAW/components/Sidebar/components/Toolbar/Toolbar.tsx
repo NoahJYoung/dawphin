@@ -82,7 +82,7 @@ export const Toolbar = observer(
         />
 
         <Button
-          className={`${styles.lgHidden} ${styles.toolbarButton} ${
+          className={`${styles.lgHidden} ${styles.leftArrow} ${
             !expanded ? styles.rotate : ""
           }`}
           type="text"

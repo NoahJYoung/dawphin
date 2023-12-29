@@ -1,7 +1,9 @@
 import { observable, makeObservable, action } from "mobx";
 import * as Tone from "tone";
 import { FXFactory } from "../Effects/FXFactory";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class MasterControl {
   public name = "Master";
   public volume: number | null = null;
@@ -12,7 +14,7 @@ export class MasterControl {
   public splitter = new Tone.Split();
   public channel: Tone.Channel = new Tone.Channel();
 
-  constructor(public fxFactory: FXFactory) {
+  constructor(@inject(FXFactory) public fxFactory: FXFactory) {
     makeObservable(this, {
       volume: observable,
       pan: observable,

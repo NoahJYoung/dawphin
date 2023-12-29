@@ -1,4 +1,5 @@
 import * as Tone from "tone";
+import { injectable } from "inversify";
 import { makeObservable, observable } from "mobx";
 
 type EffectType = {
@@ -6,6 +7,7 @@ type EffectType = {
   create: () => Tone.ToneAudioNode;
 };
 
+@injectable()
 export class FXFactory {
   effectId: number = 0;
   public effects: EffectType[] = [

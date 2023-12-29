@@ -72,7 +72,7 @@ export const Sidebar = observer(
                   expanded={expanded}
                 />
               ))}
-              <AddTrackButton audioEngine={audioEngine} />
+              <AddTrackButton expanded={expanded} audioEngine={audioEngine} />
             </div>
           </div>
         </div>

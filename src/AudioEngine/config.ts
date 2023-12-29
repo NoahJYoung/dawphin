@@ -5,22 +5,16 @@ import { Timeline } from "./Timeline";
 import { TrackFactory } from "./Track";
 import { ClipFactory } from "./Track/Clip";
 import { Keyboard } from "./Keyboard";
-import * as Tone from "tone";
+import { Container } from "inversify";
 
-const fxFactory = new FXFactory();
-const timeline = new Timeline();
-const clipFactory = new ClipFactory();
-const master = new MasterControl(fxFactory);
-const trackFactory = new TrackFactory(clipFactory);
+const container = new Container();
 
-const poly = new Tone.PolySynth(Tone.FMSynth).toDestination();
-poly.maxPolyphony = 8;
-const keyboard = new Keyboard(poly);
+container.bind(FXFactory).toSelf().inSingletonScope();
+container.bind(Timeline).toSelf().inSingletonScope();
+container.bind(ClipFactory).toSelf().inSingletonScope();
+container.bind(MasterControl).toSelf().inSingletonScope();
+container.bind(TrackFactory).toSelf().inSingletonScope();
+container.bind(Keyboard).toSelf().inSingletonScope();
+container.bind(AudioEngine).toSelf().inSingletonScope();
 
-export const audioEngineInstance = new AudioEngine(
-  master,
-  fxFactory,
-  timeline,
-  trackFactory,
-  keyboard
-);
+export const audioEngineInstance = container.get(AudioEngine);

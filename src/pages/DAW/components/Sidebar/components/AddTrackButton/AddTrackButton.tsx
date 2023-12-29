@@ -7,13 +7,17 @@ import styles from "./AddTrackButton.module.scss";
 
 interface AddTrackButtonProps {
   audioEngine: AudioEngine;
+  expanded: boolean;
 }
 
-export const AddTrackButton = ({ audioEngine }: AddTrackButtonProps) => {
+export const AddTrackButton = ({
+  audioEngine,
+  expanded,
+}: AddTrackButtonProps) => {
   return (
     <Button
       onClick={audioEngine.createTrack}
-      className={styles.addTrackButton}
+      className={`${styles.addTrackButton} ${expanded ? styles.expanded : ""}`}
       icon={<FiPlus className={styles.icon} />}
       type="text"
       style={{

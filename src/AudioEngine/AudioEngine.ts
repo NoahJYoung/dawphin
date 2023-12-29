@@ -7,6 +7,7 @@ import { MasterControl } from "./MasterControl";
 import { FXFactory } from "./Effects";
 import { Timeline } from "./Timeline";
 import { Keyboard } from "./Keyboard";
+import { inject, injectable } from "inversify";
 
 interface ClipboardItem {
   data: Blob;
@@ -15,6 +16,7 @@ interface ClipboardItem {
   fadeOutSamples: number;
 }
 
+@injectable()
 export class AudioEngine {
   clipboard: (ClipboardItem | null)[] = observable.array([]);
   state: string = "stopped";
@@ -30,11 +32,11 @@ export class AudioEngine {
   public cursorPosition: number = 0;
 
   constructor(
-    public masterControl: MasterControl,
-    public fxFactory: FXFactory,
-    public timeline: Timeline,
-    private trackFactory: TrackFactory,
-    public keyboard: Keyboard,
+    @inject(MasterControl) public masterControl: MasterControl,
+    @inject(FXFactory) public fxFactory: FXFactory,
+    @inject(Timeline) public timeline: Timeline,
+    @inject(TrackFactory) private trackFactory: TrackFactory,
+    @inject(Keyboard) public keyboard: Keyboard,
     public tracks: Track[] = observable.array([])
   ) {
     makeAutoObservable(this);

@@ -121,17 +121,15 @@ export const DAW = () => {
           <>
             {(() => {
               switch (bottomPanelView) {
-                case BottomPanelView.MIXER:
-                  return <Mixer audioEngine={audioEngineInstance} />;
-
                 case BottomPanelView.MIDI_EDITOR:
                   return <PianoRoll notes={[]} />;
 
                 case BottomPanelView.KEYBOARD:
                   return <InstrumentsView audioEngine={audioEngineInstance} />;
 
+                case BottomPanelView.MIXER:
                 default:
-                  return null;
+                  return <Mixer audioEngine={audioEngineInstance} />;
               }
             })()}
           </>

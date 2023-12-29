@@ -3,7 +3,9 @@ import { makeAutoObservable, observable } from "mobx";
 import { AudioEngine } from "..";
 import * as Tone from "tone";
 import audioBufferToWav from "audiobuffer-to-wav";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class Track {
   public volume: number | null = null;
   public pan: number | null = null;
@@ -19,7 +21,7 @@ export class Track {
 
   constructor(
     public audioEngine: AudioEngine,
-    private clipFactory: ClipFactory,
+    @inject(ClipFactory) private clipFactory: ClipFactory,
     public id: number,
     public name: string,
     public clips: Clip[] = observable.array([]),

@@ -1,7 +1,9 @@
 import * as Tone from "tone";
 import { Clip } from "./Clip";
 import { Track } from "..";
+import { injectable } from "inversify";
 
+@injectable()
 export class ClipFactory {
   createClip = (
     track: Track,

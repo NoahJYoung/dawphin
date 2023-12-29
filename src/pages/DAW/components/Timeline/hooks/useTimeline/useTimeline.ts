@@ -21,6 +21,7 @@ export const useTimeline = (
   const topbarRef = useRef<SVGSVGElement>(null);
   const playheadRef = useRef<SVGSVGElement>(null);
   const playheadXRef = useRef(0);
+  const mouseX = useRef(0);
 
   const updatePlayhead = () => {
     const x = Math.round(
@@ -88,8 +89,6 @@ export const useTimeline = (
     audioEngine.timeline.totalMeasures,
     audioEngine.bpm,
   ]);
-
-  const mouseX = useRef(0);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const divRect = e.currentTarget.getBoundingClientRect();

@@ -1,11 +1,13 @@
+import { inject, injectable } from "inversify";
 import { AudioEngine } from "..";
 import { ClipFactory } from "./Clip";
 import { Track } from "./Track";
 
+@injectable()
 export class TrackFactory {
   private currentTrackId = 1;
 
-  constructor(private clipFactory: ClipFactory) {}
+  constructor(@inject(ClipFactory) private clipFactory: ClipFactory) {}
 
   createTrack = (engine: AudioEngine): Track => {
     const newTrack = new Track(

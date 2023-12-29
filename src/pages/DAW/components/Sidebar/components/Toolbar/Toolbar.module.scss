@@ -18,6 +18,11 @@
   }
 }
 
+.leftArrow {
+  color: $text-light;
+  background: transparent !important;
+}
+
 .toolbarButton:hover,
 .toolbarButton:disabled {
   opacity: 0.5;
