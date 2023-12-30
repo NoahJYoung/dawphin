@@ -63,6 +63,7 @@ export const Key = ({ keyData, style, fullNoteName, polySynth }: KeyProps) => {
 
   return (
     <div
+      onMouseLeave={release}
       onMouseDown={attack}
       onMouseUp={release}
       onTouchStart={attack}

@@ -1,2 +1,2 @@
 export { AudioEngine } from "./AudioEngine";
-export { audioEngineInstance } from "./config";
+export { audioEngineInstance } from "./container";
