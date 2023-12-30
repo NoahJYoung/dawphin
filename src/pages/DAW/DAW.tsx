@@ -63,54 +63,28 @@ export const DAW = () => {
             audioEngine={audioEngineInstance}
           />
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-evenly",
-              width: "100%",
-              maxWidth: "150px",
-            }}
-          >
+          <div className={styles.viewButtonContainer}>
             <Button
               type="text"
               onClick={() => setBottomPanelView(BottomPanelView.MIXER)}
-              style={{
-                height: 36,
-                width: 36,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+              className={styles.viewButton}
               icon={
                 <SlidersOutlined
-                  style={{
-                    fontSize: "2rem",
-                    color:
-                      bottomPanelView === "mixer" ? "rgb(125, 0, 250)" : "#555",
-                  }}
+                  className={`${styles.btnIcon} ${
+                    bottomPanelView === "mixer" ? styles.active : ""
+                  }`}
                 />
               }
             />
             <Button
               type="text"
-              style={{
-                height: 36,
-                width: 36,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+              className={styles.viewButton}
               onClick={() => setBottomPanelView(BottomPanelView.KEYBOARD)}
               icon={
                 <PiPianoKeysFill
-                  style={{
-                    fontSize: "2rem",
-                    color:
-                      bottomPanelView === "keyboard"
-                        ? "rgb(150, 0, 250)"
-                        : "#aaa",
-                  }}
+                  className={`${styles.btnIcon} ${
+                    bottomPanelView === "keyboard" ? styles.active : ""
+                  }`}
                 />
               }
             />

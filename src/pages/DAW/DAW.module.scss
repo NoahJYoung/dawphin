@@ -23,6 +23,31 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+
+      .viewButtonContainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        width: 100%;
+        max-width: 150px;
+
+        .viewButton {
+          width: 36px;
+          height: 36px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          .btnIcon {
+            font-size: 2rem;
+            color: #aaa;
+          }
+
+          .active {
+            color: rgb(150, 0, 250);
+          }
+        }
+      }
     }
 
     .bottomPanelInner {
