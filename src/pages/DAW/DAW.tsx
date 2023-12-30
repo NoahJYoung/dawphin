@@ -10,11 +10,12 @@ import {
 } from "./components";
 import { Button } from "antd";
 
-import styles from "./DAW.module.scss";
 import { PianoRoll } from "./components/MidiEditor";
 import { InstrumentsView } from "./components/InstrumentsView";
 import { SlidersOutlined } from "@ant-design/icons";
 import { PiPianoKeysFill } from "react-icons/pi";
+
+import styles from "./DAW.module.scss";
 
 enum BottomPanelView {
   MIXER = "mixer",
