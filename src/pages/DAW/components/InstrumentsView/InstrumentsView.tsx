@@ -1,5 +1,5 @@
 import { AudioEngine } from "src/AudioEngine";
-import { KeyboardView } from "./components";
+import { ControlPanel, KeyboardView } from "./components";
 
 interface InstrumentViewProps {
   audioEngine: AudioEngine;
@@ -7,8 +7,16 @@ interface InstrumentViewProps {
 
 export const InstrumentsView = ({ audioEngine }: InstrumentViewProps) => {
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "space-evenly",
+      }}
+    >
       <KeyboardView audioEngine={audioEngine} />
-    </>
+      <ControlPanel audioEngine={audioEngine} />
+    </div>
   );
 };

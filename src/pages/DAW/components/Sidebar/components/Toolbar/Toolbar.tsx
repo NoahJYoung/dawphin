@@ -64,6 +64,7 @@ export const Toolbar = observer(
           type="text"
           onClick={() => {}}
           icon={<FiDownload className={styles.buttonIcon} />}
+          disabled
         />
 
         <Button
@@ -79,6 +80,7 @@ export const Toolbar = observer(
           type="text"
           onClick={() => {}}
           icon={<IoMdExit className={styles.buttonIcon} />}
+          disabled
         />
 
         <Button

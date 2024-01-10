@@ -3,13 +3,14 @@ import { Key as KeyData } from "../../helpers";
 import * as Tone from "tone";
 
 import styles from "./Key.module.scss";
+import { Keyboard } from "src/AudioEngine/Keyboard";
 
 interface KeyProps {
   keyData: KeyData;
   octave: number;
   style?: Record<string, any>;
   fullNoteName: string;
-  polySynth: Tone.PolySynth;
+  polySynth: Keyboard;
 }
 
 const pressedKeys = new Set<string>();

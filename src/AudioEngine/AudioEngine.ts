@@ -360,7 +360,7 @@ export class AudioEngine {
         if (this.keyboard.osc.state !== "started") {
           this.keyboard.osc.start();
         }
-        this.keyboard.synth.connect(track.recorder);
+        this.keyboard.connect(track.recorder);
       }
       track.record();
     });
@@ -401,8 +401,8 @@ export class AudioEngine {
     if (this.state === "recording") {
       this.keyboard.osc.disconnect();
       this.mic.disconnect();
-      this.keyboard.synth.disconnect();
-      this.keyboard.synth.toDestination();
+      this.keyboard.disconnect();
+      this.keyboard.toDestination();
     }
     this.setState("stopped");
     if (this.timeline.updateTimelineUI) {
