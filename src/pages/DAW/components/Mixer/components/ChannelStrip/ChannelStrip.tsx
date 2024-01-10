@@ -33,7 +33,6 @@ export const ChannelStrip = observer(
     };
 
     const handleSelect = (e: React.MouseEvent) => {
-      const audioEngine = track.audioEngine;
       if (!e.ctrlKey) {
         audioEngine.deselectAllTracks();
       }

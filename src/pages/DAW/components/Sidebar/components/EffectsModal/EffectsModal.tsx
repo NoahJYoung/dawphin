@@ -14,7 +14,7 @@ const getEffectInstances = (
   track: Track | MasterControl,
   audioEngine: AudioEngine
 ) => {
-  if (track.effectsChain.length) {
+  if (track?.effectsChain?.length) {
     return track.effectsChain.map((effect) => {
       if (effect.name === "EQ3") {
         return <EQ3View key={uuidv4()} EQ3={effect as Tone.EQ3} />;

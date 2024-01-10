@@ -12,7 +12,7 @@ export const Tracks = observer(
   ({ audioEngine, timelineRect, containerRef }: TracksProps) => {
     return (
       <>
-        {audioEngine.tracks.map((track) => (
+        {audioEngine.tracks?.map((track) => (
           <TrackView
             audioEngine={audioEngine}
             containerRef={containerRef}

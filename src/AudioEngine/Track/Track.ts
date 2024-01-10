@@ -1,9 +1,9 @@
-import { Clip, ClipFactory } from "./Clip";
+import { Clip } from "./Clip";
 import { makeAutoObservable, observable } from "mobx";
 import { AudioEngine } from "..";
 import * as Tone from "tone";
 import audioBufferToWav from "audiobuffer-to-wav";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 
 @injectable()
 export class Track {
@@ -21,8 +21,15 @@ export class Track {
 
   constructor(
     public audioEngine: AudioEngine,
-    @inject(ClipFactory) private clipFactory: ClipFactory,
-    public id: number,
+    private getNewClip: (
+      track: Track,
+      audioSrc: string,
+      audioBuffer: Tone.ToneAudioBuffer,
+      start: Tone.TimeClass,
+      fadeIn: Tone.TimeClass,
+      fadeOut: Tone.TimeClass
+    ) => Clip,
+    public id: string,
     public name: string,
     public clips: Clip[] = observable.array([]),
     public color: string = "rgb(125, 0, 250)",
@@ -231,12 +238,15 @@ export class Track {
     fadeInSamples?: number,
     fadeOutSamples?: number
   ) => {
-    const clip = this.clipFactory.createClip(
+    const buffer = new Tone.ToneAudioBuffer(src);
+
+    const clip = this.getNewClip(
       this,
       src,
-      startSeconds,
-      fadeInSamples,
-      fadeOutSamples
+      buffer,
+      Tone.Time(startSeconds, "s"),
+      Tone.Time(fadeInSamples || 0, "samples"),
+      Tone.Time(fadeOutSamples || 0, "samples")
     );
 
     this.clips.push(clip);

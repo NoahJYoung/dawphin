@@ -1,4 +1,4 @@
-import { Track, TrackFactory } from "./Track";
+import { Track } from "./Track";
 import { makeAutoObservable, observable } from "mobx";
 import * as Tone from "tone";
 import { Clip } from "./Track/Clip";
@@ -8,6 +8,8 @@ import { FXFactory } from "./Effects";
 import { Timeline } from "./Timeline";
 import { Keyboard } from "./Keyboard";
 import { inject, injectable } from "inversify";
+import { SamplePad } from "./SamplePad";
+import { constants } from "./constants";
 
 interface ClipboardItem {
   data: Blob;
@@ -35,8 +37,11 @@ export class AudioEngine {
     @inject(MasterControl) public masterControl: MasterControl,
     @inject(FXFactory) public fxFactory: FXFactory,
     @inject(Timeline) public timeline: Timeline,
-    @inject(TrackFactory) private trackFactory: TrackFactory,
+    @inject(constants.TRACK_FACTORY)
+    private getNewTrack: (audioEngine: AudioEngine) => Track,
     @inject(Keyboard) public keyboard: Keyboard,
+    @inject(SamplePad) public samplePad: SamplePad,
+
     public tracks: Track[] = observable.array([])
   ) {
     makeAutoObservable(this);
@@ -59,7 +64,6 @@ export class AudioEngine {
     Tone.getTransport().scheduleRepeat((time) => {
       this.metronome?.triggerAttack("C5", time);
     }, "4n");
-    this.createTrack();
   };
 
   toggleMetronome = () => {
@@ -88,7 +92,7 @@ export class AudioEngine {
 
   createTrack = () => {
     this.startTone();
-    const newTrack = this.trackFactory.createTrack(this);
+    const newTrack = this.getNewTrack(this);
     this.tracks.push(newTrack);
   };
 

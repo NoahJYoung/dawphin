@@ -1,13 +1,12 @@
-import { Track } from "src/AudioEngine/Track";
+import { AudioEngine } from "src/AudioEngine";
 import { Clip } from "src/AudioEngine/Track/Clip";
 
 export const calculateClipPosition = (
-  track: Track,
+  audioEngine: AudioEngine,
   clip: Clip,
   clipHeight: number,
   topPadding: number
 ) => {
-  const audioEngine = track.audioEngine;
   const left = Math.round(
     clip.start.toSamples() / audioEngine.timeline.samplesPerPixel
   );

@@ -203,7 +203,7 @@ export const ClipView = observer(
       (clip?.duration?.toSamples() || 1) / audioEngine.timeline.samplesPerPixel;
 
     const { top, left } = calculateClipPosition(
-      clip.track,
+      audioEngine,
       clip,
       CLIP_HEIGHT,
       CLIP_TOP_PADDING

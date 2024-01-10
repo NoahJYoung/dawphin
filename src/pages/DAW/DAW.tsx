@@ -9,11 +9,9 @@ import {
   TransportView,
 } from "./components";
 import { Button } from "antd";
-
-import { PianoRoll } from "./components/MidiEditor";
 import { InstrumentsView } from "./components/InstrumentsView";
 import { SlidersOutlined } from "@ant-design/icons";
-import { PiPianoKeysFill } from "react-icons/pi";
+import { PiPianoKeysFill, PiWaveformBold } from "react-icons/pi";
 
 import styles from "./DAW.module.scss";
 
@@ -21,6 +19,7 @@ enum BottomPanelView {
   MIXER = "mixer",
   KEYBOARD = "keyboard",
   MIDI_EDITOR = "midiEditor",
+  SAMPLE_PAD = "samplePad",
 }
 
 export const DAW = () => {
@@ -83,7 +82,24 @@ export const DAW = () => {
               icon={
                 <PiPianoKeysFill
                   className={`${styles.btnIcon} ${
-                    bottomPanelView === "keyboard" ? styles.active : ""
+                    bottomPanelView === BottomPanelView.KEYBOARD
+                      ? styles.active
+                      : ""
+                  }`}
+                />
+              }
+            />
+
+            <Button
+              type="text"
+              className={styles.viewButton}
+              onClick={() => setBottomPanelView(BottomPanelView.SAMPLE_PAD)}
+              icon={
+                <PiWaveformBold
+                  className={`${styles.btnIcon} ${
+                    bottomPanelView === BottomPanelView.SAMPLE_PAD
+                      ? styles.active
+                      : ""
                   }`}
                 />
               }
@@ -96,11 +112,11 @@ export const DAW = () => {
           <>
             {(() => {
               switch (bottomPanelView) {
-                case BottomPanelView.MIDI_EDITOR:
-                  return <PianoRoll notes={[]} />;
-
                 case BottomPanelView.KEYBOARD:
                   return <InstrumentsView audioEngine={audioEngineInstance} />;
+
+                // case BottomPanelView.SAMPLE_PAD:
+                //   return <div>SAMPLE PAD</div>;
 
                 case BottomPanelView.MIXER:
                 default:

@@ -20,7 +20,7 @@ export const TrackView = observer(
 
     return (
       <div style={{ display: "flex", position: "relative" }}>
-        {track.clips.map((clip) => (
+        {track?.clips?.map((clip) => (
           <ClipView
             color={track.color}
             renderCtx={renderCtx}
@@ -30,7 +30,9 @@ export const TrackView = observer(
             audioEngine={audioEngine}
           />
         ))}
-        {track.placeholderClipStart && <PlaceholderClip track={track} />}
+        {track.placeholderClipStart && (
+          <PlaceholderClip audioEngine={audioEngine} track={track} />
+        )}
       </div>
     );
   }
