@@ -1,6 +1,5 @@
 import { observer } from "mobx-react-lite";
 import { useState, useRef, useEffect } from "react";
-import { AudioEngine } from "src/AudioEngine";
 import { Clip } from "src/AudioEngine/Track/Clip";
 import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
@@ -8,23 +7,24 @@ import WaveSurfer from "wavesurfer.js";
 import { calculateClipPosition } from "./helpers";
 import { FadeCurve } from "./components";
 import * as Tone from "tone";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface ClipViewProps {
   clip: Clip;
-  audioEngine: AudioEngine;
   timelineRect: DOMRect | null;
   renderCtx: AudioContext;
   color: string;
 }
 
 export const ClipView = observer(
-  ({ clip, audioEngine, timelineRect, color }: ClipViewProps) => {
+  ({ clip, timelineRect, color }: ClipViewProps) => {
     const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
     const [peaks, setPeaks] = useState<number[][] | undefined>(undefined);
     const prevX = useRef(0);
     const overviewRef = useRef(null);
     const audioRef = useRef(null);
     const [fadeMode, setFadeMode] = useState<"in" | "out" | null>(null);
+    const audioEngine = useAudioEngine();
 
     useEffect(() => {
       if (wavesurfer) {

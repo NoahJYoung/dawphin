@@ -1,7 +1,6 @@
-import { PlusOutlined, LeftOutlined } from "@ant-design/icons";
+import { LeftOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { observer } from "mobx-react-lite";
-import { AudioEngine } from "src/AudioEngine";
 import { TOPBAR_HEIGHT } from "src/pages/DAW/constants";
 import { PiMetronomeBold } from "react-icons/pi";
 import { BiSolidMagnet } from "react-icons/bi";
@@ -10,16 +9,18 @@ import { FaSave } from "react-icons/fa";
 import { IoMdExit } from "react-icons/io";
 
 import styles from "./Toolbar.module.scss";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface ToolbarProps {
-  audioEngine: AudioEngine;
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
   toggleExpanded: () => void;
   expanded: boolean;
 }
 
 export const Toolbar = observer(
-  ({ audioEngine, expanded, toggleExpanded }: ToolbarProps) => {
+  ({ expanded, toggleExpanded }: ToolbarProps) => {
+    const audioEngine = useAudioEngine();
+
     return (
       <div
         style={{

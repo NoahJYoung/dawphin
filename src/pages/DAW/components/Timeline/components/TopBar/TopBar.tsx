@@ -5,17 +5,18 @@ import {
   zoomToGridlineMap,
 } from "../../helpers";
 import { observer } from "mobx-react-lite";
-import { AudioEngine } from "src/AudioEngine";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface TopBarProps {
-  audioEngine: AudioEngine;
   topbarRef: React.LegacyRef<SVGSVGElement>;
   gridWidth: number;
   topBarHeight: number;
 }
 
 export const TopBar = observer(
-  ({ audioEngine, topbarRef, gridWidth, topBarHeight }: TopBarProps) => {
+  ({ topbarRef, gridWidth, topBarHeight }: TopBarProps) => {
+    const audioEngine = useAudioEngine();
+
     const { totalBeats, samplesPerBeat } = calculateGridlineValues(audioEngine);
     const beatsPerMeasure = getTimeSignature(audioEngine);
 

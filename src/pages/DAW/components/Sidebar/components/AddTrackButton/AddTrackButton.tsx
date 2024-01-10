@@ -1,19 +1,16 @@
 import { Button } from "antd";
-import { AudioEngine } from "src/AudioEngine";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 import { FiPlus } from "react-icons/fi";
 import { TRACK_PANEL_FULL_WIDTH, CLIP_HEIGHT } from "src/pages/DAW/constants";
 
 import styles from "./AddTrackButton.module.scss";
 
 interface AddTrackButtonProps {
-  audioEngine: AudioEngine;
   expanded: boolean;
 }
 
-export const AddTrackButton = ({
-  audioEngine,
-  expanded,
-}: AddTrackButtonProps) => {
+export const AddTrackButton = ({ expanded }: AddTrackButtonProps) => {
+  const audioEngine = useAudioEngine();
   return (
     <Button
       onClick={audioEngine.createTrack}

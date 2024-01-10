@@ -2,18 +2,16 @@ import { useState } from "react";
 
 import { observer } from "mobx-react-lite";
 import { Modal } from "antd";
-import { AudioEngine } from "src/AudioEngine";
 import { ProjectDataDisplay, TransportControls } from "./components";
 
 import styles from "./TransportView.module.scss";
 
 interface TransportViewProps {
-  audioEngine: AudioEngine;
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 export const TransportView = observer(
-  ({ audioEngine, containerRef }: TransportViewProps) => {
+  ({ containerRef }: TransportViewProps) => {
     const [projectModalOpen, setProjectModalOpen] = useState(false);
 
     const openModal = () => {
@@ -36,13 +34,9 @@ export const TransportView = observer(
           justifyContent: "space-between",
         }}
       >
-        <TransportControls
-          containerRef={containerRef}
-          audioEngine={audioEngine}
-          openModal={openModal}
-        />
+        <TransportControls containerRef={containerRef} openModal={openModal} />
         <div className={styles.hideOnSmallScreens}>
-          <ProjectDataDisplay audioEngine={audioEngine} />
+          <ProjectDataDisplay />
         </div>
 
         <Modal
@@ -56,7 +50,7 @@ export const TransportView = observer(
           open={projectModalOpen}
           className={styles.hideOnMediumScreens}
         >
-          <ProjectDataDisplay audioEngine={audioEngine} />
+          <ProjectDataDisplay />
         </Modal>
       </div>
     );

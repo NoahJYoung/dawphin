@@ -5,7 +5,6 @@ import {
   TimelineGrid,
   TopBar,
 } from "./components";
-import type { AudioEngine } from "src/AudioEngine";
 import { observer } from "mobx-react-lite";
 import { useTimeline } from "./hooks";
 import { CLIP_HEIGHT, TOPBAR_HEIGHT } from "../../constants";
@@ -13,7 +12,6 @@ import { CLIP_HEIGHT, TOPBAR_HEIGHT } from "../../constants";
 import styles from "./TimelineView.module.scss";
 
 interface TimelineProps {
-  audioEngine: AudioEngine;
   setTimelineRect: Dispatch<SetStateAction<DOMRect | null>>;
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
   children: React.ReactNode;
@@ -22,7 +20,6 @@ interface TimelineProps {
 
 export const TimelineView = observer(
   ({
-    audioEngine,
     setTimelineRect,
     trackPanelsRef,
     children,
@@ -38,10 +35,10 @@ export const TimelineView = observer(
       handleMouseMove,
       handleClick,
       handleScroll,
-    } = useTimeline(audioEngine, containerRef, trackPanelsRef, setTimelineRect);
+    } = useTimeline(containerRef, trackPanelsRef, setTimelineRect);
 
     return (
-      <TimelineContextMenu audioEngine={audioEngine}>
+      <TimelineContextMenu>
         <div
           className={`${styles.timelineView} styled-scrollbar`}
           ref={containerRef}
@@ -52,7 +49,6 @@ export const TimelineView = observer(
         >
           <div className={styles.gridContainer} onClick={handleClick}>
             <TimelineGrid
-              audioEngine={audioEngine}
               gridRef={gridRef}
               gridWidth={gridWidth}
               gridHeight={sectionHeight}
@@ -68,7 +64,6 @@ export const TimelineView = observer(
             }}
           >
             <TopBar
-              audioEngine={audioEngine}
               topbarRef={topbarRef}
               topBarHeight={TOPBAR_HEIGHT}
               gridWidth={gridWidth}

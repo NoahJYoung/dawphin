@@ -8,20 +8,21 @@ import {
 } from "@ant-design/icons";
 import { Button } from "antd";
 import { observer } from "mobx-react-lite";
-import { AudioEngine } from "src/AudioEngine";
 import { PauseIcon, PlayIcon, RecordIcon, StopIcon } from "src/pages/DAW/icons";
 import * as Tone from "tone";
 
 import styles from "./TransportControls.module.scss";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface TransportControlsProps {
-  audioEngine: AudioEngine;
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
   openModal: () => void;
 }
 
 export const TransportControls = observer(
-  ({ audioEngine, containerRef, openModal }: TransportControlsProps) => {
+  ({ containerRef, openModal }: TransportControlsProps) => {
+    const audioEngine = useAudioEngine();
+
     const handleZoomIn = () => {
       audioEngine.timeline.setZoom("zoomIn");
       if (

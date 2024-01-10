@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
 import { keys } from "../../helpers";
 import { Key } from "../../components";
-import { AudioEngine } from "src/AudioEngine";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
-export const useKeys = (audioEngine: AudioEngine) => {
+export const useKeys = () => {
+  const audioEngine = useAudioEngine();
   const { baseOctave } = audioEngine.keyboard;
   const keyElements = useMemo(() => {
     return keys.map((key, i, arr) => {

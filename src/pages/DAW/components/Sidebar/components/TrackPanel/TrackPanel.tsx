@@ -2,7 +2,6 @@ import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Button, ColorPicker, InputRef } from "antd";
 import { Input } from "antd";
-import type { AudioEngine } from "src/AudioEngine";
 import { CLIP_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "src/pages/DAW/constants";
 import { RecordIcon } from "src/pages/DAW/icons";
 import { TrackPanelMenu } from "./components";
@@ -10,19 +9,19 @@ import { useRef } from "react";
 import { FaHeadphonesAlt } from "react-icons/fa";
 import { GoMute } from "react-icons/go";
 import { Color } from "antd/es/color-picker";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 export const TrackPanel = observer(
   ({
     track,
-    audioEngine,
     expanded,
   }: {
     track: Track;
     trackNumber: number;
-    audioEngine: AudioEngine;
     expanded: boolean;
   }) => {
     const inputRef = useRef<InputRef | null>(null);
+    const audioEngine = useAudioEngine();
 
     const handleMute = () => {
       if (track.selected) {

@@ -9,20 +9,20 @@ import {
   ArrowRightOutlined,
   MergeCellsOutlined,
 } from "@ant-design/icons";
-import type { AudioEngine } from "src/AudioEngine";
 import { observer } from "mobx-react-lite";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import * as Tone from "tone";
 import { FadeModal } from "../FadeModal";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface TimelineContextMenuProps {
   children: React.ReactNode;
-  audioEngine: AudioEngine;
 }
 
 export const TimelineContextMenu = observer(
-  ({ children, audioEngine }: TimelineContextMenuProps) => {
+  ({ children }: TimelineContextMenuProps) => {
     const [fadeModalOpen, setFadeModalOpen] = useState(false);
+    const audioEngine = useAudioEngine();
 
     const openFadeModal = () => setFadeModalOpen(true);
     const closeFadeModal = () => setFadeModalOpen(false);
@@ -113,7 +113,7 @@ export const TimelineContextMenu = observer(
         <Dropdown menu={{ items }} trigger={["contextMenu"]}>
           {children}
         </Dropdown>
-        <FadeModal open={fadeModalOpen} audioEngine={audioEngine} />
+        <FadeModal open={fadeModalOpen} />
       </>
     );
   }

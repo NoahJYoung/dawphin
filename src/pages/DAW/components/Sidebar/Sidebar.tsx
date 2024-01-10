@@ -1,6 +1,5 @@
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
-import { AudioEngine } from "src/AudioEngine";
 import {
   Toolbar,
   TrackPanel,
@@ -14,21 +13,23 @@ import {
   CLIP_TOP_PADDING,
 } from "../../constants";
 import styles from "./Sidebar.module.scss";
+import { useAudioEngine } from "../../hooks";
 
 interface SidebarProps {
   timelineRect: DOMRect | null;
-  audioEngine: AudioEngine;
   trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 export const Sidebar = observer(
-  ({ audioEngine, trackPanelsRef, containerRef }: SidebarProps) => {
+  ({ trackPanelsRef, containerRef }: SidebarProps) => {
     const [expanded, setExpanded] = useState(
       window.innerWidth > 480 ? true : false
     );
 
     const toggleExpanded = () => setExpanded(!expanded);
+
+    const audioEngine = useAudioEngine();
 
     const sectionHeight = useMemo(() => {
       const clipFullHeight = CLIP_HEIGHT + CLIP_TOP_PADDING;
@@ -42,7 +43,7 @@ export const Sidebar = observer(
     }, [audioEngine.tracks.length]);
 
     return (
-      <SidebarContextMenu audioEngine={audioEngine}>
+      <SidebarContextMenu>
         <div
           style={{
             minWidth: expanded ? 235 : 64,
@@ -54,7 +55,6 @@ export const Sidebar = observer(
           <Toolbar
             expanded={expanded}
             toggleExpanded={toggleExpanded}
-            audioEngine={audioEngine}
             containerRef={containerRef}
           />
 
@@ -65,14 +65,13 @@ export const Sidebar = observer(
             >
               {audioEngine.tracks.map((track, i) => (
                 <TrackPanel
-                  audioEngine={audioEngine}
                   trackNumber={i + 1}
                   key={track.id}
                   track={track}
                   expanded={expanded}
                 />
               ))}
-              <AddTrackButton expanded={expanded} audioEngine={audioEngine} />
+              <AddTrackButton expanded={expanded} />
             </div>
           </div>
         </div>

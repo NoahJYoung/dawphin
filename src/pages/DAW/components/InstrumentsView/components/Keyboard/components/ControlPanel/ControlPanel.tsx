@@ -1,19 +1,16 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { AudioEngine } from "src/AudioEngine";
 import { Button, Slider } from "antd";
 import { IoMdVolumeHigh } from "react-icons/io";
 import { Knob } from "src/pages/DAW/UIKit";
 import { PiWaveSineBold } from "react-icons/pi";
 import { FaRegSquare, FaPlus, FaMinus } from "react-icons/fa";
 import { BsTriangle } from "react-icons/bs";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
-interface ControlPanelProps {
-  audioEngine: AudioEngine;
-}
+export const ControlPanel = observer(() => {
+  const { keyboard } = useAudioEngine();
 
-export const ControlPanel = observer(({ audioEngine }: ControlPanelProps) => {
-  const { keyboard } = audioEngine;
   return (
     <div
       style={{

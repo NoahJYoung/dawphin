@@ -6,14 +6,10 @@ import { CompressorView, EQ3View } from "./effects";
 import { MasterControl } from "src/AudioEngine/MasterControl";
 import { ListBoxes } from "./components/ListBoxes";
 import { v4 as uuidv4 } from "uuid";
-import { AudioEngine } from "src/AudioEngine";
 
 import styles from "./EffectsModal.module.scss";
 
-const getEffectInstances = (
-  track: Track | MasterControl,
-  audioEngine: AudioEngine
-) => {
+const getEffectInstances = (track: Track | MasterControl) => {
   if (track?.effectsChain?.length) {
     return track.effectsChain.map((effect) => {
       if (effect.name === "EQ3") {
@@ -28,7 +24,6 @@ const getEffectInstances = (
         return (
           <CompressorView
             key={uuidv4()}
-            audioEngine={audioEngine}
             compressor={effect as Tone.Compressor}
           />
         );
@@ -42,17 +37,10 @@ interface EffectsModalProps {
   track: Track | MasterControl;
   open: boolean;
   onCancel: () => void;
-  audioEngine: AudioEngine;
 }
 
-export const EffectsModal = ({
-  track,
-  open,
-  onCancel,
-  audioEngine,
-}: EffectsModalProps) => {
+export const EffectsModal = ({ track, open, onCancel }: EffectsModalProps) => {
   const [effectViewIndex, setEffectViewIndex] = useState<number>(0);
-
   return (
     <Modal
       className={styles.modal}
@@ -75,7 +63,7 @@ export const EffectsModal = ({
           track={track}
         />
         <div className={styles.effectViewContainer}>
-          {getEffectInstances(track, audioEngine)[effectViewIndex]}
+          {getEffectInstances(track)[effectViewIndex]}
         </div>
       </div>
     </Modal>

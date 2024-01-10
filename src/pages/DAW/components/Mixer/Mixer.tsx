@@ -1,29 +1,18 @@
-import { AudioEngine } from "src/AudioEngine";
 import { ChannelStrip } from "./components";
 import { observer } from "mobx-react-lite";
+import { MasterFader } from "../MasterFader";
+import { useAudioEngine } from "../../hooks";
 
 import styles from "./Mixer.module.scss";
-import { MasterFader } from "../MasterFader";
 
-interface MixerProps {
-  audioEngine: AudioEngine;
-}
-
-export const Mixer = observer(({ audioEngine }: MixerProps) => {
+export const Mixer = observer(() => {
+  const { tracks } = useAudioEngine();
   return (
     <div className={`${styles.mixer} styled-scrollbar`}>
-      <MasterFader
-        audioEngine={audioEngine}
-        masterControl={audioEngine.masterControl}
-      />
+      <MasterFader />
       <div className={`${styles.channels} styled-scrollbar`}>
-        {audioEngine.tracks.map((track, i) => (
-          <ChannelStrip
-            audioEngine={audioEngine}
-            key={track.id}
-            trackNumber={i + 1}
-            track={track}
-          />
+        {tracks.map((track, i) => (
+          <ChannelStrip key={track.id} trackNumber={i + 1} track={track} />
         ))}
       </div>
     </div>

@@ -1,20 +1,14 @@
 import { useState } from "react";
 import * as Tone from "tone";
-
 import { CompressorKnob, CompressorMeters } from "./components";
-import { AudioEngine } from "src/AudioEngine";
 
 import styles from "./CompressorView.module.scss";
 
 interface CompressorViewProps {
   compressor: Tone.Compressor;
-  audioEngine: AudioEngine;
 }
 
-export const CompressorView = ({
-  compressor,
-  audioEngine,
-}: CompressorViewProps) => {
+export const CompressorView = ({ compressor }: CompressorViewProps) => {
   const [attack, setAttack] = useState(Number(compressor.attack.value));
   const [release, setRelease] = useState(Number(compressor.release.value));
   const [ratio, setRatio] = useState(Number(compressor.ratio.value));
@@ -61,7 +55,7 @@ export const CompressorView = ({
       }}
     >
       <h2>{compressor.name}</h2>
-      <CompressorMeters audioEngine={audioEngine} compressor={compressor} />
+      <CompressorMeters compressor={compressor} />
 
       <div className={styles.knobContainer}>
         <CompressorKnob

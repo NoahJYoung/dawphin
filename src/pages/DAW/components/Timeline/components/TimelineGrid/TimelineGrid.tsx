@@ -1,14 +1,13 @@
 import { observer } from "mobx-react-lite";
-import { AudioEngine } from "src/AudioEngine";
 import {
   calculateGridlineValues,
   getTimeSignature,
   zoomToGridlineMap,
 } from "../../helpers";
 import { CLIP_TOP_PADDING } from "src/pages/DAW/constants";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface TimelineGridProps {
-  audioEngine: AudioEngine;
   gridRef: React.LegacyRef<SVGSVGElement>;
   gridWidth: number;
   gridHeight: number;
@@ -18,13 +17,14 @@ interface TimelineGridProps {
 
 export const TimelineGrid = observer(
   ({
-    audioEngine,
     gridRef,
     gridWidth,
     gridHeight,
     clipHeight,
     topbarHeight,
   }: TimelineGridProps) => {
+    const audioEngine = useAudioEngine();
+
     const { totalBeats, samplesPerBeat } = calculateGridlineValues(audioEngine);
     const measuresOnly = audioEngine.timeline.samplesPerPixel >= 2048;
 

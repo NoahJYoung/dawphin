@@ -1,11 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
-import { AudioEngine } from "src/AudioEngine";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 import * as Tone from "tone";
 
 interface CompressorMetersProps {
   compressor: Tone.Compressor;
-  audioEngine: AudioEngine;
 }
 
 const meterContainerStyles: any = {
@@ -18,10 +17,11 @@ const meterContainerStyles: any = {
 };
 
 export const CompressorMeters = observer(
-  ({ compressor, audioEngine }: CompressorMetersProps) => {
+  ({ compressor }: CompressorMetersProps) => {
     const inputCanvasRef = useRef<HTMLCanvasElement>(null);
     const outputCanvasRef = useRef<HTMLCanvasElement>(null);
     const animationFrameId = useRef<number | null>(null);
+    const audioEngine = useAudioEngine();
 
     const canvasHeight = 200;
 

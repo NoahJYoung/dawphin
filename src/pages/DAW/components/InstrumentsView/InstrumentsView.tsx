@@ -1,11 +1,6 @@
-import { AudioEngine } from "src/AudioEngine";
 import { ControlPanel, KeyboardView } from "./components";
 
-interface InstrumentViewProps {
-  audioEngine: AudioEngine;
-}
-
-export const InstrumentsView = ({ audioEngine }: InstrumentViewProps) => {
+export const InstrumentsView = () => {
   return (
     <div
       style={{
@@ -15,8 +10,8 @@ export const InstrumentsView = ({ audioEngine }: InstrumentViewProps) => {
         justifyContent: "space-evenly",
       }}
     >
-      <KeyboardView audioEngine={audioEngine} />
-      <ControlPanel audioEngine={audioEngine} />
+      <KeyboardView />
+      <ControlPanel />
     </div>
   );
 };

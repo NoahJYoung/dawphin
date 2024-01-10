@@ -1,15 +1,15 @@
 import { Dropdown, MenuProps } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import type { AudioEngine } from "src/AudioEngine";
 import { observer } from "mobx-react-lite";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface TimelineContextMenuProps {
   children: React.ReactNode;
-  audioEngine: AudioEngine;
 }
 
 export const SidebarContextMenu = observer(
-  ({ children, audioEngine }: TimelineContextMenuProps) => {
+  ({ children }: TimelineContextMenuProps) => {
+    const audioEngine = useAudioEngine();
     const items: MenuProps["items"] = [
       {
         key: "1",

@@ -1,14 +1,11 @@
 import { InputNumber, Modal } from "antd";
-import { observer } from "mobx-react-lite";
 import { useState } from "react";
-import { AudioEngine } from "src/AudioEngine";
 
 interface FadeModalProps {
-  audioEngine: AudioEngine;
   open: boolean;
 }
 
-export const FadeModal = ({ audioEngine, open }: FadeModalProps) => {
+export const FadeModal = ({ open }: FadeModalProps) => {
   const [fadeInInput, setFadeInInput] = useState("");
   const [fadeOutInput, setFadeOutInput] = useState("");
 

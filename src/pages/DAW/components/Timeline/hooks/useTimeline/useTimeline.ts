@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { AudioEngine } from "src/AudioEngine";
 import { getTimeSignature } from "../../helpers";
 import {
   CLIP_HEIGHT,
@@ -8,14 +7,15 @@ import {
   SCROLLBAR_HEIGHT,
 } from "src/pages/DAW/constants";
 import * as Tone from "tone";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 export const useTimeline = (
-  audioEngine: AudioEngine,
   containerRef: React.MutableRefObject<HTMLDivElement | null>,
   trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>,
   setTimelineRect: (rect: DOMRect) => void
 ) => {
   const [rAFId, setRAFId] = useState<number | null>(null);
+  const audioEngine = useAudioEngine();
 
   const gridRef = useRef<SVGSVGElement>(null);
   const topbarRef = useRef<SVGSVGElement>(null);
