@@ -5,7 +5,7 @@ import { Timeline } from "./Timeline";
 import { Track } from "./Track";
 import { Clip } from "./Track/Clip";
 import { Keyboard } from "./Keyboard";
-import { SamplePad } from "./SamplePad";
+import { Sampler } from "./Sampler";
 import { Container, interfaces } from "inversify";
 import { v4 as uuid } from "uuid";
 import { constants } from "./constants";
@@ -52,6 +52,6 @@ container
 
 container.bind(Keyboard).toSelf().inSingletonScope();
 
-container.bind(SamplePad).toSelf().inSingletonScope();
+container.bind(Sampler).toSelf().inSingletonScope();
 
 export const audioEngineInstance = container.get(AudioEngine);

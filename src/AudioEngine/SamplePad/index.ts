@@ -1,1 +1,0 @@
-export { SamplePad } from "./SamplePad";

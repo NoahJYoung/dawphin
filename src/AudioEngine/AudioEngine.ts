@@ -8,8 +8,8 @@ import { FXFactory } from "./Effects";
 import { Timeline } from "./Timeline";
 import { Keyboard } from "./Keyboard";
 import { inject, injectable } from "inversify";
-import { SamplePad } from "./SamplePad";
 import { constants } from "./constants";
+import { Sampler } from "./Sampler";
 
 interface ClipboardItem {
   data: Blob;
@@ -40,7 +40,7 @@ export class AudioEngine {
     @inject(constants.TRACK_FACTORY)
     private getNewTrack: (audioEngine: AudioEngine) => Track,
     @inject(Keyboard) public keyboard: Keyboard,
-    @inject(SamplePad) public samplePad: SamplePad,
+    @inject(Sampler) public sampler: Sampler,
 
     public tracks: Track[] = observable.array([])
   ) {
@@ -361,6 +361,12 @@ export class AudioEngine {
           this.keyboard.osc.start();
         }
         this.keyboard.connect(track.recorder);
+      } else if (track.inputMode === "sampler") {
+        this.sampler.osc.connect(track.recorder);
+        if (this.sampler.osc.state !== "started") {
+          this.sampler.osc.start();
+        }
+        this.sampler.output.connect(track.recorder);
       }
       track.record();
     });
@@ -400,6 +406,7 @@ export class AudioEngine {
     this.tracks.forEach((track) => track.stop());
     if (this.state === "recording") {
       this.keyboard.osc.disconnect();
+      this.sampler.osc.disconnect();
       this.mic.disconnect();
       this.keyboard.disconnect();
       this.keyboard.toDestination();

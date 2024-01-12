@@ -21,7 +21,13 @@ export const ControlPanel = observer(() => {
         height: 290,
       }}
     >
-      <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          alignItems: "center",
+        }}
+      >
         <IoMdVolumeHigh style={{ fontSize: "2rem" }} />
         <Slider
           style={{ width: "100%" }}
@@ -80,6 +86,8 @@ export const ControlPanel = observer(() => {
           alignItems: "center",
           width: "100%",
           maxWidth: 350,
+          gap: 20,
+          padding: 10,
         }}
       >
         <span

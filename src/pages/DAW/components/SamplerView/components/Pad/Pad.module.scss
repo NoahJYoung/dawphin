@@ -1,0 +1,56 @@
+@import "src/styles/variables.scss";
+
+.padWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-bottom: 5px;
+
+  .buttons {
+    display: flex;
+    justify-content: space-evenly;
+
+    button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .icon {
+        font-size: 1.2rem;
+        color: $primary-purple;
+      }
+    }
+
+    button:disabled {
+      .icon {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  .pad {
+    width: 6rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: #ddd;
+    background: radial-gradient(#ddd 0%, #ddd 50%, #aaa);
+    border-radius: 6px;
+    border: none;
+  }
+
+  .pad.active {
+    box-shadow: inset -1px -1px 10px 1px #aaa;
+    transform: scale(0.95);
+    box-shadow: inset -1px -1px 10px 1px $primary-purple;
+  }
+
+  .pad:disabled {
+    opacity: 0.6;
+  }
+}

@@ -44,7 +44,7 @@
           }
 
           .active {
-            color: rgb(150, 0, 250);
+            color: $primary-purple;
           }
         }
       }
@@ -53,7 +53,7 @@
     .bottomPanelInner {
       display: flex;
       gap: 5px;
-      height: 100%;
+      height: fit-content;
       color: $text-light;
     }
   }

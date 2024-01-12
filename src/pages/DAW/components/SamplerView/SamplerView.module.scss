@@ -1,0 +1,30 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  gap: 24px;
+
+  .sampler {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 24px;
+    padding: 10px 10px;
+    height: 100%;
+  }
+
+  .volumeSliders {
+    padding: 12px;
+    display: flex;
+    gap: 24px;
+    height: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .container {
+    justify-content: center;
+    gap: 48px;
+  }
+}

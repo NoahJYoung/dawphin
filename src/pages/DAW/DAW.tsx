@@ -5,14 +5,15 @@ import {
   Tracks,
   Sidebar,
   TransportView,
+  SamplerView,
 } from "./components";
 import { Button } from "antd";
 import { InstrumentsView } from "./components/InstrumentsView";
 import { SlidersOutlined } from "@ant-design/icons";
 import { PiPianoKeysFill, PiWaveformBold } from "react-icons/pi";
+import { AudioEngineProvider } from "./hooks";
 
 import styles from "./DAW.module.scss";
-import { AudioEngineProvider } from "./hooks";
 
 enum BottomPanelView {
   MIXER = "mixer",
@@ -98,15 +99,14 @@ export const DAW = () => {
           </div>
 
           <div className={`${styles.bottomPanelInner} styled-scrollbar`}>
-            {/* TODO: Create a component switch component, so as to not leave this IIF in the middle of here */}
             <>
               {(() => {
                 switch (bottomPanelView) {
                   case BottomPanelView.KEYBOARD:
                     return <InstrumentsView />;
 
-                  // case BottomPanelView.SAMPLE_PAD:
-                  //   return <div>SAMPLE PAD</div>;
+                  case BottomPanelView.SAMPLE_PAD:
+                    return <SamplerView />;
 
                   case BottomPanelView.MIXER:
                   default:
