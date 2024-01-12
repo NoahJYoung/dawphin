@@ -2,8 +2,8 @@ import { Clip } from "./Clip";
 import { makeAutoObservable, observable } from "mobx";
 import { AudioEngine } from "..";
 import * as Tone from "tone";
-import audioBufferToWav from "audiobuffer-to-wav";
 import { injectable } from "inversify";
+import { blobToBuffer } from "../helpers";
 
 @injectable()
 export class Track {
@@ -23,7 +23,6 @@ export class Track {
     public audioEngine: AudioEngine,
     private getNewClip: (
       track: Track,
-      audioSrc: string,
       audioBuffer: Tone.ToneAudioBuffer,
       start: Tone.TimeClass,
       fadeIn: Tone.TimeClass,
@@ -81,9 +80,9 @@ export class Track {
     this.recorder.start();
     transport.once("stop", async () => {
       const blob = await this.recorder.stop();
-      const url = URL.createObjectURL(blob);
+      const toneBuffer = await blobToBuffer(blob);
       this.setPlaceholderClipStart(null);
-      this.addClip(url, startSeconds);
+      this.addClip(toneBuffer, startSeconds);
     });
   };
 
@@ -193,13 +192,8 @@ export class Track {
       gapsInSeconds
     );
 
-    const buffer = concatenatedBuffer.get();
+    const buffer = new Tone.ToneAudioBuffer(concatenatedBuffer.get());
     if (buffer) {
-      const blob = new Blob([audioBufferToWav(buffer)], {
-        type: "audio/wav",
-      });
-      const src = URL.createObjectURL(blob);
-
       selectedClips.forEach((clip) => {
         const clipsCopy = [...this.clips];
         const index = clipsCopy.indexOf(clip);
@@ -208,7 +202,7 @@ export class Track {
         this.setClips(clipsCopy);
       });
 
-      this.addClip(src, selectedClips[0].start.toSeconds());
+      this.addClip(buffer, selectedClips[0].start.toSeconds());
     }
   };
 
@@ -233,16 +227,13 @@ export class Track {
   };
 
   addClip = (
-    src: string,
+    buffer: Tone.ToneAudioBuffer,
     startSeconds: number,
     fadeInSamples?: number,
     fadeOutSamples?: number
   ) => {
-    const buffer = new Tone.ToneAudioBuffer(src);
-
     const clip = this.getNewClip(
       this,
-      src,
       buffer,
       Tone.Time(startSeconds, "s"),
       Tone.Time(fadeInSamples || 0, "samples"),

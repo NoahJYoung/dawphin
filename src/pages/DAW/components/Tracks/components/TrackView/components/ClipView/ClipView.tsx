@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Clip } from "src/AudioEngine/Track/Clip";
 import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
@@ -8,6 +8,7 @@ import { calculateClipPosition } from "./helpers";
 import { FadeCurve } from "./components";
 import * as Tone from "tone";
 import { useAudioEngine } from "src/pages/DAW/hooks";
+import { bufferToBlob } from "src/AudioEngine/helpers";
 
 interface ClipViewProps {
   clip: Clip;
@@ -19,38 +20,45 @@ interface ClipViewProps {
 export const ClipView = observer(
   ({ clip, timelineRect, color }: ClipViewProps) => {
     const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
-    const [peaks, setPeaks] = useState<number[][] | undefined>(undefined);
     const prevX = useRef(0);
     const overviewRef = useRef(null);
     const audioRef = useRef(null);
     const [fadeMode, setFadeMode] = useState<"in" | "out" | null>(null);
     const audioEngine = useAudioEngine();
 
+    const audioURL = useMemo(
+      () => URL.createObjectURL(bufferToBlob(clip.audioBuffer)),
+      [clip.audioBuffer]
+    );
+
     useEffect(() => {
-      if (wavesurfer) {
-        setPeaks(wavesurfer.exportPeaks());
-      }
       const sampleRate = Tone.getContext().sampleRate;
       const pixelsPerSample = audioEngine.timeline.samplesPerPixel;
       const pixelsPerSecond = Math.round(sampleRate / pixelsPerSample);
       if (overviewRef?.current && clip.end) {
-        const wavesurfer = WaveSurfer.create({
+        const surfer = WaveSurfer.create({
           interact: true,
           media: audioRef?.current || undefined,
           container: overviewRef.current,
           waveColor: convertRgbToRgba("rgb(0, 0, 0)", 0.5),
           progressColor: convertRgbToRgba("rgb(0, 0, 0)", 0.5),
-          url: clip.audioSrc,
+          url: audioURL,
           height: "auto",
           minPxPerSec: pixelsPerSecond,
           hideScrollbar: true,
           cursorWidth: 0,
           normalize: false,
-          peaks,
         });
-        setWavesurfer(wavesurfer);
+        setWavesurfer(surfer);
       }
-    }, [clip.duration, peaks]);
+
+      return () => {
+        if (wavesurfer) {
+          wavesurfer.destroy();
+        }
+        URL.revokeObjectURL(audioURL);
+      };
+    }, [clip.duration, audioURL]);
 
     useEffect(() => {
       wavesurfer?.setOptions({ normalize: clip.normalized });
@@ -276,7 +284,6 @@ export const ClipView = observer(
             clipDurationInSamples={clip.duration?.toSamples() || 0}
           />
         </div>
-        <audio src={clip.audioSrc} ref={audioRef} />
       </>
     );
   }

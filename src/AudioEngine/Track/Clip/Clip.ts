@@ -17,7 +17,6 @@ export class Clip {
 
   constructor(
     public track: Track,
-    public audioSrc: string,
     public audioBuffer: Tone.ToneAudioBuffer,
     public start: Tone.TimeClass,
     public fadeIn: Tone.TimeClass = Tone.Time(0),
@@ -85,7 +84,7 @@ export class Clip {
   };
 
   loadAudio = async () => {
-    await this.player.load(this.audioSrc);
+    this.player.buffer = this.audioBuffer;
     this.setDuration(Tone.Time(this.player.buffer.duration, "s"));
     this.setEnd(
       Tone.Time(this.start.toSeconds() + this.player.buffer.duration, "s")
@@ -155,7 +154,6 @@ export class Clip {
   };
 
   deleteClip = () => {
-    URL.revokeObjectURL(this.audioSrc);
     this.player.dispose();
     this.clearEvents();
   };

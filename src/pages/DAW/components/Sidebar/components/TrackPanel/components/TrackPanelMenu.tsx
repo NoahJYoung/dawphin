@@ -6,6 +6,7 @@ import {
 import { Dropdown, Button, Menu } from "antd";
 import { ChangeEvent, useRef } from "react";
 import { Track } from "src/AudioEngine/Track";
+import { blobToBuffer } from "src/AudioEngine/helpers";
 import * as Tone from "tone";
 
 interface TrackPanelMenuProps {
@@ -16,11 +17,11 @@ export const TrackPanelMenu = ({ track }: TrackPanelMenuProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const transport = Tone.getTransport();
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFile = e.target.files[0];
-      const src = URL.createObjectURL(selectedFile);
-      track.addClip(src, transport.seconds);
+      const buffer = await blobToBuffer(selectedFile);
+      track.addClip(buffer, transport.seconds);
     }
   };
 

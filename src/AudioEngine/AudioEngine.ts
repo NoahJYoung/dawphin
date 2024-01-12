@@ -10,6 +10,7 @@ import { Keyboard } from "./Keyboard";
 import { inject, injectable } from "inversify";
 import { constants } from "./constants";
 import { Sampler } from "./Sampler";
+import { blobToBuffer } from "./helpers";
 
 interface ClipboardItem {
   data: Blob;
@@ -218,14 +219,9 @@ export class AudioEngine {
       data &&
         data.clips.forEach((clipData) => {
           const buffer = clipData.buffer.get();
+          const toneBuffer = new Tone.ToneAudioBuffer(buffer);
           if (buffer) {
-            const blob = new Blob([audioBufferToWav(buffer)], {
-              type: "audio/wav",
-            });
-            currentTrack?.addClip(
-              URL.createObjectURL(blob),
-              clipData.start.toSamples()
-            );
+            currentTrack?.addClip(toneBuffer, clipData.start.toSamples());
           }
         });
       currentTrack?.setClips(
@@ -272,28 +268,28 @@ export class AudioEngine {
         .filter((item): item is ClipboardItem => item !== null)
         .sort((a, b) => a.start.toSeconds() - b.start.toSeconds());
 
-      sortedClipboard.forEach((item, i) => {
+      sortedClipboard.forEach(async (item, i) => {
         if (item?.data) {
+          const buffer = await blobToBuffer(item.data);
           if (i > 0) {
             const adjustedStart = item.start.toSeconds() + transport.seconds;
-            this.selectedTracks.forEach((track) =>
+            this.selectedTracks.forEach((track) => {
               track.addClip(
-                URL.createObjectURL(item.data),
+                buffer,
                 adjustedStart,
                 item.fadeInSamples,
                 item.fadeOutSamples
-              )
-            );
+              );
+            });
           } else {
-            console.log("fade samples", item.fadeInSamples);
-            this.selectedTracks.forEach((track) =>
+            this.selectedTracks.forEach((track) => {
               track.addClip(
-                URL.createObjectURL(item.data),
+                buffer,
                 transport.seconds,
                 item.fadeInSamples,
                 item.fadeOutSamples
-              )
-            );
+              );
+            });
           }
         }
       });

@@ -28,8 +28,7 @@ export const Pad = observer(({ padNumber }: PadProps) => {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFile = e.target.files[0];
-      const src = URL.createObjectURL(selectedFile);
-      sampler.loadAudio(padNumber, src);
+      sampler.loadAudio(padNumber, selectedFile);
     }
   };
 
