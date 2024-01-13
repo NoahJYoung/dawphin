@@ -3,14 +3,16 @@ import { observer } from "mobx-react-lite";
 import { Button } from "antd";
 import { PiFolder, PiTrash } from "react-icons/pi";
 import { useAudioEngine } from "src/pages/DAW/hooks";
+import { Pad as PadData } from "src/AudioEngine/Sampler";
 
 import styles from "./Pad.module.scss";
 
 interface PadProps {
   padNumber: number;
+  pad: PadData;
 }
 
-export const Pad = observer(({ padNumber }: PadProps) => {
+export const Pad = observer(({ padNumber, pad }: PadProps) => {
   const [active, setActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { sampler } = useAudioEngine();
@@ -60,7 +62,7 @@ export const Pad = observer(({ padNumber }: PadProps) => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [padNumber]);
+  }, [padNumber, pad?.loaded]);
 
   return (
     <span key={padNumber} className={styles.padWrapper}>

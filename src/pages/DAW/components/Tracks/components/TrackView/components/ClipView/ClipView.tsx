@@ -1,14 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { useState, useRef, useEffect, useMemo } from "react";
+import React, { useRef } from "react";
 import { Clip } from "src/AudioEngine/Track/Clip";
 import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
-import WaveSurfer from "wavesurfer.js";
 import { calculateClipPosition } from "./helpers";
 import { FadeCurve } from "./components";
-import * as Tone from "tone";
-import { useAudioEngine } from "src/pages/DAW/hooks";
-import { bufferToBlob } from "src/AudioEngine/helpers";
+import { useClip } from "./hooks";
 
 interface ClipViewProps {
   clip: Clip;
@@ -19,50 +16,10 @@ interface ClipViewProps {
 
 export const ClipView = observer(
   ({ clip, timelineRect, color }: ClipViewProps) => {
-    const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
     const prevX = useRef(0);
-    const overviewRef = useRef(null);
-    const audioRef = useRef(null);
-    const [fadeMode, setFadeMode] = useState<"in" | "out" | null>(null);
-    const audioEngine = useAudioEngine();
 
-    const audioURL = useMemo(
-      () => URL.createObjectURL(bufferToBlob(clip.audioBuffer)),
-      [clip.audioBuffer]
-    );
-
-    useEffect(() => {
-      const sampleRate = Tone.getContext().sampleRate;
-      const pixelsPerSample = audioEngine.timeline.samplesPerPixel;
-      const pixelsPerSecond = Math.round(sampleRate / pixelsPerSample);
-      if (overviewRef?.current && clip.end) {
-        const surfer = WaveSurfer.create({
-          interact: true,
-          media: audioRef?.current || undefined,
-          container: overviewRef.current,
-          waveColor: convertRgbToRgba("rgb(0, 0, 0)", 0.5),
-          progressColor: convertRgbToRgba("rgb(0, 0, 0)", 0.5),
-          url: audioURL,
-          height: "auto",
-          minPxPerSec: pixelsPerSecond,
-          hideScrollbar: true,
-          cursorWidth: 0,
-          normalize: false,
-        });
-        setWavesurfer(surfer);
-      }
-
-      return () => {
-        if (wavesurfer) {
-          wavesurfer.destroy();
-        }
-        URL.revokeObjectURL(audioURL);
-      };
-    }, [clip.duration, audioURL]);
-
-    useEffect(() => {
-      wavesurfer?.setOptions({ normalize: clip.normalized });
-    }, [clip.normalized]);
+    const { waveSurferRef, audioEngine, fadeMode, setFadeMode, clipWidth } =
+      useClip(clip);
 
     const handleClick = (e: React.MouseEvent) => {
       const initialState = clip.isSelected;
@@ -113,7 +70,7 @@ export const ClipView = observer(
       const dragValue = 2.5;
       const movementValue = dragValue * audioEngine.timeline.samplesPerPixel;
       e.preventDefault();
-      if (overviewRef.current && timelineRect) {
+      if (waveSurferRef.current && timelineRect) {
         if (!fadeMode) {
           if (e.clientX !== prevX.current) {
             if (e.clientX > prevX.current) {
@@ -170,7 +127,7 @@ export const ClipView = observer(
         const dragValue = 10;
         const movementValue = dragValue * audioEngine.timeline.samplesPerPixel;
 
-        if (overviewRef.current && timelineRect) {
+        if (waveSurferRef.current && timelineRect) {
           if (avgClientX !== prevX.current) {
             if (avgClientX > prevX.current) {
               audioEngine.moveSelectedClips(movementValue, "right");
@@ -182,33 +139,6 @@ export const ClipView = observer(
         }
       }
     };
-
-    useEffect(() => {
-      const sampleRate = Tone.getContext().sampleRate;
-      const pixelsPerSample = audioEngine.timeline.samplesPerPixel;
-      const pixelsPerSecond = Math.round(sampleRate / pixelsPerSample);
-      wavesurfer?.zoom(pixelsPerSecond);
-    }, [audioEngine.timeline.samplesPerPixel]);
-
-    useEffect(() => {
-      const container = document.querySelector(
-        `#wave-container${clip.id} > div`
-      );
-      if (container) {
-        const shadowRoot = container.shadowRoot;
-        if (shadowRoot) {
-          const firstDiv = shadowRoot.querySelector(
-            '.scroll[part="scroll"]'
-          ) as HTMLElement;
-          if (firstDiv) {
-            firstDiv.style.pointerEvents = "none";
-          }
-        }
-      }
-    }, [overviewRef.current]);
-
-    const clipWidth =
-      (clip?.duration?.toSamples() || 1) / audioEngine.timeline.samplesPerPixel;
 
     const { top, left } = calculateClipPosition(
       audioEngine,
@@ -256,7 +186,7 @@ export const ClipView = observer(
             zIndex: 3,
             overflow: "hidden",
           }}
-          ref={overviewRef}
+          ref={waveSurferRef}
           onClick={handleClick}
         >
           <p

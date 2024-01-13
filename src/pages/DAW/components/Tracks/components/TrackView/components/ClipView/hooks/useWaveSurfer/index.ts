@@ -1,0 +1,1 @@
+export { useWaveSurfer } from "./useWaveSurfer";

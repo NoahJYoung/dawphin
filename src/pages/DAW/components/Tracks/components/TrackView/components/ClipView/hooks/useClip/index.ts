@@ -1,0 +1,1 @@
+export { useClip } from "./useClip";

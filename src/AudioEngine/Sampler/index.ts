@@ -1,1 +1,1 @@
-export { Sampler } from "./Sampler";
+export { Sampler, type Pad } from "./Sampler";

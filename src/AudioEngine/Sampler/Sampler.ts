@@ -1,9 +1,9 @@
 import { injectable } from "inversify";
-import { makeAutoObservable } from "mobx";
+import { action, makeAutoObservable } from "mobx";
 import * as Tone from "tone";
 import { blobToBuffer } from "../helpers";
 
-interface Pad {
+export interface Pad {
   player: Tone.Player;
   volume: number;
   loaded: boolean;
@@ -37,23 +37,28 @@ export class Sampler {
     this.output.toDestination();
   };
 
+  @action
+  private setLoaded = (pad: number) => {
+    this.pads[pad].loaded = this.pads[pad].player.loaded;
+  };
+
   async loadAudio(pad: number, audio: Blob) {
     const buffer = await blobToBuffer(audio);
     this.pads[pad].player.buffer = buffer;
-    this.pads[pad].loaded = this.pads[pad].player.loaded;
+    this.setLoaded(pad);
   }
 
   attack(pad: number) {
-    const activePad = this.pads[pad].player;
-    if (activePad.loaded) {
+    const activePad = this.pads[pad]?.player;
+    if (activePad?.loaded) {
       this.active = true;
       activePad.start();
     }
   }
 
   release(pad: number) {
-    const activePad = this.pads[pad].player;
-    if (activePad.loaded) {
+    const activePad = this.pads[pad]?.player;
+    if (activePad?.loaded) {
       activePad.stop();
       this.active = false;
     }
