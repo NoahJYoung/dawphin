@@ -105,10 +105,12 @@ export const ControlPanel = observer(() => {
             value={keyboard.squareVolume}
             onChange={keyboard.setSquareVolume}
             color={"rgb(125, 0, 250)"}
-            min={-99}
+            min={-100}
             max={0}
             size={60}
             round
+            renderValue={(value) => `${value + 100}`}
+            suffix="%"
           />
         </span>
 
@@ -125,10 +127,12 @@ export const ControlPanel = observer(() => {
             value={keyboard.triangleVolume}
             onChange={keyboard.setTriangleVolume}
             color={"rgb(125, 0, 250)"}
-            min={-99}
+            min={-100}
             max={0}
             size={60}
             round
+            renderValue={(value) => `${value + 100}`}
+            suffix="%"
           />
         </span>
 
@@ -147,10 +151,12 @@ export const ControlPanel = observer(() => {
             value={keyboard.sineVolume}
             onChange={keyboard.setSineVolume}
             color="rgb(125, 0, 250)"
-            min={-99}
+            min={-100}
             max={0}
             size={60}
             round
+            renderValue={(value) => `${value + 100}`}
+            suffix="%"
           />
         </span>
       </div>

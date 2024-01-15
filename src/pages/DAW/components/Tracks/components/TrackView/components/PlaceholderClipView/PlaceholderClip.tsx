@@ -66,7 +66,6 @@ export const PlaceholderClip = observer(({ track }: PlaceholderClipProps) => {
         height: "80px",
         borderRadius: "10px",
         color: "blue",
-        border: `1px solid ${track.color}`,
         zIndex: 3,
         overflow: "hidden",
       }}

@@ -192,6 +192,8 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
             max={100}
             double
             color="rgb(0, 0, 250)"
+            renderValue={(value) => `${Math.abs(value)}`}
+            suffix="%"
             round
           />
         </div>

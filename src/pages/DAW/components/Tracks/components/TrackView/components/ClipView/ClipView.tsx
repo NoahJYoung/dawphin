@@ -147,7 +147,7 @@ export const ClipView = observer(
       CLIP_TOP_PADDING
     );
 
-    const backgroundAlpha = clip.isSelected ? 0.5 : 0.2;
+    const backgroundAlpha = clip.isSelected ? 0.7 : 0.4;
 
     return (
       <>
@@ -182,7 +182,6 @@ export const ClipView = observer(
             height: "80px",
             borderRadius: "6px",
             color: "blue",
-            border: `1px solid ${color}`,
             zIndex: 3,
             overflow: "hidden",
           }}
@@ -193,7 +192,8 @@ export const ClipView = observer(
             onDragOver={(e) => e.preventDefault()}
             style={{
               margin: 0,
-              color: convertRgbToRgba("rgb(0, 0, 0)", 0.5),
+              marginLeft: 12,
+              color: convertRgbToRgba("rgb(0, 0, 0)", 0.6),
               position: "absolute",
               fontWeight: "bold",
               fontSize: "0.75rem",

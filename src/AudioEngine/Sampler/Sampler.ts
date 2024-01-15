@@ -14,10 +14,12 @@ export class Sampler {
   public active: boolean = false;
   public output: Tone.Channel = new Tone.Channel();
   public osc: Tone.Oscillator = new Tone.Oscillator(1).set({ volume: -50 });
+  // TODO: REFACTOR: use Tone.Players() ?
   public pads: Record<number, Pad> = {
     1: { player: new Tone.Player(), volume: 0, loaded: false },
     2: { player: new Tone.Player(), volume: 0, loaded: false },
     3: { player: new Tone.Player(), volume: 0, loaded: false },
+    4: { player: new Tone.Player(), volume: 0, loaded: false },
     5: { player: new Tone.Player(), volume: 0, loaded: false },
     6: { player: new Tone.Player(), volume: 0, loaded: false },
     7: { player: new Tone.Player(), volume: 0, loaded: false },

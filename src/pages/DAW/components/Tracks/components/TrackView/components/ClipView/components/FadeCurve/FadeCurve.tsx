@@ -71,8 +71,8 @@ export const FadeCurve = observer(
         style={{ position: "absolute", left: 0, top: 0, zIndex: 1000 }}
         onMouseDown={() => setIsDragging(true)}
       >
-        <path d={fadeInFillPath} fill="rgba(0, 0, 0, 0.5)" />
-        <path d={fadeOutFillPath} fill="rgba(0, 0, 0, 0.5)" />
+        <path d={fadeInFillPath} fill="rgba(0, 0, 0, 0.4)" />
+        <path d={fadeOutFillPath} fill="rgba(0, 0, 0, 0.4)" />
 
         <path d={fadeInCurvePath} stroke={color} strokeWidth={1} fill="none" />
         <path d={fadeOutCurvePath} stroke={color} strokeWidth={1} fill="none" />

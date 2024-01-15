@@ -14,6 +14,8 @@ import { useState } from "react";
 import * as Tone from "tone";
 import { FadeModal } from "../FadeModal";
 import { useAudioEngine } from "src/pages/DAW/hooks";
+import { PiWaveformBold } from "react-icons/pi";
+import { bufferToBlob } from "src/AudioEngine/helpers";
 
 interface TimelineContextMenuProps {
   children: React.ReactNode;
@@ -45,7 +47,7 @@ export const TimelineContextMenu = observer(
       Tone.getTransport().seconds
     ).toSamples();
 
-    const items: MenuProps["items"] = [
+    const items = [
       {
         key: "1",
         onClick: audioEngine.copyClips,
@@ -105,6 +107,25 @@ export const TimelineContextMenu = observer(
         label: "Move to cursor",
         // disabled: audioEngine.selectedClips.length !== 1,
         icon: <ArrowRightOutlined />,
+      },
+      {
+        key: "9",
+
+        label: "Send to sampler",
+        disabled: audioEngine.selectedClips.length !== 1,
+        children: Array.from(Array(10).keys())
+          .filter((key) => key !== 0)
+          .map((num) => ({
+            key: `9-${num}`,
+            label: `Pad ${num}`,
+            onClick: () => {
+              audioEngine.sampler.loadAudio(
+                num,
+                bufferToBlob(audioEngine.selectedClips[0].audioBuffer)
+              );
+            },
+          })),
+        icon: <PiWaveformBold />,
       },
     ];
 

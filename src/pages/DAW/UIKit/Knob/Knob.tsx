@@ -13,6 +13,7 @@ interface KnobProps {
   suffix?: string;
   step?: number;
   round?: boolean;
+  renderValue?: (value: number) => string;
 }
 
 export const Knob = ({
@@ -27,6 +28,7 @@ export const Knob = ({
   suffix,
   step = 1,
   round,
+  renderValue,
 }: KnobProps) => {
   const startAngle = (360 - degrees) / 2;
   const endAngle = startAngle + degrees;
@@ -84,6 +86,8 @@ export const Knob = ({
     const endHandler = () => {
       document.removeEventListener("mousemove", moveHandler);
       document.removeEventListener("touchmove", moveHandler);
+      document.addEventListener("mouseup", endHandler);
+      document.addEventListener("touchend", endHandler);
     };
 
     document.addEventListener("mousemove", moveHandler);
@@ -126,6 +130,9 @@ export const Knob = ({
   };
 
   const background = calculateColorAngle();
+  const preparedValue = round
+    ? Math.round(value)
+    : Math.round(value * 100) / 100;
 
   return (
     <div
@@ -177,7 +184,7 @@ export const Knob = ({
           whiteSpace: "nowrap",
         }}
       >
-        {`${round ? Math.round(value) : Math.round(value * 100) / 100} ${
+        {`${renderValue ? renderValue(preparedValue) : preparedValue}${
           suffix ?? ""
         }`}
       </p>
