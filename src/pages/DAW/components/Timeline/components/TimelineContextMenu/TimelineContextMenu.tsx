@@ -1,4 +1,4 @@
-import { Dropdown, MenuProps } from "antd";
+import { Dropdown } from "antd";
 import {
   SplitCellsOutlined,
   DeleteOutlined,
@@ -16,6 +16,7 @@ import { FadeModal } from "../FadeModal";
 import { useAudioEngine } from "src/pages/DAW/hooks";
 import { PiWaveformBold } from "react-icons/pi";
 import { bufferToBlob } from "src/AudioEngine/helpers";
+import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
 
 interface TimelineContextMenuProps {
   children: React.ReactNode;
@@ -47,7 +48,7 @@ export const TimelineContextMenu = observer(
       Tone.getTransport().seconds
     ).toSamples();
 
-    const items = [
+    const items: ItemType<MenuItemType>[] = [
       {
         key: "1",
         onClick: audioEngine.copyClips,
@@ -102,8 +103,10 @@ export const TimelineContextMenu = observer(
       { type: "divider" },
       {
         key: "8",
-        onClick: () =>
-          audioEngine.selectedClips[0].setPosition(cursorPositionSamples),
+        onClick: () => {
+          const [selectedClip] = audioEngine.selectedClips;
+          selectedClip.setPosition(cursorPositionSamples);
+        },
         label: "Move to cursor",
         // disabled: audioEngine.selectedClips.length !== 1,
         icon: <ArrowRightOutlined />,

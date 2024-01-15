@@ -30,6 +30,7 @@ export const MasterFader = observer(() => {
         width: "120px",
         paddingRight: "5px",
         paddingTop: 0,
+        paddingBottom: 5,
       }}
     >
       <div
