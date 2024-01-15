@@ -114,7 +114,7 @@ export const TimelineContextMenu = observer(
         label: "Send to sampler",
         disabled: audioEngine.selectedClips.length !== 1,
         children: Array.from(Array(10).keys())
-          .filter((key) => key !== 0)
+          .slice(1, 10)
           .map((num) => ({
             key: `9-${num}`,
             label: `Pad ${num}`,
