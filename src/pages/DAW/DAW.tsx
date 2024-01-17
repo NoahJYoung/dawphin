@@ -12,8 +12,10 @@ import { InstrumentsView } from "./components/InstrumentsView";
 import { SlidersOutlined } from "@ant-design/icons";
 import { PiPianoKeysFill, PiWaveformBold } from "react-icons/pi";
 import { AudioEngineProvider } from "./hooks";
+import * as d3 from "d3";
 
 import styles from "./DAW.module.scss";
+import { EqualizerView } from "./components/Sidebar/components/EffectsModal/effects";
 
 enum BottomPanelView {
   MIXER = "mixer",
@@ -33,7 +35,7 @@ export const DAW = () => {
 
   return (
     <AudioEngineProvider>
-      <div className={`${styles.wrapper} styled-scrollbar`}>
+      {/* <div className={`${styles.wrapper} styled-scrollbar`}>
         <div className={styles.topPanel}>
           <Sidebar
             containerRef={containerRef}
@@ -116,7 +118,8 @@ export const DAW = () => {
             </>
           </div>
         </div>
-      </div>
+      </div> */}
+      <EqualizerView width={800} height={400} />
     </AudioEngineProvider>
   );
 };
