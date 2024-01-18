@@ -1,0 +1,12 @@
+.container {
+  border-radius: 6px;
+
+  svg {
+    border-radius: inherit;
+  }
+
+  .bandPoint:hover {
+    stroke: #ccc;
+    r: 6;
+  }
+}

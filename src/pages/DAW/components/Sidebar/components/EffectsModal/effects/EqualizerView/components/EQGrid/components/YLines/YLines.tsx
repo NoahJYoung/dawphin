@@ -1,4 +1,4 @@
-import { LineData } from "../../../../helpers/lines";
+import { LineData } from "../../../../types";
 
 interface YLinesProps {
   lines: LineData[];
@@ -23,9 +23,9 @@ export const YLines = ({ lines, width, scaleY }: YLinesProps) => {
           <text
             fill="#888"
             textAnchor="middle"
-            x={20}
+            x={10}
             y={Math.round(scaleY(line.value)) - 5}
-            fontSize={"0.8rem"}
+            fontSize={"0.7rem"}
           >
             {line.displayValue}
           </text>

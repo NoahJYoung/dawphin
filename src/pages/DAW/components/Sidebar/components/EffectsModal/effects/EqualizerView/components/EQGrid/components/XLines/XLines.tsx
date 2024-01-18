@@ -1,4 +1,4 @@
-import { LineData } from "../../../../helpers/lines";
+import { LineData } from "../../../../types";
 
 interface XLinesProps {
   lines: LineData[];
@@ -25,7 +25,7 @@ export const XLines = ({ lines, height, scaleX }: XLinesProps) => {
             textAnchor="middle"
             x={Math.round(scaleX(line.value))}
             y={height - 5}
-            fontSize={"0.8rem"}
+            fontSize={"0.7rem"}
           >
             {line.displayValue}
           </text>

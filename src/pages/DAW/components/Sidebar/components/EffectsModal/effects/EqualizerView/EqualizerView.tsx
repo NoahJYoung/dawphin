@@ -1,100 +1,84 @@
 import { EQGrid } from "./components";
-import { Point, bands } from "./helpers/lines";
+import { Point, mockedBands } from "./types";
 import * as d3 from "d3";
-import { findLogarithmicIntersections, getBeforeAndAfterPoints } from "./notes";
+import * as Tone from "tone";
+import { getCurvePoints } from "./helpers";
+import { useMemo } from "react";
+import { observer } from "mobx-react-lite";
 
-const indexToLineColorMap: Record<number, string> = {
-  0: "blue",
-  1: "red",
-  2: "green",
-  3: "white",
-  4: "orange",
-  5: "purple",
-};
+import styles from "./EqualizerView.module.scss";
+import { Equalizer } from "src/AudioEngine/Effects/Equalizer/Equalizer";
 
 interface EqualizerViewProps {
   width: number;
   height: number;
 }
 
-const twoDArray = bands.map((band) => getBeforeAndAfterPoints(band));
+const testEq = new Equalizer(new Tone.Channel(), Tone.getDestination());
 
-// const zeroDbBaselinePoints: Point[] = getBeforeAndAfterPoints({
-//   hertz: 800,
-//   gain: 0,
-//   Q: 0.1,
-// });
+const testEqBands = testEq.bands;
 
-const zeroDbBaselinePoints: Point[] = [
-  { hertz: 20, gain: 0 },
-  { hertz: 20000, gain: 0 },
-];
+export const EqualizerView = observer(
+  ({ width, height }: EqualizerViewProps) => {
+    const curvePoints = getCurvePoints(testEqBands);
+    const scaleY = d3
+      .scaleLinear()
+      .domain([-12, 12])
+      .range([height - 20, 0]);
 
-const pointsToMap = [...twoDArray, zeroDbBaselinePoints];
+    const scaleX = d3
+      .scaleLog()
+      .domain([20, 20000])
+      .range([30, width - 15]);
 
-console.log("intersection Points", findLogarithmicIntersections(pointsToMap));
+    const lineGenerator = d3
+      .line<Point>()
+      .x((band) => scaleX(band.hertz))
+      .y((band) => scaleY(band.gain))
+      .curve(d3.curveBumpX);
 
-const intersectingPoints = findLogarithmicIntersections(pointsToMap);
-const preparedBands = bands.map(({ gain, hertz }) => ({ gain, hertz }));
+    const combinedCurvePath = useMemo(
+      () => lineGenerator(curvePoints),
+      [mockedBands.length]
+    );
 
-const curveToMap = [
-  ...preparedBands,
-  ...intersectingPoints,
-  ...zeroDbBaselinePoints,
-].sort((a, b) => a.hertz - b.hertz);
-
-export const EqualizerView = ({ width, height }: EqualizerViewProps) => {
-  const scaleY = d3
-    .scaleLinear()
-    .domain([-12, 12])
-    .range([height - 20, 0]);
-
-  const scaleX = d3
-    .scaleLog()
-    .domain([20, 20000])
-    .range([50, width - 20]);
-
-  const lineGenerator = d3
-    .line<Point>()
-    .x((band) => scaleX(band.hertz))
-    .y((band) => scaleY(band.gain))
-    .curve(d3.curveBumpX);
-
-  const linePaths = pointsToMap.map((points) => lineGenerator(points));
-
-  const unifiedCurvePath = lineGenerator(curveToMap);
-
-  return (
-    <div style={{ background: "#ccc", height, width }}>
-      <svg width={width} height={height}>
-        <EQGrid scaleY={scaleY} scaleX={scaleX} width={width} height={height} />
-
-        {bands.map((band, i) => (
-          <circle
-            key={i}
-            stroke="#ccc"
-            fill="nofill"
-            cx={scaleX(band.hertz)}
-            cy={scaleY(band.gain)}
-            r={5}
-          />
-        ))}
-
-        {unifiedCurvePath && (
-          <path d={unifiedCurvePath} fill="none" stroke="rgb(125, 0, 250)" />
-        )}
-
-        {/* {linePaths.map((path, i) =>
-          path ? (
-            <path
-              key={i}
-              d={path}
-              fill="none"
-              stroke={indexToLineColorMap[i]}
+    return (
+      <>
+        <div
+          className={styles.container}
+          style={{ height, width, borderRadius: "6px" }}
+        >
+          <svg width={width} height={height} style={{ borderRadius: "6px" }}>
+            <EQGrid
+              scaleY={scaleY}
+              scaleX={scaleX}
+              width={width}
+              height={height}
             />
-          ) : null
-        )} */}
-      </svg>
-    </div>
-  );
-};
+
+            {combinedCurvePath && (
+              <path
+                d={combinedCurvePath}
+                fill="rgba(125, 0, 250, 0.5)"
+                stroke="rgb(125, 0, 250)"
+              />
+            )}
+
+            {testEqBands.map((band, i) => (
+              <circle
+                className={styles.bandPoint}
+                key={i}
+                stroke="#888"
+                fill="transparent"
+                cx={scaleX(band.hertz)}
+                cy={scaleY(band.gain)}
+                r={5}
+              />
+            ))}
+          </svg>
+        </div>
+        <button onClick={() => testEq.createBand()}>New Band</button>
+      </>
+    );
+  }
+);

@@ -119,7 +119,7 @@ export const DAW = () => {
           </div>
         </div>
       </div> */}
-      <EqualizerView width={800} height={400} />
+      <EqualizerView width={500} height={250} />
     </AudioEngineProvider>
   );
 };
