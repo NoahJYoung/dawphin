@@ -63,9 +63,8 @@ export const Toolbar = observer(
         <Button
           className={`${styles.toolbarButton} ${expanded ? "" : styles.hidden}`}
           type="text"
-          onClick={() => {}}
+          onClick={audioEngine.downloadProjectMixdown}
           icon={<FiDownload className={styles.buttonIcon} />}
-          disabled
         />
 
         <Button

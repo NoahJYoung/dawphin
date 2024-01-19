@@ -1,34 +1,38 @@
 .projectDataDisplayContainer {
   color: #555;
+  font-family: "Inter";
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  font-size: 24px;
+  gap: 1rem;
+  height: 100%;
+  border-radius: 5px;
 
-  .bpmInput {
+  .item {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+    width: 100%;
+
     input {
-      color: #555 !important;
-      text-align: right;
-      padding: 0;
-      padding-right: 0.25rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      align-items: flex-end;
       font-size: 28px;
-    }
-  }
-
-  .timeSignatureInput {
-    display: "flex";
-    align-items: "center";
-    background: transparent;
-
-    input {
-      color: #555 !important;
-      text-align: right;
+      background: transparent;
       padding: 0;
-      padding-top: 0.2rem;
-      padding-right: 0.25rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 30px;
+      border: none;
+      color: #555;
+      display: "flex";
+      width: 64px;
+      outline: none;
+      text-align: center;
+    }
+
+    input.small {
+      width: 32px;
     }
   }
 }

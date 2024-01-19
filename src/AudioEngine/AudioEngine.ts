@@ -21,6 +21,7 @@ interface ClipboardItem {
 
 @injectable()
 export class AudioEngine {
+  projectTitle: string = "New Project";
   clipboard: (ClipboardItem | null)[] = observable.array([]);
   state: string = "stopped";
   bpm: number = Tone.getTransport().bpm.value;
@@ -419,6 +420,42 @@ export class AudioEngine {
   startTone = async () => {
     if (Tone.getContext().state !== "running") {
       await Tone.start();
+    }
+  };
+
+  getOfflineBounce = async () => {
+    const totalDurationInSeconds = 30;
+
+    const toneBuffer = await Tone.Offline(async () => {
+      this.tracks.forEach((track) => {
+        track.channel.toDestination();
+        track.play();
+      });
+    }, totalDurationInSeconds);
+
+    const rawBuffer = toneBuffer.get();
+
+    if (rawBuffer) {
+      const wav = audioBufferToWav(rawBuffer);
+      return new Blob([wav], { type: "audio/wav" });
+    }
+
+    return null;
+  };
+
+  downloadProjectMixdown = async () => {
+    const blob = await this.getOfflineBounce();
+    if (blob) {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.style.display = "none";
+      anchor.href = url;
+      anchor.download = `${this.projectTitle || "track"}.wav`;
+      document.body.appendChild(anchor);
+      anchor.click();
+
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
     }
   };
 }

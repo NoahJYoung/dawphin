@@ -1,96 +1,58 @@
+import { ChangeEvent } from "react";
+
 import { observer } from "mobx-react-lite";
-import { InputNumber } from "antd";
+import { useDebouncedProjectSettings } from "./hooks";
 
 import styles from "./ProjectDataDisplay.module.scss";
-import { useAudioEngine } from "src/pages/DAW/hooks";
 
 export const ProjectDataDisplay = observer(() => {
-  const audioEngine = useAudioEngine();
+  const {
+    totalMeasuresInput,
+    setTotalMeasuresInput,
+    timeSignatureInput,
+    setTimeSignatureInput,
+    bpmInput,
+    setBpmInput,
+  } = useDebouncedProjectSettings();
+
+  const handleTotalMeasuresChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value !== "") {
+      setTotalMeasuresInput(event.target.value);
+    } else {
+      setTotalMeasuresInput("");
+    }
+  };
+
+  const handleTimeSignatureChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTimeSignatureInput(event.target.value);
+  };
+
+  const handleBpmChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setBpmInput(event.target.value);
+  };
 
   return (
-    <div
-      className={styles.projectDataDisplayContainer}
-      style={{
-        fontFamily: "Inter",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-evenly",
-        fontSize: "20px",
-        gap: "1rem",
-        height: "100%",
-        borderRadius: "5px",
-        width: "12rem",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "0.25rem",
-          width: "100%",
-          flexWrap: "nowrap",
-        }}
-      >
-        <InputNumber
-          value={audioEngine.bpm}
-          type="number"
-          className={styles.bpmInput}
-          style={{
-            width: "3.5rem",
-            maxHeight: "100%",
-            fontFamily: "inherit",
-            fontSize: "inherit",
-            border: "none",
-            outline: "none",
-            background: "transparent",
-          }}
-          controls={false}
-          onChange={(e) => {
-            const value = e?.valueOf();
-            if (value && value > 40) {
-              audioEngine.setBpm(value);
-            }
-          }}
-        />
+    <div className={styles.projectDataDisplayContainer}>
+      <div className={styles.item}>
+        <input onChange={handleBpmChange} value={bpmInput} />
         <p>bpm</p>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.25rem",
-          justifyContent: "center",
-          width: "100%",
-        }}
-      >
-        <InputNumber
-          value={audioEngine.timeSignature as number}
-          className={styles.timeSignatureInput}
-          style={{
-            width: "2rem",
-            height: "28px",
-            fontFamily: "Inter",
-            fontSize: "28px",
-            display: "flex",
-            border: "none",
-            outline: "none",
-          }}
-          min={2}
-          max={12}
-          controls={false}
-          type="number"
-          size="small"
-          onChange={(e) => {
-            const input = e?.valueOf();
-            if (input && input > 0) {
-              audioEngine.setTimeSignature(input);
-            }
-          }}
+      <div className={styles.item}>
+        <input
+          className={styles.small}
+          onChange={handleTimeSignatureChange}
+          value={timeSignatureInput}
         />
-        <p style={{ fontSize: "28px", margin: 0 }}>/</p>
+        <p style={{ fontSize: "28px", margin: 0, marginRight: 2 }}>/</p>
         <p style={{ fontSize: "28px", margin: 0 }}>4</p>
+      </div>
+      <div className={styles.item}>
+        <input
+          onChange={handleTotalMeasuresChange}
+          value={totalMeasuresInput}
+        />
+        <p>measures</p>
       </div>
     </div>
   );

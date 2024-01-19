@@ -60,6 +60,10 @@ export class Timeline {
     }
   };
 
+  setTotalMeasures = (measures: number) => {
+    this.totalMeasures = measures;
+  };
+
   toEnd = () => {
     if (this.audioEngine && this.updateTimelineUI) {
       this.audioEngine.startTone();
