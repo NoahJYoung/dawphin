@@ -34,7 +34,7 @@ export const TopBar = observer(
         {Array.from({ length: totalBeats + 1 }).map((_, i) => {
           const sample = i * samplesPerBeat * beatsPerMeasure;
           const x =
-            sample / audioEngine.timeline.samplesPerPixel / beatsPerMeasure;
+            audioEngine.timeline.samplesToPixels(sample) / beatsPerMeasure;
           const isMeasure = i % beatsPerMeasure === 0;
           const isQuarterNote = !isMeasure;
 

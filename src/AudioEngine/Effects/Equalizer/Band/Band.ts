@@ -14,4 +14,16 @@ export class Band {
   ) {
     makeAutoObservable(this);
   }
+
+  setHertz = (hertz: number) => {
+    this.hertz = hertz;
+  };
+
+  setGain = (gain: number) => {
+    this.gain = gain;
+  };
+
+  setQ = (Q: number) => {
+    this.Q = Q;
+  };
 }

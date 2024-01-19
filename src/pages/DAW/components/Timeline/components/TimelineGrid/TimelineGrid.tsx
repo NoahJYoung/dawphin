@@ -65,7 +65,7 @@ export const TimelineGrid = observer(
         })}
         {Array.from({ length: totalBeats + 1 }).map((_, i) => {
           const sample = i * samplesPerBeat;
-          let x = sample / audioEngine.timeline.samplesPerPixel;
+          let x = audioEngine.timeline.samplesToPixels(sample);
 
           if (measuresOnly) {
             x *= getTimeSignature(audioEngine);

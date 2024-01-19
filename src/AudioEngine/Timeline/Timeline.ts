@@ -75,4 +75,12 @@ export class Timeline {
   linkAudioEngine = (engine: AudioEngine) => {
     this.audioEngine = engine;
   };
+
+  samplesToPixels = (samples: number) => {
+    return samples / this.samplesPerPixel;
+  };
+
+  pixelsToSamples = (pixels: number) => {
+    return pixels * this.samplesPerPixel;
+  };
 }

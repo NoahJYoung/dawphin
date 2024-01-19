@@ -3,7 +3,7 @@ import { makeAutoObservable, observable } from "mobx";
 import { AudioEngine } from "..";
 import * as Tone from "tone";
 import { injectable } from "inversify";
-import { blobToBuffer } from "../helpers";
+import { blobToBuffer, bufferToBlob } from "../helpers";
 
 @injectable()
 export class Track {
@@ -175,7 +175,7 @@ export class Track {
     this.channel.chain(...this.effectsChain, Tone.getDestination());
   };
 
-  joinSelectedClips = () => {
+  joinSelectedClips = async (config?: { noFade: boolean }) => {
     const selectedClips = this.clips.filter((clip) => clip.isSelected);
     if (selectedClips.length < 2) return;
     selectedClips.sort((a, b) => a.start.toSeconds() - b.start.toSeconds());
@@ -187,10 +187,12 @@ export class Track {
       gapsInSeconds.push(gap);
     }
 
-    const concatenatedBuffer = Clip.concatenateBuffers(
-      selectedClips.map((clip) => clip.audioBuffer),
-      gapsInSeconds
-    );
+    const concatenatedBuffer = !!config?.noFade
+      ? Clip.concatenateBuffers(
+          selectedClips.map((clip) => clip.audioBuffer),
+          gapsInSeconds
+        )
+      : await Clip.concatenateAndFadeClips(selectedClips, gapsInSeconds);
 
     const buffer = new Tone.ToneAudioBuffer(concatenatedBuffer.get());
     if (buffer) {
@@ -242,10 +244,40 @@ export class Track {
 
     this.clips.push(clip);
 
-    return clip.id;
+    return clip;
   };
 
   setClips = (clips: Clip[]) => {
     this.clips = clips;
+  };
+
+  getCombinedTrackAudioBuffer = async () => {
+    const gapsInSeconds = [];
+    for (let i = 0; i < this.clips.length - 1; i++) {
+      const currentClipEnd = this.clips[i].end?.toSeconds() || 0;
+      const nextClipStart = this.clips[i + 1].start.toSeconds();
+      const gap = nextClipStart - currentClipEnd;
+      gapsInSeconds.push(gap);
+    }
+    const concatenatedBuffer = await Clip.concatenateAndFadeClips(
+      this.clips,
+      gapsInSeconds
+    );
+    return concatenatedBuffer;
+  };
+
+  downloadTrackAudio = async () => {
+    const buffer = await this.getCombinedTrackAudioBuffer();
+    const blob = bufferToBlob(buffer);
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.style.display = "none";
+    anchor.href = url;
+    anchor.download = `${this.name || "track"}.wav`;
+    document.body.appendChild(anchor);
+    anchor.click();
+
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
   };
 }

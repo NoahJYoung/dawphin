@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
 
+function convertToLogarithmic(value: number, min: number, max: number) {
+  const scale = (value - min) / (max - min);
+
+  const minLog = Math.log(min);
+  const maxLog = Math.log(max);
+  const scaleLog = minLog + (maxLog - minLog) * scale;
+
+  return Math.exp(scaleLog);
+}
+
 interface KnobProps {
   value: number;
   onChange: (newValue: number) => void;
@@ -14,6 +24,7 @@ interface KnobProps {
   step?: number;
   round?: boolean;
   renderValue?: (value: number) => string;
+  logarithmic?: boolean;
 }
 
 export const Knob = ({
@@ -29,6 +40,7 @@ export const Knob = ({
   step = 1,
   round,
   renderValue,
+  logarithmic = false,
 }: KnobProps) => {
   const startAngle = (360 - degrees) / 2;
   const endAngle = startAngle + degrees;
@@ -51,10 +63,16 @@ export const Knob = ({
   );
 
   useEffect(() => {
-    const newValue = convertRange(startAngle, endAngle, min, max, deg);
+    const newValue = logarithmic
+      ? convertToLogarithmic(
+          convertRange(startAngle, endAngle, min, max, deg),
+          min,
+          max
+        )
+      : convertRange(startAngle, endAngle, min, max, deg);
 
     onChange((newValue / step) * step);
-  }, [deg, min, max, startAngle, endAngle, onChange, step]);
+  }, [deg, min, max, startAngle, endAngle, onChange, step, logarithmic]);
 
   const startDrag = (e: React.MouseEvent | React.TouchEvent) => {
     if (e.type !== "touchMove") {
@@ -129,7 +147,7 @@ export const Knob = ({
     }
   };
 
-  const background = calculateColorAngle();
+  const background = logarithmic ? "#222" : calculateColorAngle();
   const preparedValue = round
     ? Math.round(value)
     : Math.round(value * 100) / 100;

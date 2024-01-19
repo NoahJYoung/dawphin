@@ -1,12 +1,14 @@
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useAudioEngine } from "src/pages/DAW/hooks";
+import styles from "./FadeCurve.module.scss";
+import * as d3 from "d3";
 
 interface FadeCurveProps {
   fadeInLengthInSamples: number;
   fadeOutLengthInSamples: number;
   height: number;
   color: string;
-  samplesPerPixel: number;
   clipDurationInSamples: number;
 }
 
@@ -16,29 +18,48 @@ export const FadeCurve = observer(
     fadeOutLengthInSamples,
     height,
     color,
-    samplesPerPixel,
     clipDurationInSamples,
   }: FadeCurveProps) => {
-    const fadeInWidth = Math.round(fadeInLengthInSamples / samplesPerPixel);
-    const fadeOutWidth = Math.round(fadeOutLengthInSamples / samplesPerPixel);
-    const endOfClip = Math.round(clipDurationInSamples / samplesPerPixel);
-    const [isFadeInHovering, setIsFadeInHovering] = useState(false);
-    const [isFadeOutHovering, setIsFadeOutHovering] = useState(false);
-    const [isDragging, setIsDragging] = useState(false);
+    const audioEngine = useAudioEngine();
+    const fadeInWidth = Math.round(
+      audioEngine.timeline.samplesToPixels(fadeInLengthInSamples)
+    );
+    const fadeOutWidth = Math.round(
+      audioEngine.timeline.samplesToPixels(fadeOutLengthInSamples)
+    );
+    const endOfClip = Math.round(
+      audioEngine.timeline.samplesToPixels(clipDurationInSamples)
+    );
+
+    const fadeInRef = useRef(null);
+    const fadeOutRef = useRef(null);
 
     useEffect(() => {
-      const handleMouseUp = () => {
-        setIsFadeInHovering(false);
-        setIsFadeOutHovering(false);
-        setIsDragging(false);
-      };
+      if (fadeInRef.current) {
+        const fadeInDragHandler = d3
+          .drag<any, unknown>()
+          .on("start", function () {
+            d3.select(this).raise();
+          })
+          .on("drag", function (event) {
+            audioEngine.setFadeInOnSelectedClips(event.dx);
+          });
 
-      window.addEventListener("dragend", handleMouseUp);
+        d3.select(fadeInRef.current).call(fadeInDragHandler);
+      }
+      if (fadeOutRef.current) {
+        const fadeOutdragHandler = d3
+          .drag<any, unknown>()
+          .on("start", function () {
+            d3.select(this).raise();
+          })
+          .on("drag", function (event) {
+            audioEngine.setFadeOutOnSelectedClips(-event.dx);
+          });
 
-      return () => {
-        window.removeEventListener("dragend", handleMouseUp);
-      };
-    }, []);
+        d3.select(fadeOutRef.current).call(fadeOutdragHandler);
+      }
+    }, [audioEngine, fadeInRef, fadeOutRef]);
 
     const fadeInControlX = fadeInWidth / 4;
     const fadeInControlY = height / 4;
@@ -69,7 +90,6 @@ export const FadeCurve = observer(
         width={endOfClip}
         height={height}
         style={{ position: "absolute", left: 0, top: 0, zIndex: 1000 }}
-        onMouseDown={() => setIsDragging(true)}
       >
         <path d={fadeInFillPath} fill="rgba(0, 0, 0, 0.4)" />
         <path d={fadeOutFillPath} fill="rgba(0, 0, 0, 0.4)" />
@@ -78,30 +98,27 @@ export const FadeCurve = observer(
         <path d={fadeOutCurvePath} stroke={color} strokeWidth={1} fill="none" />
 
         <rect
-          onMouseEnter={() => setIsFadeInHovering(true)}
-          onMouseLeave={() => !isDragging && setIsFadeInHovering(false)}
+          className={styles.fadeCurveRect}
+          ref={fadeInRef}
           x={fadeInRectX}
           y={fadeInRectY}
           width={10}
           height={10}
           stroke={color}
           strokeWidth={1}
-          fill={isFadeInHovering ? color : "none"}
-          style={{ opacity: 0.85, pointerEvents: "all", cursor: "pointer" }}
+          fill="transparent"
         />
 
         <rect
-          onMouseEnter={() => setIsFadeOutHovering(true)}
-          onMouseLeave={() => !isDragging && setIsFadeOutHovering(false)}
-          onDragOver={(e) => e.preventDefault()}
+          className={styles.fadeCurveRect}
+          ref={fadeOutRef}
           x={fadeOutRectX}
           y={fadeOutRectY}
           width={10}
           height={10}
           stroke={color}
           strokeWidth={1}
-          fill={isFadeOutHovering ? color : "none"}
-          style={{ opacity: 0.85, pointerEvents: "all", cursor: "pointer" }}
+          fill="transparent"
         />
       </svg>
     );

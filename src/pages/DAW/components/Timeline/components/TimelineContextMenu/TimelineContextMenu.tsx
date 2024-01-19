@@ -80,10 +80,21 @@ export const TimelineContextMenu = observer(
       },
       {
         key: "5",
-        onClick: audioEngine.joinSelectedClips,
         label: "Join",
         // disabled: !hasSelectedClips,
         icon: <MergeCellsOutlined />,
+        children: [
+          {
+            key: "5-1",
+            onClick: () => audioEngine.joinSelectedClips(),
+            label: "With fades",
+          },
+          {
+            key: "5-2",
+            onClick: () => audioEngine.joinSelectedClips({ noFade: true }),
+            label: "Without fades",
+          },
+        ],
       },
       { type: "divider" },
       {
@@ -121,11 +132,10 @@ export const TimelineContextMenu = observer(
           .map((num) => ({
             key: `9-${num}`,
             label: `Pad ${num}`,
-            onClick: () => {
-              audioEngine.sampler.loadAudio(
-                num,
-                bufferToBlob(audioEngine.selectedClips[0].audioBuffer)
-              );
+            onClick: async () => {
+              const bufferWithFades =
+                await audioEngine.selectedClips[0].getBufferWithFades();
+              audioEngine.sampler.loadAudio(num, bufferToBlob(bufferWithFades));
             },
           })),
         icon: <PiWaveformBold />,

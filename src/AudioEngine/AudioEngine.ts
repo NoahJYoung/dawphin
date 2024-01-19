@@ -139,19 +139,13 @@ export class AudioEngine {
     this.setSelectedClips(selectedClips);
   };
 
-  moveSelectedClips = (samples: number, direction: "right" | "left") => {
+  moveSelectedClips = (movementValue: number) => {
     this.getSelectedClips();
-    if (direction === "right") {
-      this.selectedClips.forEach((clip) =>
-        clip.setPosition(clip.start.toSamples() + samples)
-      );
-    } else {
-      if (!this.selectedClips.find((clip) => clip.start.toSamples() === 0)) {
-        this.selectedClips.forEach((clip) =>
-          clip.setPosition(clip.start.toSamples() - samples)
-        );
-      }
-    }
+    this.selectedClips.forEach((clip) =>
+      clip.setPosition(
+        clip.start.toSamples() + this.timeline.pixelsToSamples(movementValue)
+      )
+    );
   };
 
   quantizeSelectedClips = () => {
@@ -165,36 +159,29 @@ export class AudioEngine {
     });
   };
 
-  setFadeInOnSelectedClips = (samples: number, direction: "left" | "right") => {
+  setFadeInOnSelectedClips = (movement: number) => {
     this.getSelectedClips();
     this.selectedClips.forEach((clip) => {
-      if (direction === "right") {
-        clip.setFadeIn(
-          Tone.Time((clip.fadeIn?.toSamples() || 0) + samples, "samples")
-        );
-      } else {
-        clip.setFadeIn(
-          Tone.Time((clip.fadeIn?.toSamples() || 0) - samples, "samples")
-        );
-      }
+      clip.setFadeIn(
+        Tone.Time(
+          (clip.fadeIn?.toSamples() || 0) +
+            this.timeline.pixelsToSamples(movement),
+          "samples"
+        )
+      );
     });
   };
 
-  setFadeOutOnSelectedClips = (
-    samples: number,
-    direction: "left" | "right"
-  ) => {
+  setFadeOutOnSelectedClips = (movement: number) => {
     this.getSelectedClips();
     this.selectedClips.forEach((clip) => {
-      if (direction === "right") {
-        clip.setFadeOut(
-          Tone.Time((clip.fadeOut?.toSamples() || 0) - samples, "samples")
-        );
-      } else {
-        clip.setFadeOut(
-          Tone.Time((clip.fadeOut?.toSamples() || 0) + samples, "samples")
-        );
-      }
+      clip.setFadeOut(
+        Tone.Time(
+          (clip.fadeOut?.toSamples() || 0) +
+            this.timeline.pixelsToSamples(movement),
+          "samples"
+        )
+      );
     });
   };
 
@@ -221,7 +208,17 @@ export class AudioEngine {
           const buffer = clipData.buffer.get();
           const toneBuffer = new Tone.ToneAudioBuffer(buffer);
           if (buffer) {
-            currentTrack?.addClip(toneBuffer, clipData.start.toSamples());
+            const clip = currentTrack?.addClip(
+              toneBuffer,
+              clipData.start.toSamples()
+            );
+            if (clipData.fadeIn) {
+              clip.setFadeIn(clipData.fadeIn);
+            }
+
+            if (clipData.fadeOut) {
+              clip.setFadeOut(clipData.fadeOut);
+            }
           }
         });
       currentTrack?.setClips(
@@ -230,8 +227,8 @@ export class AudioEngine {
     });
   };
 
-  joinSelectedClips = () => {
-    this.tracks.forEach((track) => track.joinSelectedClips());
+  joinSelectedClips = (config?: { noFade: boolean }) => {
+    this.tracks.forEach((track) => track.joinSelectedClips(config));
   };
 
   deselectClips = () => {

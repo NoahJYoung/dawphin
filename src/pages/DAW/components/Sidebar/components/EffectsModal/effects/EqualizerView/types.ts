@@ -14,18 +14,6 @@ export interface Point {
   gain: number;
 }
 
-export const mockedBands: Band[] = [
-  // { hertz: 20, gain: 0, Q: 1 },
-  { hertz: 120, gain: 2, Q: 0.2 },
-  // { hertz: 850, gain: 5, Q: 0.1 },
-  { hertz: 800, gain: 5, Q: 0.5 },
-  // { hertz: 17000, gain: 5, Q: 4.3 },
-  // { hertz: 2000, gain: 8, Q: 10 },
-  // { hertz: 5000, gain: 4, Q: 4 },
-  { hertz: 5000, gain: -4, Q: 1 },
-  // { hertz: 20000, gain: 0, Q: 1 },
-];
-
 export const xLines: LineData[] = [
   {
     value: 20,

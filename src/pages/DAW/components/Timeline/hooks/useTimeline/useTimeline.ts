@@ -25,8 +25,9 @@ export const useTimeline = (
 
   const updatePlayhead = () => {
     const x = Math.round(
-      (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
-        audioEngine.timeline.samplesPerPixel
+      audioEngine.timeline.samplesToPixels(
+        Tone.getTransport().seconds * Tone.getContext().sampleRate
+      )
     );
     const width = containerRef.current?.clientWidth || 0;
     const multiplier = x / width;
@@ -81,7 +82,7 @@ export const useTimeline = (
     const samplesPerBeat = Tone.getContext().sampleRate / beatsPerSecond;
     const samplesPerMeasure = samplesPerBeat * getTimeSignature(audioEngine);
     const totalSamples = samplesPerMeasure * audioEngine.timeline.totalMeasures;
-    const widthInPixels = totalSamples / audioEngine.timeline.samplesPerPixel;
+    const widthInPixels = audioEngine.timeline.samplesToPixels(totalSamples);
 
     return widthInPixels;
   }, [
@@ -99,7 +100,7 @@ export const useTimeline = (
     if (gridRef.current) {
       const pixels = mouseX.current + (containerRef?.current?.scrollLeft || 0);
       const time = Tone.Time(
-        pixels * audioEngine.timeline.samplesPerPixel,
+        audioEngine.timeline.pixelsToSamples(pixels),
         "samples"
       );
       if (audioEngine.timeline.snap) {

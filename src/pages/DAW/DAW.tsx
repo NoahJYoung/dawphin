@@ -35,7 +35,7 @@ export const DAW = () => {
 
   return (
     <AudioEngineProvider>
-      {/* <div className={`${styles.wrapper} styled-scrollbar`}>
+      <div className={`${styles.wrapper} styled-scrollbar`}>
         <div className={styles.topPanel}>
           <Sidebar
             containerRef={containerRef}
@@ -118,8 +118,8 @@ export const DAW = () => {
             </>
           </div>
         </div>
-      </div> */}
-      <EqualizerView width={500} height={250} />
+      </div>
+      <EqualizerView width={1000} height={500} />
     </AudioEngineProvider>
   );
 };

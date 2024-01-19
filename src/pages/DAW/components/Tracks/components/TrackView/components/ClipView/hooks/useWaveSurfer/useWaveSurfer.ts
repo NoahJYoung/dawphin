@@ -16,8 +16,8 @@ export const useWaveSurfer = (clip: Clip, audioEngine: AudioEngine) => {
 
   useEffect(() => {
     const sampleRate = Tone.getContext().sampleRate;
-    const pixelsPerSample = audioEngine.timeline.samplesPerPixel;
-    const pixelsPerSecond = Math.round(sampleRate / pixelsPerSample);
+    const samplesPerPixel = audioEngine.timeline.samplesPerPixel;
+    const pixelsPerSecond = Math.round(sampleRate / samplesPerPixel);
     if (waveSurferRef?.current && clip.end) {
       const surfer = WaveSurfer.create({
         interact: true,
@@ -48,8 +48,8 @@ export const useWaveSurfer = (clip: Clip, audioEngine: AudioEngine) => {
 
   useEffect(() => {
     const sampleRate = Tone.getContext().sampleRate;
-    const pixelsPerSample = audioEngine.timeline.samplesPerPixel;
-    const pixelsPerSecond = Math.round(sampleRate / pixelsPerSample);
+    const samplesPerPixel = audioEngine.timeline.samplesPerPixel;
+    const pixelsPerSecond = Math.round(sampleRate / samplesPerPixel);
     waveSurfer?.zoom(pixelsPerSecond);
   }, [audioEngine.timeline.samplesPerPixel]);
 

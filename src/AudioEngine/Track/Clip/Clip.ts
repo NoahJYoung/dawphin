@@ -137,10 +137,10 @@ export class Clip {
   };
 
   setFadeOut = (time: Tone.TimeClass) => {
-    if (time.toSamples() > 0) {
+    if (time.toSamples() < this.duration!.toSamples()) {
       this.player.fadeOut = time.toSeconds();
     } else {
-      this.player.fadeOut = 0;
+      this.player.fadeOut = this.duration!.toSeconds();
     }
     this.fadeOut = Tone.Time(this.player.fadeOut);
   };
@@ -182,10 +182,12 @@ export class Clip {
               this.start.toSeconds() / Tone.getContext().sampleRate
             ),
             buffer: clipOneBuffer,
+            fadeIn: this.fadeIn,
           },
           {
             start: Tone.Time(transportSeconds / Tone.getContext().sampleRate),
             buffer: clipTwoBuffer,
+            fadeOut: this.fadeOut,
           },
         ],
         oldId: this.id,
@@ -224,5 +226,56 @@ export class Clip {
     });
 
     return new Tone.ToneAudioBuffer(concatenatedBuffer);
+  };
+
+  async getBufferWithFades() {
+    const clipDuration = this.player.buffer.duration;
+    const fadeInDuration = this.fadeIn.toSeconds();
+    const fadeOutDuration = this.fadeOut.toSeconds();
+
+    return await Tone.Offline(async (context) => {
+      const source = new Tone.BufferSource(this.player.buffer).connect(
+        context.destination
+      );
+
+      source.fadeIn = fadeInDuration;
+      source.fadeOut = fadeOutDuration;
+
+      source.start();
+
+      const stopTime = clipDuration - fadeOutDuration;
+      source.stop(stopTime);
+    }, clipDuration);
+  }
+
+  static concatenateAndFadeClips = async (
+    clips: Clip[],
+    gapsInSeconds: number[]
+  ) => {
+    let totalDuration = 0;
+    const buffersWithFades: Tone.ToneAudioBuffer[] = [];
+
+    for (const clip of clips) {
+      const bufferWithFades = await clip.getBufferWithFades();
+      buffersWithFades.push(bufferWithFades);
+      totalDuration += bufferWithFades.duration;
+    }
+
+    totalDuration += gapsInSeconds.reduce((sum, gap) => sum + gap, 0);
+
+    return await Tone.Offline(async (context) => {
+      let offset = 0;
+      buffersWithFades.forEach((buffer, index) => {
+        const source = new Tone.BufferSource(buffer).connect(
+          context.destination
+        );
+        source.start(offset);
+        offset += buffer.duration;
+
+        if (index < gapsInSeconds.length) {
+          offset += gapsInSeconds[index];
+        }
+      });
+    }, totalDuration);
   };
 }

@@ -49,8 +49,13 @@ export const TrackPanelMenu = ({ track }: TrackPanelMenuProps) => {
           Add file
         </div>
       </Menu.Item>
-      <Menu.Item key="2" icon={<DownloadOutlined />} disabled>
-        Download track
+      <Menu.Item
+        onClick={track.downloadTrackAudio}
+        key="2"
+        icon={<DownloadOutlined />}
+        disabled={track.clips.length === 0}
+      >
+        Download audio
       </Menu.Item>
     </Menu>
   );

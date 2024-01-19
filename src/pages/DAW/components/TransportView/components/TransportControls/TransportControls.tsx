@@ -1,4 +1,5 @@
 import React from "react";
+import * as Tone from "tone";
 import {
   EllipsisOutlined,
   StepBackwardOutlined,
@@ -9,10 +10,9 @@ import {
 import { Button } from "antd";
 import { observer } from "mobx-react-lite";
 import { PauseIcon, PlayIcon, RecordIcon, StopIcon } from "src/pages/DAW/icons";
-import * as Tone from "tone";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 import styles from "./TransportControls.module.scss";
-import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface TransportControlsProps {
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -29,9 +29,9 @@ export const TransportControls = observer(
         containerRef.current?.scrollLeft ||
         containerRef.current?.scrollLeft === 0
       ) {
-        const transportPos =
-          (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
-          audioEngine.timeline.samplesPerPixel;
+        const transportPos = audioEngine.timeline.samplesToPixels(
+          Tone.getTransport().seconds * Tone.getContext().sampleRate
+        );
         const offset = containerRef.current.clientWidth / 2;
         containerRef.current.scrollLeft = transportPos - offset;
       }
@@ -44,9 +44,9 @@ export const TransportControls = observer(
           containerRef.current?.scrollLeft ||
           containerRef.current?.scrollLeft === 0
         ) {
-          const transportPos =
-            (Tone.getTransport().seconds * Tone.getContext().sampleRate) /
-            audioEngine.timeline.samplesPerPixel;
+          const transportPos = audioEngine.timeline.samplesToPixels(
+            Tone.getTransport().seconds * Tone.getContext().sampleRate
+          );
           const offset = containerRef.current.clientWidth / 2;
           containerRef.current.scrollLeft = transportPos - offset;
         }
