@@ -94,8 +94,8 @@ export const TrackPanel = observer(
       <div
         style={{
           border: track.selected
-            ? `1px solid ${track.color}`
-            : "1px solid #191919",
+            ? `2px solid ${track.color}`
+            : "2px solid #191919",
           borderRadius: "6px",
           display: "flex",
           width: TRACK_PANEL_FULL_WIDTH,

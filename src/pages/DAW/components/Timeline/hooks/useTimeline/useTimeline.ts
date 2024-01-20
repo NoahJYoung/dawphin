@@ -96,7 +96,19 @@ export const useTimeline = (
     mouseX.current = e.clientX - divRect.left;
   };
 
-  const handleClick = () => {
+  const handleClick = (e: any) => {
+    const trackToSelectIndex =
+      Math.round((e.clientY + e.target.scrollTop) / (80 + 2.5)) - 1;
+    const inRange =
+      trackToSelectIndex >= 0 && trackToSelectIndex < audioEngine.tracks.length;
+    if (inRange) {
+      if (!e.ctrlKey) {
+        audioEngine.deselectAllTracks();
+      }
+      audioEngine.tracks[trackToSelectIndex].select();
+      audioEngine.getSelectedTracks();
+    }
+
     if (gridRef.current) {
       const pixels = mouseX.current + (containerRef?.current?.scrollLeft || 0);
       const time = Tone.Time(

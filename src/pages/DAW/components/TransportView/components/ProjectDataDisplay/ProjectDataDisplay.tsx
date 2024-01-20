@@ -31,15 +31,44 @@ export const ProjectDataDisplay = observer(() => {
     setBpmInput(event.target.value);
   };
 
+  const handleTimeSignatureWheel = (e: any) => {
+    if (e.deltaY < 0) {
+      setTimeSignatureInput(Number(timeSignatureInput) + 1);
+    } else if (e.deltaY > 0) {
+      setTimeSignatureInput(Number(timeSignatureInput) - 1);
+    }
+  };
+
+  const handleTotalMeasuresWheel = (e: any) => {
+    if (e.deltaY < 0) {
+      setTotalMeasuresInput(Number(totalMeasuresInput) + 1);
+    } else if (e.deltaY > 0) {
+      setTotalMeasuresInput(Number(totalMeasuresInput) - 1);
+    }
+  };
+
+  const handleBpmWheel = (e: any) => {
+    if (e.deltaY < 0) {
+      setBpmInput(Number(bpmInput) + 1);
+    } else if (e.deltaY > 0) {
+      setBpmInput(Number(bpmInput) - 1);
+    }
+  };
+
   return (
     <div className={styles.projectDataDisplayContainer}>
       <div className={styles.item}>
-        <input onChange={handleBpmChange} value={bpmInput} />
+        <input
+          onWheel={handleBpmWheel}
+          onChange={handleBpmChange}
+          value={bpmInput}
+        />
         <p>bpm</p>
       </div>
       <p className={styles.separator}>|</p>
       <div className={styles.item}>
         <input
+          onWheel={handleTimeSignatureWheel}
           className={styles.small}
           onChange={handleTimeSignatureChange}
           value={timeSignatureInput}
@@ -50,6 +79,7 @@ export const ProjectDataDisplay = observer(() => {
       <p className={styles.separator}>|</p>
       <div className={styles.item}>
         <input
+          onWheel={handleTotalMeasuresWheel}
           onChange={handleTotalMeasuresChange}
           value={totalMeasuresInput}
         />

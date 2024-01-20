@@ -252,6 +252,7 @@ export class AudioEngine {
   };
 
   pasteClips = () => {
+    console.log(this.selectedTracks);
     const transport = Tone.getTransport();
     if (this.selectedTracks.length > 0) {
       const sortedClipboard = [...this.clipboard]

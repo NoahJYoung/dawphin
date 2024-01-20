@@ -93,8 +93,8 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
       onClick={handleSelect}
       style={{
         border: track.selected
-          ? `1px solid ${track.color}`
-          : "1px solid #191919",
+          ? `2px solid ${track.color}`
+          : "2px solid #191919",
         background: "#333",
         borderRadius: "6px",
         display: "flex",
