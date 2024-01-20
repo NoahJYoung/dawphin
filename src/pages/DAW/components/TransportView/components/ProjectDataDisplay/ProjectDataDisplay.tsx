@@ -37,7 +37,7 @@ export const ProjectDataDisplay = observer(() => {
         <input onChange={handleBpmChange} value={bpmInput} />
         <p>bpm</p>
       </div>
-
+      <p className={styles.separator}>|</p>
       <div className={styles.item}>
         <input
           className={styles.small}
@@ -47,12 +47,13 @@ export const ProjectDataDisplay = observer(() => {
         <p style={{ fontSize: "28px", margin: 0, marginRight: 2 }}>/</p>
         <p style={{ fontSize: "28px", margin: 0 }}>4</p>
       </div>
+      <p className={styles.separator}>|</p>
       <div className={styles.item}>
         <input
           onChange={handleTotalMeasuresChange}
           value={totalMeasuresInput}
         />
-        <p>measures</p>
+        <p>bars</p>
       </div>
     </div>
   );

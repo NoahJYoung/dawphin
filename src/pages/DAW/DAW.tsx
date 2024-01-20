@@ -12,7 +12,6 @@ import { InstrumentsView } from "./components/InstrumentsView";
 import { SlidersOutlined } from "@ant-design/icons";
 import { PiPianoKeysFill, PiWaveformBold } from "react-icons/pi";
 import { AudioEngineProvider } from "./hooks";
-import * as d3 from "d3";
 
 import styles from "./DAW.module.scss";
 import { EqualizerView } from "./components/Sidebar/components/EffectsModal/effects";
@@ -119,7 +118,7 @@ export const DAW = () => {
           </div>
         </div>
       </div>
-      <EqualizerView width={1000} height={500} />
+      {/* <EqualizerView width={1000} height={500} /> */}
     </AudioEngineProvider>
   );
 };

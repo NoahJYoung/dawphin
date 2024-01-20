@@ -239,20 +239,12 @@ export class AudioEngine {
   };
 
   copyClips = () => {
-    this.clipboard = this.selectedClips.map((clip) => {
-      const buffer = clip.audioBuffer.get();
-      const fadeInSamples = clip.fadeIn.toSamples();
-      const fadeOutSamples = clip.fadeOut.toSamples();
-      if (buffer) {
-        return {
-          data: new Blob([audioBufferToWav(buffer)], { type: "audio/wav" }),
-          start: clip.start,
-          fadeInSamples,
-          fadeOutSamples,
-        };
-      }
-      return null;
-    });
+    this.clipboard = this.selectedClips.map((clip) => ({
+      ...clip.getClipData(),
+      data: new Blob([audioBufferToWav(clip.getClipData().data)], {
+        type: "audio/wav",
+      }),
+    }));
   };
 
   setNormalized = (value: boolean) => {
@@ -423,25 +415,23 @@ export class AudioEngine {
     }
   };
 
-  getOfflineBounce = async () => {
-    const totalDurationInSeconds = 30;
+  async getOfflineBounce() {
+    const trackLengths = this.tracks.map((track) =>
+      track.getLastClipEndpointInSeconds()
+    );
+    const endSeconds = trackLengths[trackLengths.length - 1];
 
-    const toneBuffer = await Tone.Offline(async () => {
-      this.tracks.forEach((track) => {
-        track.channel.toDestination();
-        track.play();
-      });
-    }, totalDurationInSeconds);
+    const renderedBuffer = await Tone.Offline(async (offlineCtx) => {
+      this.tracks.forEach((track) => track.offlineRender(offlineCtx));
+    }, endSeconds);
 
-    const rawBuffer = toneBuffer.get();
-
-    if (rawBuffer) {
-      const wav = audioBufferToWav(rawBuffer);
+    if (renderedBuffer) {
+      const wav = audioBufferToWav(renderedBuffer.get()!);
       return new Blob([wav], { type: "audio/wav" });
     }
 
     return null;
-  };
+  }
 
   downloadProjectMixdown = async () => {
     const blob = await this.getOfflineBounce();

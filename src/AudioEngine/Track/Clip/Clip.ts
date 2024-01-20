@@ -228,6 +228,19 @@ export class Clip {
     return new Tone.ToneAudioBuffer(concatenatedBuffer);
   };
 
+  getClipData = () => {
+    const buffer = this.audioBuffer.get();
+    const fadeInSamples = this.fadeIn.toSamples();
+    const fadeOutSamples = this.fadeOut.toSamples();
+
+    return {
+      data: buffer!,
+      start: this.start,
+      fadeInSamples,
+      fadeOutSamples,
+    };
+  };
+
   async getBufferWithFades() {
     const clipDuration = this.player.buffer.duration;
     const fadeInDuration = this.fadeIn.toSeconds();
@@ -277,5 +290,18 @@ export class Clip {
         }
       });
     }, totalDuration);
+  };
+
+  offlineRender = (offlineTrackChannel: Tone.Channel) => {
+    const offlinePlayer = new Tone.Player();
+    offlinePlayer.buffer = this.audioBuffer;
+    if (offlinePlayer.loaded) {
+      offlinePlayer.loaded;
+      offlinePlayer.connect(offlineTrackChannel);
+      offlinePlayer.start(this.start.toSeconds());
+      offlinePlayer.stop(
+        this.start.toSeconds() + (this.duration?.toSeconds() || 0)
+      );
+    }
   };
 }

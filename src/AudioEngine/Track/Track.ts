@@ -4,6 +4,8 @@ import { AudioEngine } from "..";
 import * as Tone from "tone";
 import { injectable } from "inversify";
 import { blobToBuffer, bufferToBlob } from "../helpers";
+import { RecursivePartial } from "tone/build/esm/core/util/Interface";
+import { FXFactory } from "../Effects";
 
 @injectable()
 export class Track {
@@ -279,5 +281,31 @@ export class Track {
 
     document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
+  };
+
+  getLastClipEndpointInSeconds = (): number => {
+    const [lastClip] = [...this.clips].sort(
+      (a, b) =>
+        a.start.toSeconds() +
+        (a.duration?.toSeconds() || 0) +
+        (b.start.toSeconds() + (b.duration?.toSeconds() || 0))
+    );
+
+    return lastClip.start.toSeconds() + (lastClip.duration?.toSeconds() || 0);
+  };
+
+  offlineRender = (offlineCtx: Tone.OfflineContext) => {
+    const offlineChannel = new Tone.Channel().set({
+      volume: this.volume || 0,
+      pan: (this.pan || 0) / 100,
+      mute: this.channel.mute,
+    });
+    const offlineFxFactory = new FXFactory();
+    const offlineFxChain = this.effectsChain.map((effect) => {
+      return offlineFxFactory.createEffect(effect.name)!;
+    });
+
+    offlineChannel.chain(...offlineFxChain, offlineCtx.destination);
+    this.clips.forEach((clip) => clip.offlineRender(offlineChannel));
   };
 }
