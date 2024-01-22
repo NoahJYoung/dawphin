@@ -78,6 +78,7 @@ export const Knob = ({
     if (e.type !== "touchMove") {
       e.preventDefault();
     }
+    e.stopPropagation();
 
     const knob = e.currentTarget.getBoundingClientRect();
     const pts = {
@@ -101,7 +102,8 @@ export const Knob = ({
       setDeg(currentDeg);
     };
 
-    const endHandler = () => {
+    const endHandler = (e: any) => {
+      e.stopPropagation();
       document.removeEventListener("mousemove", moveHandler);
       document.removeEventListener("touchmove", moveHandler);
       document.addEventListener("mouseup", endHandler);
@@ -123,7 +125,10 @@ export const Knob = ({
     return finalDeg;
   };
 
-  const handleResetValue = () => setDeg(180);
+  const handleResetValue = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeg(180);
+  };
 
   const calculateColorAngle = () => {
     if (double) {

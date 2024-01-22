@@ -28,7 +28,8 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
     setEffectsModalOpen(false);
   };
 
-  const toggleEffectsModal = () => {
+  const toggleEffectsModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setEffectsModalOpen(!effectsModalOpen);
   };
 
@@ -39,7 +40,8 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
     track.select();
   };
 
-  const handleMute = () => {
+  const handleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (track.selected) {
       if (track.muted) {
         audioEngine.unmuteSelectedTracks();
@@ -51,7 +53,8 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
     }
   };
 
-  const handleSolo = () => {
+  const handleSolo = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (track.selected) {
       if (track.solo) {
         audioEngine.unsoloSelectedTracks();
@@ -210,7 +213,10 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
                       justifyContent: "center",
                     }
               }
-              onClick={() => track.setInputMode("mic")}
+              onClick={(e) => {
+                e.stopPropagation();
+                track.setInputMode("mic");
+              }}
               icon={<AudioOutlined />}
               type="text"
             />
@@ -228,7 +234,10 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
                       justifyContent: "center",
                     }
               }
-              onClick={() => track.setInputMode("keyboard")}
+              onClick={(e) => {
+                e.stopPropagation();
+                track.setInputMode("keyboard");
+              }}
               type="text"
               icon={
                 <PiPianoKeysFill
@@ -253,7 +262,10 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
                       justifyContent: "center",
                     }
               }
-              onClick={() => track.setInputMode("sampler")}
+              onClick={(e) => {
+                e.stopPropagation();
+                track.setInputMode("sampler");
+              }}
               type="text"
               icon={
                 <PiWaveformBold

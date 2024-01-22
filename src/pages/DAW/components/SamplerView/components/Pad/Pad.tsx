@@ -38,7 +38,7 @@ export const Pad = observer(({ padNumber, pad }: PadProps) => {
     fileInputRef.current?.click();
   };
 
-  const isAudioLoaded = !!sampler.pads[padNumber]?.loaded;
+  const isAudioLoaded = !!sampler.padStates[padNumber]?.loaded;
 
   useEffect(() => {
     const stringPadNumber = String(padNumber);

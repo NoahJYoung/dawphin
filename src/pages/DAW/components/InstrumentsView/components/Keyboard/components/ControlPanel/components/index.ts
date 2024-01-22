@@ -1,0 +1,1 @@
+export { KeyboardSynthControls } from "./KeyboardSynthControls";

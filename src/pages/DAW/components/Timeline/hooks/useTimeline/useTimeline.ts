@@ -107,8 +107,9 @@ export const useTimeline = (
       }
       audioEngine.tracks[trackToSelectIndex].select();
       audioEngine.getSelectedTracks();
+    } else if (trackToSelectIndex >= audioEngine.tracks.length) {
+      audioEngine.deselectAllTracks();
     }
-
     if (gridRef.current) {
       const pixels = mouseX.current + (containerRef?.current?.scrollLeft || 0);
       const time = Tone.Time(

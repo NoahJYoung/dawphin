@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { Key as KeyData } from "../../helpers";
 import * as Tone from "tone";
 
@@ -10,71 +10,63 @@ interface KeyProps {
   octave: number;
   style?: Record<string, any>;
   fullNoteName: string;
-  polySynth: Keyboard;
+  keyboard: Keyboard;
 }
 
 const pressedKeys = new Set<string>();
 
-export const Key = ({ keyData, style, fullNoteName, polySynth }: KeyProps) => {
-  const [active, setActive] = useState(false);
+export const Key = memo(
+  ({ keyData, style, fullNoteName, keyboard }: KeyProps) => {
+    const [active, setActive] = useState(false);
 
-  const attack = useCallback(
-    (e?: React.MouseEvent | React.TouchEvent) => {
-      e && e.preventDefault();
+    const attack = useCallback(() => {
       if (pressedKeys.has(fullNoteName)) return;
       pressedKeys.add(fullNoteName);
       setActive(true);
-      polySynth.triggerAttack(fullNoteName, Tone.immediate() + 0.01);
-    },
-    [polySynth, fullNoteName]
-  );
+      keyboard.triggerAttack(fullNoteName, Tone.immediate());
+    }, [keyboard, fullNoteName, keyboard.mode]);
 
-  const release = useCallback(
-    (e?: React.MouseEvent | React.TouchEvent) => {
-      e && e.preventDefault();
+    const release = useCallback(() => {
       if (!pressedKeys.has(fullNoteName)) return;
       pressedKeys.delete(fullNoteName);
       setActive(false);
-      polySynth.triggerRelease(fullNoteName, Tone.immediate() + 0.01);
-    },
-    [polySynth, fullNoteName]
-  );
+      keyboard.triggerRelease(fullNoteName, Tone.immediate() + 0.01);
+    }, [keyboard, fullNoteName, keyboard.mode]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.repeat || active) return;
-      if (e.key === keyData.key) {
+    useEffect(() => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.repeat || e.key !== keyData.key) return;
         attack();
-      }
-    };
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.repeat) return;
-      if (e.key === keyData.key) {
+      };
+
+      const handleKeyUp = (e: KeyboardEvent) => {
+        if (e.repeat || e.key !== keyData.key) return;
         release();
-      }
-    };
+      };
 
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [keyData, fullNoteName]);
+      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keyup", handleKeyUp);
 
-  return (
-    <div
-      onMouseLeave={release}
-      onMouseDown={attack}
-      onMouseUp={release}
-      onTouchStart={attack}
-      onTouchEnd={release}
-      style={style}
-      className={`${styles.key} ${styles[keyData.type]} ${
-        active ? styles.active : ""
-      }`}
-    >
-      <p>{keyData.key.toUpperCase()}</p>
-    </div>
-  );
-};
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+        window.removeEventListener("keyup", handleKeyUp);
+      };
+    }, [attack, release, keyData.key]);
+
+    return (
+      <div
+        className={`${styles.key} ${styles[keyData.type]} ${
+          active ? styles.active : ""
+        }`}
+        style={style}
+        onMouseDown={attack}
+        onMouseUp={release}
+        onMouseLeave={release}
+        onTouchStart={attack}
+        onTouchEnd={release}
+      >
+        <p>{keyData.key.toUpperCase()}</p>
+      </div>
+    );
+  }
+);

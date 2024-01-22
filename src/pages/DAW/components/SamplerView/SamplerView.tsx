@@ -13,7 +13,7 @@ export const SamplerView = () => {
           <Pad
             key={padNumber}
             padNumber={padNumber}
-            pad={audioEngine.sampler.pads[padNumber]}
+            pad={audioEngine.sampler.padStates[padNumber]}
           />
         ))}
       </div>

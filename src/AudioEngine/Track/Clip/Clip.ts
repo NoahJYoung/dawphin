@@ -32,7 +32,9 @@ export class Clip {
   }
 
   play = (time: number, seekTime?: number) => {
-    this.player.start(time, seekTime);
+    if (this.player.loaded) {
+      this.player.start(time, seekTime);
+    }
   };
 
   schedulePlay = () => {
@@ -126,23 +128,38 @@ export class Clip {
   };
 
   setFadeIn = (time: Tone.TimeClass) => {
-    if (time.toSamples() < 0) {
-      this.player.fadeIn = 0;
-    } else if (this.duration && time.toSamples() > this.duration!.toSamples()) {
-      this.player.fadeIn = this.duration!.toSeconds();
-    } else {
-      this.player.fadeIn = time.toSeconds();
+    if (
+      time.toSamples() <
+      this.duration!.toSamples() - this.fadeOut.toSamples()
+    ) {
+      if (time.toSamples() < 0) {
+        this.player.fadeIn = 0;
+      } else if (
+        this.duration &&
+        time.toSamples() > this.duration.toSamples()
+      ) {
+        this.player.fadeIn = this.duration!.toSeconds();
+      } else {
+        this.player.fadeIn = time.toSeconds();
+      }
+      this.fadeIn = Tone.Time(this.player.fadeIn);
     }
-    this.fadeIn = Tone.Time(this.player.fadeIn);
   };
 
   setFadeOut = (time: Tone.TimeClass) => {
-    if (time.toSamples() < this.duration!.toSamples()) {
-      this.player.fadeOut = time.toSeconds();
-    } else {
-      this.player.fadeOut = this.duration!.toSeconds();
+    if (
+      time.toSamples() <
+      this.duration!.toSamples() - this.fadeIn.toSamples()
+    ) {
+      if (time.toSamples() > 0) {
+        this.player.fadeOut = time.toSeconds();
+      } else if (time.toSamples() <= 0) {
+        this.player.fadeOut = 0;
+      } else {
+        this.player.fadeOut = this.duration!.toSeconds();
+      }
+      this.fadeOut = Tone.Time(this.player.fadeOut);
     }
-    this.fadeOut = Tone.Time(this.player.fadeOut);
   };
 
   setSelect = (value: boolean) => {

@@ -26,7 +26,7 @@ export const useKeys = () => {
           keyData={key}
           key={key.note + i}
           fullNoteName={fullNoteName}
-          polySynth={audioEngine.keyboard}
+          keyboard={audioEngine.keyboard}
         />
       );
     });

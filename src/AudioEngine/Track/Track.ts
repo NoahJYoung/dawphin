@@ -284,14 +284,20 @@ export class Track {
   };
 
   getLastClipEndpointInSeconds = (): number => {
-    const [lastClip] = [...this.clips].sort(
-      (a, b) =>
-        a.start.toSeconds() +
-        (a.duration?.toSeconds() || 0) +
-        (b.start.toSeconds() + (b.duration?.toSeconds() || 0))
-    );
+    if (this.clips.length >= 2) {
+      const [lastClip] = [...this.clips].sort(
+        (a, b) =>
+          a.start.toSeconds() +
+          (a.duration?.toSeconds() || 0) +
+          (b.start.toSeconds() + (b.duration?.toSeconds() || 0))
+      );
 
-    return lastClip.start.toSeconds() + (lastClip.duration?.toSeconds() || 0);
+      return lastClip.start.toSeconds() + (lastClip.duration?.toSeconds() || 0);
+    }
+    return this.clips.length === 1
+      ? this.clips[0].start.toSeconds() +
+          (this.clips[0].duration?.toSeconds() || 0)
+      : 0;
   };
 
   offlineRender = (offlineCtx: Tone.OfflineContext) => {

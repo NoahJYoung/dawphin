@@ -1,12 +1,11 @@
-import React from "react";
 import { observer } from "mobx-react-lite";
-import { Button, Slider } from "antd";
+import { Button, Select, Slider } from "antd";
 import { IoMdVolumeHigh } from "react-icons/io";
-import { Knob } from "src/pages/DAW/UIKit";
-import { PiWaveSineBold } from "react-icons/pi";
-import { FaRegSquare, FaPlus, FaMinus } from "react-icons/fa";
-import { BsTriangle } from "react-icons/bs";
+import { IoMusicalNoteSharp } from "react-icons/io5";
+
 import { useAudioEngine } from "src/pages/DAW/hooks";
+import { KeyboardSynthControls } from "./components";
+import { FaMinus, FaPlus } from "react-icons/fa";
 
 export const ControlPanel = observer(() => {
   const { keyboard } = useAudioEngine();
@@ -16,7 +15,7 @@ export const ControlPanel = observer(() => {
       style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-evenly",
+        gap: 10,
         width: 250,
         height: 290,
       }}
@@ -37,7 +36,6 @@ export const ControlPanel = observer(() => {
           value={keyboard.volume}
         />
       </div>
-
       <div
         style={{
           display: "flex",
@@ -78,88 +76,35 @@ export const ControlPanel = observer(() => {
           />
         </div>
       </div>
+      <Select
+        value={keyboard.mode}
+        onChange={keyboard.setKeyboardMode}
+        options={[
+          { label: "Synthesizer", value: "synth" },
+          { label: "Sampler", value: "sampler" },
+        ]}
+      />
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          maxWidth: 350,
-          gap: 20,
-          padding: 10,
-        }}
-      >
-        <span
+      {keyboard.mode === "synth" ? (
+        <KeyboardSynthControls keyboard={keyboard} />
+      ) : (
+        <div
           style={{
             display: "flex",
-            flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
-            gap: 10,
+            gap: 24,
           }}
         >
-          <FaRegSquare
-            style={{ fontSize: "2rem", color: "rgb(125, 0, 250)" }}
+          <IoMusicalNoteSharp style={{ fontSize: 30 }} />
+          <Select
+            value={keyboard.baseUrl}
+            onChange={keyboard.setSamplerBaseUrl}
+            options={[{ label: "Piano", value: "src/assets/sounds/keys/" }]}
+            style={{ width: "100%" }}
           />
-          <Knob
-            value={keyboard.squareVolume}
-            onChange={keyboard.setSquareVolume}
-            color={"rgb(125, 0, 250)"}
-            min={-100}
-            max={0}
-            size={60}
-            round
-            renderValue={(value) => `${value + 100}`}
-            suffix="%"
-          />
-        </span>
-
-        <span
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <BsTriangle style={{ fontSize: "2rem", color: "rgb(125, 0, 250)" }} />
-          <Knob
-            value={keyboard.triangleVolume}
-            onChange={keyboard.setTriangleVolume}
-            color={"rgb(125, 0, 250)"}
-            min={-100}
-            max={0}
-            size={60}
-            round
-            renderValue={(value) => `${value + 100}`}
-            suffix="%"
-          />
-        </span>
-
-        <span
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <PiWaveSineBold
-            style={{ fontSize: "2rem", color: "rgb(125, 0, 250)" }}
-          />
-          <Knob
-            value={keyboard.sineVolume}
-            onChange={keyboard.setSineVolume}
-            color="rgb(125, 0, 250)"
-            min={-100}
-            max={0}
-            size={60}
-            round
-            renderValue={(value) => `${value + 100}`}
-            suffix="%"
-          />
-        </span>
-      </div>
+        </div>
+      )}
     </div>
   );
 });
