@@ -142,7 +142,10 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
                 innerColor={track.active ? activeInnerRgb : inactiveInnerRgb}
               />
             }
-            onClick={track.toggleActive}
+            onClick={(e) => {
+              e.stopPropagation();
+              track.toggleActive();
+            }}
             style={{
               background: "transparent",
               marginLeft: "5px",

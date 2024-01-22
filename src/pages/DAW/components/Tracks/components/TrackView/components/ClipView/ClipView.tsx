@@ -68,6 +68,7 @@ export const ClipView = observer(({ clip, color }: ClipViewProps) => {
           fontSize: "0.75rem",
           zIndex: -1,
           userSelect: "none",
+          flexWrap: "nowrap",
         }}
       >
         {`${clip.track.name} | ${clip.start.toBarsBeatsSixteenths()}`}

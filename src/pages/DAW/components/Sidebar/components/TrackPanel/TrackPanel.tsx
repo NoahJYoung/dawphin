@@ -23,7 +23,8 @@ export const TrackPanel = observer(
     const inputRef = useRef<InputRef | null>(null);
     const audioEngine = useAudioEngine();
 
-    const handleMute = () => {
+    const handleMute = (e: React.MouseEvent) => {
+      e.stopPropagation();
       if (track.selected) {
         if (track.muted) {
           audioEngine.unmuteSelectedTracks();
@@ -35,7 +36,8 @@ export const TrackPanel = observer(
       }
     };
 
-    const handleSolo = () => {
+    const handleSolo = (e: React.MouseEvent) => {
+      e.stopPropagation();
       if (track.selected) {
         if (track.solo) {
           audioEngine.unsoloSelectedTracks();
@@ -54,6 +56,7 @@ export const TrackPanel = observer(
     };
 
     const handleClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
       if (!e.ctrlKey) {
         audioEngine.deselectAllTracks();
       }
@@ -62,6 +65,7 @@ export const TrackPanel = observer(
     };
 
     const handleDoubleClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
       if (!e.ctrlKey) {
         audioEngine.deselectClips();
       }
@@ -143,7 +147,10 @@ export const TrackPanel = observer(
                   innerColor={track.active ? activeInnerRgb : inactiveInnerRgb}
                 />
               }
-              onClick={track.toggleActive}
+              onClick={(e) => {
+                e.stopPropagation();
+                track.toggleActive();
+              }}
               style={{
                 background: "transparent",
                 border: "none",
