@@ -85,6 +85,7 @@ export const TimelineGrid = observer(
                 x2={x}
                 y2={gridHeight}
                 stroke="#444"
+                strokeWidth={2}
               />
 
               {eighthNotes && (

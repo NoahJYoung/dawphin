@@ -14,7 +14,6 @@ import { PiPianoKeysFill, PiWaveformBold } from "react-icons/pi";
 import { AudioEngineProvider, LinkedScrollProvider } from "./hooks";
 
 import styles from "./DAW.module.scss";
-import { EqualizerView } from "./components/Sidebar/components/EffectsModal/effects";
 
 enum BottomPanelView {
   MIXER = "mixer",
@@ -30,18 +29,13 @@ export const DAW = () => {
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const trackPanelsRef = useRef<HTMLDivElement>(null);
 
   return (
     <AudioEngineProvider>
       <LinkedScrollProvider>
         <div className={`${styles.wrapper} styled-scrollbar`}>
           <div className={styles.topPanel}>
-            <Sidebar
-              containerRef={containerRef}
-              timelineRect={timelineRect}
-              trackPanelsRef={trackPanelsRef}
-            />
+            <Sidebar containerRef={containerRef} timelineRect={timelineRect} />
             <TimelineView
               setTimelineRect={setTimelineRect}
               containerRef={containerRef}
@@ -118,7 +112,6 @@ export const DAW = () => {
             </div>
           </div>
         </div>
-        {/* <EqualizerView width={1000} height={500} /> */}
       </LinkedScrollProvider>
     </AudioEngineProvider>
   );

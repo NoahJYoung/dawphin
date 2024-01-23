@@ -57,13 +57,14 @@ export const TopBar = observer(
                   x1={x}
                   y1="0"
                   x2={x}
-                  y2={topBarHeight}
+                  y2={topBarHeight - 1}
+                  strokeWidth={2}
                   stroke="#444"
                 />
               )}
               {isMeasure && (
                 <text
-                  x={x + 2}
+                  x={x + 4}
                   y="15"
                   fill="#888"
                   fontSize="12px"
@@ -78,7 +79,8 @@ export const TopBar = observer(
                   x1={x}
                   y1={topBarHeight * 0.25}
                   x2={x}
-                  y2={topBarHeight}
+                  y2={topBarHeight - 1}
+                  strokeWidth={2}
                   stroke="#444"
                 />
               )}
@@ -89,7 +91,7 @@ export const TopBar = observer(
                   x1={x * 0.5}
                   y1={topBarHeight * 0.5}
                   x2={x * 0.5}
-                  y2={topBarHeight}
+                  y2={topBarHeight - 1}
                   stroke="#444"
                 />
               )}
@@ -100,7 +102,7 @@ export const TopBar = observer(
                   x1={x * 0.25}
                   y1={topBarHeight * 0.75}
                   x2={x * 0.25}
-                  y2={topBarHeight}
+                  y2={topBarHeight - 1}
                   stroke="#444"
                 />
               )}

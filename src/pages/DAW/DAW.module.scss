@@ -12,6 +12,10 @@
     position: relative;
   }
 
+  .topPanel::-webkit-scrollbar {
+    display: none;
+  }
+
   .bottomPanelOuter {
     display: flex;
     flex-direction: column;
