@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Toolbar,
   TrackPanel,
@@ -13,7 +13,7 @@ import {
   CLIP_TOP_PADDING,
 } from "../../constants";
 import styles from "./Sidebar.module.scss";
-import { useAudioEngine } from "../../hooks";
+import { useAudioEngine, useLinkedScroll } from "../../hooks";
 
 interface SidebarProps {
   timelineRect: DOMRect | null;
@@ -27,20 +27,41 @@ export const Sidebar = observer(
       window.innerWidth > 480 ? true : false
     );
 
+    const { scrollTop, setScrollTop, sectionHeight } = useLinkedScroll();
+
+    const handleScroll = (e: any) => {
+      e.preventDefault();
+      setScrollTop(e.target.scrollTop);
+    };
+
+    useEffect(() => {
+      const div = trackPanelsRef.current;
+      if (div) {
+        div.scrollTop = scrollTop;
+        div.addEventListener("scroll", handleScroll);
+      }
+
+      return () => {
+        if (div) {
+          div.removeEventListener("scroll", handleScroll);
+        }
+      };
+    }, [scrollTop, setScrollTop]);
+
     const toggleExpanded = () => setExpanded(!expanded);
 
     const audioEngine = useAudioEngine();
 
-    const sectionHeight = useMemo(() => {
-      const clipFullHeight = CLIP_HEIGHT + CLIP_TOP_PADDING;
-      const calculatedHeight =
-        clipFullHeight * audioEngine.tracks.length +
-        SCROLLBAR_HEIGHT +
-        clipFullHeight;
-      return calculatedHeight > MIN_GRID_HEIGHT
-        ? calculatedHeight
-        : MIN_GRID_HEIGHT;
-    }, [audioEngine.tracks.length]);
+    // const sectionHeight = useMemo(() => {
+    //   const clipFullHeight = CLIP_HEIGHT + CLIP_TOP_PADDING;
+    //   const calculatedHeight =
+    //     clipFullHeight * audioEngine.tracks.length +
+    //     SCROLLBAR_HEIGHT +
+    //     clipFullHeight;
+    //   return calculatedHeight > MIN_GRID_HEIGHT
+    //     ? calculatedHeight
+    //     : MIN_GRID_HEIGHT;
+    // }, [audioEngine.tracks.length]);
 
     return (
       <SidebarContextMenu>
@@ -61,7 +82,7 @@ export const Sidebar = observer(
           <div className={styles.trackPanelsWrapper} ref={trackPanelsRef}>
             <div
               className={styles.trackPanels}
-              style={{ height: sectionHeight }}
+              style={{ height: Math.round(sectionHeight - 36) }}
             >
               {audioEngine.tracks.map((track, i) => (
                 <TrackPanel

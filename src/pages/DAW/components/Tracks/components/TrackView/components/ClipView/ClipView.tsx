@@ -43,7 +43,7 @@ export const ClipView = observer(({ clip, color }: ClipViewProps) => {
       id={`wave-container${clip.id}`}
       style={{
         left,
-        top,
+        top: top + clip.yOffset,
         position: "absolute",
         background: convertRgbToRgba(color, backgroundAlpha),
         opacity: clip.isSelected ? 0.9 : 0.8,
@@ -76,6 +76,7 @@ export const ClipView = observer(({ clip, color }: ClipViewProps) => {
 
       <FadeCurve
         key={"fadeIn"}
+        clip={clip}
         fadeInLengthInSamples={clip.fadeIn.toSamples()}
         fadeOutLengthInSamples={clip.fadeOut.toSamples()}
         height={CLIP_HEIGHT}

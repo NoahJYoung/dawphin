@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { useAudioEngine } from "src/pages/DAW/hooks";
 import styles from "./FadeCurve.module.scss";
 import * as d3 from "d3";
+import { Clip } from "src/AudioEngine/Track/Clip";
 
 interface FadeCurveProps {
   fadeInLengthInSamples: number;
@@ -10,6 +11,7 @@ interface FadeCurveProps {
   height: number;
   color: string;
   clipDurationInSamples: number;
+  clip: Clip;
 }
 
 export const FadeCurve = observer(
@@ -19,6 +21,7 @@ export const FadeCurve = observer(
     height,
     color,
     clipDurationInSamples,
+    clip,
   }: FadeCurveProps) => {
     const audioEngine = useAudioEngine();
     const fadeInWidth = Math.round(
@@ -41,8 +44,13 @@ export const FadeCurve = observer(
           .on("start", function () {
             d3.select(this).raise();
           })
-          .on("drag", function (event) {
-            audioEngine.setFadeInOnSelectedClips(event.dx);
+          .on("drag", function (e) {
+            if (!clip.isSelected) {
+              audioEngine.deselectClips();
+              clip.setSelect(true);
+              audioEngine.getSelectedClips();
+            }
+            audioEngine.setFadeInOnSelectedClips(e.dx);
           });
 
         d3.select(fadeInRef.current).call(fadeInDragHandler);
@@ -53,8 +61,13 @@ export const FadeCurve = observer(
           .on("start", function () {
             d3.select(this).raise();
           })
-          .on("drag", function (event) {
-            audioEngine.setFadeOutOnSelectedClips(-event.dx);
+          .on("drag", function (e) {
+            if (!clip.isSelected) {
+              audioEngine.deselectClips();
+              clip.setSelect(true);
+              audioEngine.getSelectedClips();
+            }
+            audioEngine.setFadeOutOnSelectedClips(-e.dx);
           });
 
         d3.select(fadeOutRef.current).call(fadeOutdragHandler);

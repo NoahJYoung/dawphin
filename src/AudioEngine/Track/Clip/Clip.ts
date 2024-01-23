@@ -14,6 +14,7 @@ export class Clip {
   public player = new Tone.Player();
   public startEventId: number | null = null;
   public stopEventId: number | null = null;
+  public yOffset = 0;
 
   constructor(
     public track: Track,
@@ -170,9 +171,16 @@ export class Clip {
     this.audioBuffer = data;
   };
 
+  setYOffset = (offset: number) => {
+    this.yOffset = offset;
+  };
+
   deleteClip = () => {
     this.player.dispose();
     this.clearEvents();
+    this.track.setClips([
+      ...this.track.clips.filter((clip) => clip.id !== this.id),
+    ]);
   };
 
   split = () => {

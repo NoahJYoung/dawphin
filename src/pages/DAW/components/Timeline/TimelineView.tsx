@@ -15,16 +15,10 @@ interface TimelineProps {
   setTimelineRect: Dispatch<SetStateAction<DOMRect | null>>;
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
   children: React.ReactNode;
-  trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 export const TimelineView = observer(
-  ({
-    setTimelineRect,
-    trackPanelsRef,
-    children,
-    containerRef,
-  }: TimelineProps) => {
+  ({ setTimelineRect, children, containerRef }: TimelineProps) => {
     const {
       gridRef,
       topbarRef,
@@ -35,7 +29,7 @@ export const TimelineView = observer(
       handleMouseMove,
       handleClick,
       handleScroll,
-    } = useTimeline(containerRef, trackPanelsRef, setTimelineRect);
+    } = useTimeline(containerRef, setTimelineRect);
 
     return (
       <TimelineContextMenu>

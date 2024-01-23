@@ -7,14 +7,14 @@ import {
   SCROLLBAR_HEIGHT,
 } from "src/pages/DAW/constants";
 import * as Tone from "tone";
-import { useAudioEngine } from "src/pages/DAW/hooks";
+import { useAudioEngine, useLinkedScroll } from "src/pages/DAW/hooks";
 
 export const useTimeline = (
   containerRef: React.MutableRefObject<HTMLDivElement | null>,
-  trackPanelsRef: React.MutableRefObject<HTMLDivElement | null>,
   setTimelineRect: (rect: DOMRect) => void
 ) => {
   const [rAFId, setRAFId] = useState<number | null>(null);
+  const { scrollTop, setScrollTop, sectionHeight } = useLinkedScroll();
   const audioEngine = useAudioEngine();
 
   const gridRef = useRef<SVGSVGElement>(null);
@@ -131,24 +131,40 @@ export const useTimeline = (
     }
   };
 
-  const handleScroll = (e: React.UIEvent) => {
+  const handleScroll = (e: any) => {
+    // e.preventDefault();
     const target = e.target as HTMLDivElement;
     audioEngine.timeline.scrollXOffsetPixels = target.scrollLeft;
-    if (trackPanelsRef?.current) {
-      trackPanelsRef.current.scrollTop = target.scrollTop;
-    }
+    // if (trackPanelsRef?.current) {
+    //   trackPanelsRef.current.scrollTop = target.scrollTop;
+    // }
+    setScrollTop(target.scrollTop);
   };
 
-  const sectionHeight = useMemo(() => {
-    const clipFullHeight = CLIP_HEIGHT + CLIP_TOP_PADDING;
-    const calculatedHeight =
-      clipFullHeight * audioEngine.tracks.length +
-      SCROLLBAR_HEIGHT +
-      clipFullHeight;
-    return calculatedHeight > MIN_GRID_HEIGHT
-      ? calculatedHeight
-      : MIN_GRID_HEIGHT;
-  }, [audioEngine.tracks.length]);
+  useEffect(() => {
+    const div = containerRef.current;
+    if (div) {
+      div.scrollTop = scrollTop;
+      div.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (div) {
+        div.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [scrollTop, setScrollTop]);
+
+  // const sectionHeight = useMemo(() => {
+  //   const clipFullHeight = CLIP_HEIGHT + CLIP_TOP_PADDING;
+  //   const calculatedHeight =
+  //     clipFullHeight * audioEngine.tracks.length +
+  //     SCROLLBAR_HEIGHT +
+  //     clipFullHeight;
+  //   return calculatedHeight > MIN_GRID_HEIGHT
+  //     ? calculatedHeight
+  //     : MIN_GRID_HEIGHT;
+  // }, [audioEngine.tracks.length]);
 
   return {
     gridRef,

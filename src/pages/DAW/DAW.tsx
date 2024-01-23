@@ -11,7 +11,7 @@ import { Button } from "antd";
 import { InstrumentsView } from "./components/InstrumentsView";
 import { RxMixerVertical } from "react-icons/rx";
 import { PiPianoKeysFill, PiWaveformBold } from "react-icons/pi";
-import { AudioEngineProvider } from "./hooks";
+import { AudioEngineProvider, LinkedScrollProvider } from "./hooks";
 
 import styles from "./DAW.module.scss";
 import { EqualizerView } from "./components/Sidebar/components/EffectsModal/effects";
@@ -34,91 +34,92 @@ export const DAW = () => {
 
   return (
     <AudioEngineProvider>
-      <div className={`${styles.wrapper} styled-scrollbar`}>
-        <div className={styles.topPanel}>
-          <Sidebar
-            containerRef={containerRef}
-            timelineRect={timelineRect}
-            trackPanelsRef={trackPanelsRef}
-          />
-          <TimelineView
-            setTimelineRect={setTimelineRect}
-            containerRef={containerRef}
-            trackPanelsRef={trackPanelsRef}
-          >
-            <Tracks containerRef={containerRef} timelineRect={timelineRect} />
-          </TimelineView>
-        </div>
+      <LinkedScrollProvider>
+        <div className={`${styles.wrapper} styled-scrollbar`}>
+          <div className={styles.topPanel}>
+            <Sidebar
+              containerRef={containerRef}
+              timelineRect={timelineRect}
+              trackPanelsRef={trackPanelsRef}
+            />
+            <TimelineView
+              setTimelineRect={setTimelineRect}
+              containerRef={containerRef}
+            >
+              <Tracks containerRef={containerRef} timelineRect={timelineRect} />
+            </TimelineView>
+          </div>
 
-        <div className={styles.bottomPanelOuter}>
-          <div className={styles.bottomPanelMiddle}>
-            <TransportView containerRef={containerRef} />
+          <div className={styles.bottomPanelOuter}>
+            <div className={styles.bottomPanelMiddle}>
+              <TransportView containerRef={containerRef} />
 
-            <div className={styles.viewButtonContainer}>
-              <Button
-                type="text"
-                onClick={() => setBottomPanelView(BottomPanelView.MIXER)}
-                className={styles.viewButton}
-                icon={
-                  <RxMixerVertical
-                    className={`${styles.btnIcon} ${
-                      bottomPanelView === "mixer" ? styles.active : ""
-                    }`}
-                  />
-                }
-              />
-              <Button
-                type="text"
-                className={styles.viewButton}
-                onClick={() => setBottomPanelView(BottomPanelView.KEYBOARD)}
-                icon={
-                  <PiPianoKeysFill
-                    className={`${styles.btnIcon} ${
-                      bottomPanelView === BottomPanelView.KEYBOARD
-                        ? styles.active
-                        : ""
-                    }`}
-                  />
-                }
-              />
+              <div className={styles.viewButtonContainer}>
+                <Button
+                  type="text"
+                  onClick={() => setBottomPanelView(BottomPanelView.MIXER)}
+                  className={styles.viewButton}
+                  icon={
+                    <RxMixerVertical
+                      className={`${styles.btnIcon} ${
+                        bottomPanelView === "mixer" ? styles.active : ""
+                      }`}
+                    />
+                  }
+                />
+                <Button
+                  type="text"
+                  className={styles.viewButton}
+                  onClick={() => setBottomPanelView(BottomPanelView.KEYBOARD)}
+                  icon={
+                    <PiPianoKeysFill
+                      className={`${styles.btnIcon} ${
+                        bottomPanelView === BottomPanelView.KEYBOARD
+                          ? styles.active
+                          : ""
+                      }`}
+                    />
+                  }
+                />
 
-              <Button
-                type="text"
-                className={styles.viewButton}
-                onClick={() => setBottomPanelView(BottomPanelView.SAMPLE_PAD)}
-                icon={
-                  <PiWaveformBold
-                    className={`${styles.btnIcon} ${
-                      bottomPanelView === BottomPanelView.SAMPLE_PAD
-                        ? styles.active
-                        : ""
-                    }`}
-                  />
-                }
-              />
+                <Button
+                  type="text"
+                  className={styles.viewButton}
+                  onClick={() => setBottomPanelView(BottomPanelView.SAMPLE_PAD)}
+                  icon={
+                    <PiWaveformBold
+                      className={`${styles.btnIcon} ${
+                        bottomPanelView === BottomPanelView.SAMPLE_PAD
+                          ? styles.active
+                          : ""
+                      }`}
+                    />
+                  }
+                />
+              </div>
+            </div>
+
+            <div className={`${styles.bottomPanelInner} styled-scrollbar`}>
+              <>
+                {(() => {
+                  switch (bottomPanelView) {
+                    case BottomPanelView.KEYBOARD:
+                      return <InstrumentsView />;
+
+                    case BottomPanelView.SAMPLE_PAD:
+                      return <SamplerView />;
+
+                    case BottomPanelView.MIXER:
+                    default:
+                      return <Mixer />;
+                  }
+                })()}
+              </>
             </div>
           </div>
-
-          <div className={`${styles.bottomPanelInner} styled-scrollbar`}>
-            <>
-              {(() => {
-                switch (bottomPanelView) {
-                  case BottomPanelView.KEYBOARD:
-                    return <InstrumentsView />;
-
-                  case BottomPanelView.SAMPLE_PAD:
-                    return <SamplerView />;
-
-                  case BottomPanelView.MIXER:
-                  default:
-                    return <Mixer />;
-                }
-              })()}
-            </>
-          </div>
         </div>
-      </div>
-      {/* <EqualizerView width={1000} height={500} /> */}
+        {/* <EqualizerView width={1000} height={500} /> */}
+      </LinkedScrollProvider>
     </AudioEngineProvider>
   );
 };
