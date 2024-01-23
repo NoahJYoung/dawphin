@@ -1,17 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Toolbar,
   TrackPanel,
   SidebarContextMenu,
   AddTrackButton,
 } from "./components";
-import {
-  SCROLLBAR_HEIGHT,
-  MIN_GRID_HEIGHT,
-  CLIP_HEIGHT,
-  CLIP_TOP_PADDING,
-} from "../../constants";
 import styles from "./Sidebar.module.scss";
 import { useAudioEngine, useLinkedScroll } from "../../hooks";
 
@@ -51,17 +45,6 @@ export const Sidebar = observer(
     const toggleExpanded = () => setExpanded(!expanded);
 
     const audioEngine = useAudioEngine();
-
-    // const sectionHeight = useMemo(() => {
-    //   const clipFullHeight = CLIP_HEIGHT + CLIP_TOP_PADDING;
-    //   const calculatedHeight =
-    //     clipFullHeight * audioEngine.tracks.length +
-    //     SCROLLBAR_HEIGHT +
-    //     clipFullHeight;
-    //   return calculatedHeight > MIN_GRID_HEIGHT
-    //     ? calculatedHeight
-    //     : MIN_GRID_HEIGHT;
-    // }, [audioEngine.tracks.length]);
 
     return (
       <SidebarContextMenu>

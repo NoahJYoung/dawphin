@@ -1,11 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getTimeSignature } from "../../helpers";
-import {
-  CLIP_HEIGHT,
-  CLIP_TOP_PADDING,
-  MIN_GRID_HEIGHT,
-  SCROLLBAR_HEIGHT,
-} from "src/pages/DAW/constants";
 import * as Tone from "tone";
 import { useAudioEngine, useLinkedScroll } from "src/pages/DAW/hooks";
 
@@ -132,12 +126,8 @@ export const useTimeline = (
   };
 
   const handleScroll = (e: any) => {
-    // e.preventDefault();
     const target = e.target as HTMLDivElement;
     audioEngine.timeline.scrollXOffsetPixels = target.scrollLeft;
-    // if (trackPanelsRef?.current) {
-    //   trackPanelsRef.current.scrollTop = target.scrollTop;
-    // }
     setScrollTop(target.scrollTop);
   };
 
@@ -154,17 +144,6 @@ export const useTimeline = (
       }
     };
   }, [scrollTop, setScrollTop]);
-
-  // const sectionHeight = useMemo(() => {
-  //   const clipFullHeight = CLIP_HEIGHT + CLIP_TOP_PADDING;
-  //   const calculatedHeight =
-  //     clipFullHeight * audioEngine.tracks.length +
-  //     SCROLLBAR_HEIGHT +
-  //     clipFullHeight;
-  //   return calculatedHeight > MIN_GRID_HEIGHT
-  //     ? calculatedHeight
-  //     : MIN_GRID_HEIGHT;
-  // }, [audioEngine.tracks.length]);
 
   return {
     gridRef,
