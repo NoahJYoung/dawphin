@@ -216,11 +216,11 @@ export const MasterFader = observer(() => {
             </div>
           </div>
         </div>
-        <EffectsModal
+        {/* <EffectsModal
           onCancel={closeEffectsModal}
           track={masterControl}
           open={effectsModalOpen}
-        />
+        /> */}
       </div>
     </div>
   );

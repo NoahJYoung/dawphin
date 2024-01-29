@@ -31,4 +31,8 @@ export class FXFactory {
       return undefined;
     }
   };
+
+  getEffectNames = () => {
+    return this.effects.map((effect) => effect.name);
+  };
 }

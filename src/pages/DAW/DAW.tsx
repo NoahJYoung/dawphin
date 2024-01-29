@@ -9,7 +9,7 @@ import {
 } from "./components";
 import { Button } from "antd";
 import { InstrumentsView } from "./components/InstrumentsView";
-import { RxMixerVertical } from "react-icons/rx";
+import { RiSoundModuleLine } from "react-icons/ri";
 import { PiPianoKeysFill, PiWaveformBold } from "react-icons/pi";
 import { AudioEngineProvider, LinkedScrollProvider } from "./hooks";
 
@@ -54,7 +54,7 @@ export const DAW = () => {
                   onClick={() => setBottomPanelView(BottomPanelView.MIXER)}
                   className={styles.viewButton}
                   icon={
-                    <RxMixerVertical
+                    <RiSoundModuleLine
                       className={`${styles.btnIcon} ${
                         bottomPanelView === "mixer" ? styles.active : ""
                       }`}

@@ -154,11 +154,11 @@ export class Track {
   };
 
   addEffect = (effect: Tone.ToneAudioNode) => {
-    this.effectsChain.forEach((effect, i) => {
-      if (i < this.effectsChain.length - 1) {
-        effect.disconnect(this.effectsChain[i + 1]);
-      }
-    });
+    // this.effectsChain.forEach((effect, i) => {
+    //   if (i < this.effectsChain.length - 1) {
+    //     effect.disconnect(this.effectsChain[i + 1]);
+    //   }
+    // });
 
     this.setEffectsChain([...this.effectsChain, effect]);
     this.channel.chain(...this.effectsChain, Tone.getDestination());

@@ -1,8 +1,5 @@
-import {
-  DownloadOutlined,
-  EllipsisOutlined,
-  FolderOpenOutlined,
-} from "@ant-design/icons";
+import { DownloadOutlined, EllipsisOutlined } from "@ant-design/icons";
+import { LuFileAudio2 } from "react-icons/lu";
 import { Dropdown, Button, Menu } from "antd";
 import { ChangeEvent, useRef } from "react";
 import { Track } from "src/AudioEngine/Track";
@@ -33,7 +30,7 @@ export const TrackPanelMenu = ({ track }: TrackPanelMenuProps) => {
     <Menu>
       <Menu.Item
         key="1"
-        icon={<FolderOpenOutlined />}
+        icon={<LuFileAudio2 style={{ fontSize: 18 }} />}
         onClick={handleLabelClick}
       >
         <input
@@ -52,7 +49,7 @@ export const TrackPanelMenu = ({ track }: TrackPanelMenuProps) => {
       <Menu.Item
         onClick={track.downloadTrackAudio}
         key="2"
-        icon={<DownloadOutlined />}
+        icon={<DownloadOutlined style={{ fontSize: 18 }} />}
         disabled={track.clips.length === 0}
       >
         Download audio

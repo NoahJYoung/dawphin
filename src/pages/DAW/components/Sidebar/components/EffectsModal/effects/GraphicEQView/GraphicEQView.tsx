@@ -1,27 +1,25 @@
 import { CenterFrequency, EQGrid } from "./components";
 import { Point } from "./types";
 import * as d3 from "d3";
-import * as Tone from "tone";
 import { getCurvePoints } from "./helpers";
 import { observer } from "mobx-react-lite";
 
-import styles from "./EqualizerView.module.scss";
-import { Equalizer } from "src/AudioEngine/Effects/Equalizer/Equalizer";
+import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer/GraphicEQ";
 import { Knob } from "src/pages/DAW/UIKit";
+
+import styles from "./GraphicEQView.module.scss";
 
 interface EqualizerViewProps {
   width: number;
   height: number;
+  graphicEQ: GraphicEQ;
 }
 
-const testEq = new Equalizer(new Tone.Channel(), Tone.getDestination());
-
-const testEqBands = testEq.bands;
-
-export const EqualizerView = observer(
-  ({ width, height }: EqualizerViewProps) => {
+export const GraphicEQView = observer(
+  ({ width, height, graphicEQ }: EqualizerViewProps) => {
+    const testEQBands = graphicEQ.bands;
     const curvePoints = getCurvePoints(
-      [...testEqBands].sort((a, b) => a.hertz - b.hertz)
+      [...testEQBands].sort((a, b) => a.hertz - b.hertz)
     );
     const scaleY = d3
       .scaleLinear()
@@ -42,7 +40,7 @@ export const EqualizerView = observer(
     const combinedCurvePath = lineGenerator(curvePoints);
 
     return (
-      <>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <div
           className={styles.container}
           style={{ height, width, borderRadius: "6px" }}
@@ -63,7 +61,7 @@ export const EqualizerView = observer(
               />
             )}
 
-            {testEqBands.map((band, i) => (
+            {testEQBands.map((band, i) => (
               <CenterFrequency
                 className={styles.bandPoint}
                 scaleX={scaleX}
@@ -74,14 +72,17 @@ export const EqualizerView = observer(
             ))}
           </svg>
         </div>
+        <button onClick={() => graphicEQ.createBand()}>New Band</button>
         <>
-          <button onClick={() => testEq.createBand()}>New Band</button>
-          {testEqBands.map((band, i) => {
+          {testEQBands.map((band, i) => {
             return (
-              <div style={{ display: "flex", gap: "20px" }}>
+              <div
+                key={`${band.hertz}-${i}`}
+                style={{ display: "flex", gap: "20px" }}
+              >
                 <p style={{ color: "#888" }}>{`Band ${i + 1}`}</p>
                 <Knob
-                  min={21}
+                  min={20}
                   max={20000}
                   step={1}
                   size={60}
@@ -89,7 +90,6 @@ export const EqualizerView = observer(
                   suffix=" hz"
                   onChange={band.setHertz}
                   round
-                  logarithmic
                 />
 
                 <Knob
@@ -111,13 +111,12 @@ export const EqualizerView = observer(
                   size={60}
                   value={band.Q}
                   onChange={band.setQ}
-                  logarithmic
                 />
               </div>
             );
           })}
         </>
-      </>
+      </div>
     );
   }
 );

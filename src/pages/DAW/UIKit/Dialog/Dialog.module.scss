@@ -1,0 +1,65 @@
+@import "src/styles/variables.scss";
+
+.modal {
+  position: fixed;
+  min-width: fit-content;
+  top: 10%;
+  left: 0;
+  overflow: auto;
+  background: $surface-0;
+  color: $text-light;
+  border: 1px solid #333;
+  border-radius: 6px;
+
+  hr {
+    border: 1px solid rgba(250, 250, 250, 0.1);
+  }
+
+  .innerWrapper {
+    padding: 2px;
+    width: 100%;
+    height: 100%;
+
+    .contentWrapper {
+      position: relative;
+
+      .content {
+        width: 100%;
+      }
+    }
+
+    .sidebarWrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h3 {
+        margin: 5px;
+      }
+    }
+
+    .xButton {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      color: inherit;
+
+      .icon {
+        font-size: 20px;
+        padding: 0;
+      }
+    }
+
+    .xButton:hover {
+      opacity: 0.6;
+    }
+  }
+}

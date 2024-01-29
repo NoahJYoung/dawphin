@@ -34,6 +34,15 @@ export const ControlPanel = observer(() => {
           max={0}
           onChange={keyboard.setVolume}
           value={keyboard.volume}
+          handleStyle={{
+            width: "15px",
+            height: "30px",
+            background: "radial-gradient(#bbb, #777)",
+            borderRadius: "4px",
+            position: "absolute",
+            top: "-7px",
+            zIndex: "1000",
+          }}
         />
       </div>
       <div

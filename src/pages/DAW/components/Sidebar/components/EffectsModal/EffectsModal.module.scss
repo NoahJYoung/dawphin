@@ -1,5 +1,24 @@
+@import "src/styles/variables.scss";
+
 .modal {
-  padding: 0;
+  height: 500px;
+  width: 680px;
+
+  .sidebar {
+    height: 400px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: $surface-0;
+    bottom: 0;
+    width: 50px;
+    transition: width, 0.3s ease;
+    z-index: 1000;
+
+    &.sidebarOpen {
+      width: 250px;
+    }
+  }
 
   .innerContainer {
     width: 100%;
@@ -9,10 +28,16 @@
     color: #aaa;
   }
   .effectViewContainer {
-    width: 75%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    background: $surface-1;
+    border-radius: 6px;
+    padding: 5px;
+    max-height: 100%;
+    min-height: 400px;
+    padding-left: 100px;
+    min-width: 600px;
+    overflow: auto;
   }
 
   @media (max-width: 768px) {

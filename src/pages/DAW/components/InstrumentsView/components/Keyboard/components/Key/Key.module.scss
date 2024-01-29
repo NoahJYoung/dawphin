@@ -3,6 +3,10 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
+
+  p {
+    user-select: none;
+  }
 }
 
 .white {

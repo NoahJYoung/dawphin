@@ -22,8 +22,17 @@ export const PadVolumeSlider = observer(
           onChange={(e) => {
             audioEngine.sampler.setPadVolume(padNumber, e);
           }}
-          trackStyle={{ background: "rgb(125, 0, 250)", width: 10 }}
-          railStyle={{ width: 10 }}
+          trackStyle={{ background: "rgb(125, 0, 250)", width: 6 }}
+          railStyle={{ width: 6 }}
+          handleStyle={{
+            width: "30px",
+            height: "15px",
+            background: "radial-gradient(#bbb, #777)",
+            borderRadius: "4px",
+            position: "absolute",
+            left: "-7px",
+            zIndex: "1000",
+          }}
           className={styles.slider}
           vertical
         />
