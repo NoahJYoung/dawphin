@@ -1,19 +1,24 @@
-import * as Tone from "tone";
 import { injectable } from "inversify";
 import { makeObservable, observable } from "mobx";
+import { GraphicEQ } from "../Equalizer";
+import { BaseEffectType } from "../types";
 
 type EffectType = {
   name: string;
-  create: () => Tone.ToneAudioNode;
+  create: () => BaseEffectType;
 };
 
 @injectable()
 export class FXFactory {
   effectId: number = 0;
   public effects: EffectType[] = [
-    { name: "EQ3", create: () => new Tone.EQ3() },
-    { name: "Compressor", create: () => new Tone.Compressor() },
-    { name: "Reverb", create: () => new Tone.Reverb() },
+    {
+      name: "graphicEQ",
+      create: () => new GraphicEQ(),
+    },
+    // { name: "EQ3", create: () => new Tone.EQ3() },
+    // { name: "Compressor", create: () => new Tone.Compressor() },
+    // { name: "Reverb", create: () => new Tone.Reverb() },
   ];
 
   constructor() {
@@ -22,7 +27,7 @@ export class FXFactory {
     });
   }
 
-  createEffect = (name: string): Tone.ToneAudioNode | undefined => {
+  createEffect = (name: string) => {
     const selectedEffect = this.effects.find((effect) => effect.name === name);
     if (selectedEffect) {
       return selectedEffect.create();

@@ -1,41 +1,54 @@
 import { injectable } from "inversify";
+import { v4 as uuid } from "uuid";
 import * as Tone from "tone";
 import { makeAutoObservable } from "mobx";
 
 @injectable()
 export class Band {
   filter: Tone.Filter = new Tone.Filter();
+  id = uuid();
   constructor(
     public hertz: number = 1000,
     public gain: number = 0,
     public type: BiquadFilterType = "peaking",
-    public Q: number = 0.2
+    public Q: number = 0.5
   ) {
     makeAutoObservable(this);
+    this.init();
   }
 
-  connect = (node: Tone.ToneAudioNode) => {
-    this.filter.connect(node);
+  init = () => {
+    this.setGain(0);
+    this.setFilterType("peaking");
   };
 
-  disconnect = (node: Tone.ToneAudioNode) => {
-    this.filter.disconnect(node);
+  connect = (destination: Tone.ToneAudioNode) => {
+    this.filter.connect(destination);
   };
 
   setHertz = (frequency: number) => {
-    const roundedValue = Math.round(frequency * 100) / 100;
+    const roundedValue = Math.round(frequency);
     this.filter.set({ frequency: roundedValue });
-    this.hertz = this.filter.frequency.get().value;
+    this.hertz = roundedValue;
   };
 
   setGain = (gain: number) => {
-    const roundedValue = Math.round(gain * 100) / 100;
-    this.filter.set({ gain: roundedValue });
-    this.gain = this.filter.gain.get().value;
+    if (gain < 12 && gain > -12) {
+      const roundedValue = Math.round(gain * 100) / 100;
+      this.filter.gain.linearRampTo(roundedValue, 0.1);
+      this.gain = roundedValue;
+    }
   };
 
   setQ = (Q: number) => {
     this.filter.set({ Q });
-    this.Q = this.filter.Q.get().value;
+    this.Q = Q;
   };
+
+  setFilterType = (type: BiquadFilterType) => {
+    this.filter.type = type;
+    this.type = this.filter.type;
+  };
+
+  dispose = () => {};
 }

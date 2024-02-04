@@ -4,8 +4,8 @@ import { AudioEngine } from "..";
 import * as Tone from "tone";
 import { injectable } from "inversify";
 import { blobToBuffer, bufferToBlob } from "../helpers";
-import { RecursivePartial } from "tone/build/esm/core/util/Interface";
 import { FXFactory } from "../Effects";
+import { BaseEffectType } from "../Effects/types";
 
 @injectable()
 export class Track {
@@ -18,7 +18,8 @@ export class Track {
   public splitter = new Tone.Split();
   public recorder = new Tone.Recorder();
   public placeholderClipStart: Tone.TimeClass | null = null;
-  public effectsChain: Tone.ToneAudioNode[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public effectsChain: BaseEffectType[] = [];
   public inputMode: "mic" | "keyboard" | "sampler" = "mic";
 
   constructor(
@@ -145,7 +146,7 @@ export class Track {
     this.audioEngine.getSelectedTracks();
   };
 
-  setEffectsChain = (effects: Tone.ToneAudioNode[]) => {
+  setEffectsChain = (effects: BaseEffectType[]) => {
     this.effectsChain = effects;
   };
 
@@ -153,28 +154,35 @@ export class Track {
     this.inputMode = inputMode;
   };
 
-  addEffect = (effect: Tone.ToneAudioNode) => {
-    // this.effectsChain.forEach((effect, i) => {
-    //   if (i < this.effectsChain.length - 1) {
-    //     effect.disconnect(this.effectsChain[i + 1]);
-    //   }
-    // });
+  addEffect = (effect: BaseEffectType) => {
+    this.channel.disconnect();
+    this.effectsChain.forEach((effect, i) => {
+      if (i < this.effectsChain.length - 1) {
+        effect.output.disconnect(this.effectsChain[i + 1].input);
+      }
+    });
 
     this.setEffectsChain([...this.effectsChain, effect]);
-    this.channel.chain(...this.effectsChain, Tone.getDestination());
+    // this.channel.chain(...this.effectsChain, Tone.getDestination());
+    this.channel.connect(this.effectsChain[0].input);
+    // (this.effectsChain[0] as any).connect(Tone.getDestination());
   };
 
-  removeEffect = (index: number) => {
-    this.channel.disconnect(this.effectsChain[0]);
+  removeEffect = (id: string) => {
+    this.channel.disconnect(this.effectsChain[0].input);
     this.effectsChain.forEach((effect, i) => {
       if (i < this.effectsChain.length) {
-        effect.disconnect(this.effectsChain[i + 1]);
+        effect.output.disconnect(this.effectsChain[i + 1]?.input);
       }
     });
     const filteredFX = [...this.effectsChain];
+    const index = this.effectsChain.findIndex((effect) => effect.id === id);
     filteredFX.splice(index, 1);
     this.setEffectsChain(filteredFX);
-    this.channel.chain(...this.effectsChain, Tone.getDestination());
+    this.channel.chain(
+      ...this.effectsChain.map((effect) => effect.input),
+      Tone.getDestination()
+    );
   };
 
   joinSelectedClips = async (config?: { noFade: boolean }) => {
@@ -189,7 +197,7 @@ export class Track {
       gapsInSeconds.push(gap);
     }
 
-    const concatenatedBuffer = !!config?.noFade
+    const concatenatedBuffer = config?.noFade
       ? Clip.concatenateBuffers(
           selectedClips.map((clip) => clip.audioBuffer),
           gapsInSeconds
@@ -308,10 +316,14 @@ export class Track {
     });
     const offlineFxFactory = new FXFactory();
     const offlineFxChain = this.effectsChain.map((effect) => {
-      return offlineFxFactory.createEffect(effect.name)!;
+      return offlineFxFactory.createEffect(effect.name);
     });
 
-    offlineChannel.chain(...offlineFxChain, offlineCtx.destination);
+    offlineChannel.chain(
+      ...offlineFxChain.map((effect) => effect!.input),
+      offlineCtx.destination
+    );
+
     this.clips.forEach((clip) => clip.offlineRender(offlineChannel));
   };
 }

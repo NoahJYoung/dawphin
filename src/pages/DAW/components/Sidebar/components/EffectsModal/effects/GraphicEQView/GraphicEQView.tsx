@@ -1,11 +1,11 @@
-import { CenterFrequency, EQGrid } from "./components";
+import { BandTab, CenterFrequency, EQGrid } from "./components";
 import { Point } from "./types";
 import * as d3 from "d3";
 import { getCurvePoints } from "./helpers";
 import { observer } from "mobx-react-lite";
-
 import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer/GraphicEQ";
-import { Knob } from "src/pages/DAW/UIKit";
+import { Tabs } from "antd";
+import { useMemo, useState } from "react";
 
 import styles from "./GraphicEQView.module.scss";
 
@@ -17,9 +17,14 @@ interface EqualizerViewProps {
 
 export const GraphicEQView = observer(
   ({ width, height, graphicEQ }: EqualizerViewProps) => {
-    const testEQBands = graphicEQ.bands;
+    const [activeBandId, setActiveBandId] = useState<string>();
+
     const curvePoints = getCurvePoints(
-      [...testEQBands].sort((a, b) => a.hertz - b.hertz)
+      [...graphicEQ.bands].sort((a, b) => a.hertz - b.hertz)
+    );
+    const activeBand = useMemo(
+      () => graphicEQ.bands.find((band) => band.id === activeBandId),
+      [graphicEQ.bands, activeBandId]
     );
     const scaleY = d3
       .scaleLinear()
@@ -38,6 +43,37 @@ export const GraphicEQView = observer(
       .curve(d3.curveBumpX);
 
     const combinedCurvePath = lineGenerator(curvePoints);
+
+    const createBand = () => {
+      setActiveBandId(graphicEQ.createBand());
+    };
+
+    const deleteBand = (key: string) => {
+      graphicEQ.deleteBand(key);
+      setActiveBandId(graphicEQ.bands[0]?.id);
+    };
+
+    const bandTabs = graphicEQ.bands.map((band, i) => ({
+      label: `Band ${i + 1}`,
+      key: band.id,
+    }));
+
+    const handleChange = (id: string) => {
+      setActiveBandId(id);
+    };
+
+    const onEdit = (
+      targetKey: React.MouseEvent | React.KeyboardEvent | string,
+      action: "add" | "remove"
+    ) => {
+      if (action === "add") {
+        createBand();
+      } else {
+        if (typeof targetKey === "string") {
+          deleteBand(targetKey);
+        }
+      }
+    };
 
     return (
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -61,7 +97,7 @@ export const GraphicEQView = observer(
               />
             )}
 
-            {testEQBands.map((band, i) => (
+            {graphicEQ.bands.map((band, i) => (
               <CenterFrequency
                 className={styles.bandPoint}
                 scaleX={scaleX}
@@ -72,50 +108,17 @@ export const GraphicEQView = observer(
             ))}
           </svg>
         </div>
-        <button onClick={() => graphicEQ.createBand()}>New Band</button>
-        <>
-          {testEQBands.map((band, i) => {
-            return (
-              <div
-                key={`${band.hertz}-${i}`}
-                style={{ display: "flex", gap: "20px" }}
-              >
-                <p style={{ color: "#888" }}>{`Band ${i + 1}`}</p>
-                <Knob
-                  min={20}
-                  max={20000}
-                  step={1}
-                  size={60}
-                  value={band.hertz}
-                  suffix=" hz"
-                  onChange={band.setHertz}
-                  round
-                />
 
-                <Knob
-                  double
-                  min={-12}
-                  max={12}
-                  step={0.25}
-                  size={60}
-                  value={band.gain}
-                  suffix=" Db"
-                  onChange={band.setGain}
-                />
+        <Tabs
+          activeKey={activeBandId}
+          onChange={handleChange}
+          items={bandTabs}
+          type="editable-card"
+          size="small"
+          onEdit={onEdit}
+        />
 
-                <Knob
-                  double
-                  min={0.2}
-                  max={20}
-                  step={0.1}
-                  size={60}
-                  value={band.Q}
-                  onChange={band.setQ}
-                />
-              </div>
-            );
-          })}
-        </>
+        {activeBand && <BandTab key={activeBand.id} band={activeBand} />}
       </div>
     );
   }

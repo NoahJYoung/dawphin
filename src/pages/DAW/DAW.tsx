@@ -16,17 +16,14 @@ import { AudioEngineProvider, LinkedScrollProvider } from "./hooks";
 import styles from "./DAW.module.scss";
 
 enum BottomPanelView {
-  MIXER = "mixer",
-  KEYBOARD = "keyboard",
-  MIDI_EDITOR = "midiEditor",
-  SAMPLE_PAD = "samplePad",
+  MIXER,
+  KEYBOARD,
+  SAMPLE_PAD,
 }
 
 export const DAW = () => {
   const [timelineRect, setTimelineRect] = useState<DOMRect | null>(null);
-  const [bottomPanelView, setBottomPanelView] = useState<BottomPanelView>(
-    BottomPanelView.MIXER
-  );
+  const [bottomPanelView, setBottomPanelView] = useState<BottomPanelView>(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +53,9 @@ export const DAW = () => {
                   icon={
                     <RiSoundModuleLine
                       className={`${styles.btnIcon} ${
-                        bottomPanelView === "mixer" ? styles.active : ""
+                        bottomPanelView === BottomPanelView.MIXER
+                          ? styles.active
+                          : ""
                       }`}
                     />
                   }
@@ -94,21 +93,19 @@ export const DAW = () => {
             </div>
 
             <div className={`${styles.bottomPanelInner} styled-scrollbar`}>
-              <>
-                {(() => {
-                  switch (bottomPanelView) {
-                    case BottomPanelView.KEYBOARD:
-                      return <InstrumentsView />;
+              {(() => {
+                switch (bottomPanelView) {
+                  case BottomPanelView.KEYBOARD:
+                    return <InstrumentsView />;
 
-                    case BottomPanelView.SAMPLE_PAD:
-                      return <SamplerView />;
+                  case BottomPanelView.SAMPLE_PAD:
+                    return <SamplerView />;
 
-                    case BottomPanelView.MIXER:
-                    default:
-                      return <Mixer />;
-                  }
-                })()}
-              </>
+                  case BottomPanelView.MIXER:
+                  default:
+                    return <Mixer />;
+                }
+              })()}
             </div>
           </div>
         </div>

@@ -28,9 +28,10 @@ export const CenterFrequency = ({
           const newX = scaleX.invert(event.x);
           const newY = scaleY.invert(event.y);
 
-          d3.select(this).attr("cx", event.x).attr("cy", event.y);
-
-          band.setGain(newY);
+          if (newY < 12 && newY > -12) {
+            d3.select(this).attr("cx", event.x).attr("cy", event.y);
+            band.setGain(newY);
+          }
           band.setHertz(newX);
         });
 

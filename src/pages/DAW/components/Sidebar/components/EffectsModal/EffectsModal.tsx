@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Dialog } from "src/pages/DAW/UIKit";
 import { Track } from "src/AudioEngine/Track";
-import * as Tone from "tone";
-import { CompressorView, EQ3View, GraphicEQView } from "./effects";
-import { MasterControl } from "src/AudioEngine/MasterControl";
-import { v4 as uuidv4 } from "uuid";
+import { GraphicEQView } from "./effects";
 import { MdRoute } from "react-icons/md";
 import { FiPlus } from "react-icons/fi";
 import { Button, Menu } from "antd";
@@ -12,36 +9,21 @@ import { AudioEngine } from "src/AudioEngine";
 import { useAudioEngine } from "src/pages/DAW/hooks";
 import Sider from "antd/es/layout/Sider";
 import { observer } from "mobx-react-lite";
-
 import styles from "./EffectsModal.module.scss";
 import { PiTrash } from "react-icons/pi";
 import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer";
 
-const getEffectInstances = (track: Track | MasterControl) => {
+const getEffectInstances = (track: Track) => {
   if (track?.effectsChain?.length) {
     return track.effectsChain.map((effect) => {
       switch (effect.name) {
         case "graphicEQ":
           return (
             <GraphicEQView
-              graphicEQ={effect as unknown as GraphicEQ}
-              key={uuidv4()}
+              graphicEQ={effect as GraphicEQ}
+              key={effect.id}
               height={250}
               width={540}
-            />
-          );
-
-        case "EQ3":
-          return <EQ3View EQ3={effect as unknown as Tone.EQ3} key={uuidv4()} />;
-
-        case "Reverb":
-          return <div key={uuidv4()}>reverbView</div>;
-
-        case "Compressor":
-          return (
-            <CompressorView
-              key={uuidv4()}
-              compressor={effect as Tone.Compressor}
             />
           );
       }
@@ -73,7 +55,7 @@ const getMenuItems = (
           >
             <p>{effect.name}</p>
             <Button
-              onClick={() => track.removeEffect(i)}
+              onClick={() => track.removeEffect(effect.id)}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -86,7 +68,6 @@ const getMenuItems = (
           </span>
         ),
         onClick: () => setView(i),
-        selectable: true,
       })),
       disabled: track.effectsChain.length === 0,
     },
@@ -100,7 +81,6 @@ const getMenuItems = (
         onClick: () => {
           setView(i);
           const newEffect = track.fxFactory.createEffect(name);
-          console.log(newEffect);
           if (newEffect) {
             track.addEffect(newEffect);
           }
@@ -111,7 +91,7 @@ const getMenuItems = (
 };
 
 interface EffectsModalProps {
-  track: Track | MasterControl;
+  track: Track;
   open: boolean;
   onCancel: () => void;
 }

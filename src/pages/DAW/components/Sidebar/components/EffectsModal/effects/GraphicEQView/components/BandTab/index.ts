@@ -1,0 +1,1 @@
+export { BandTab } from "./BandTab";
