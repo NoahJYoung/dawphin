@@ -36,16 +36,19 @@ export class Track {
     public clips: Clip[] = observable.array([]),
     public color: string = "rgb(125, 0, 250)",
     public selected: boolean = false,
-    public channel: Tone.Channel = new Tone.Channel(),
-    public muted = channel.mute
+    public input: Tone.Channel = new Tone.Channel(),
+    public output: Tone.Channel = new Tone.Channel(),
+
+    public muted = input.mute
   ) {
     makeAutoObservable(this);
 
     this.setPan(0);
-    this.channel.connect(this.splitter);
+    this.input.connect(this.splitter);
     this.splitter.connect(this.leftMeter, 0);
     this.splitter.connect(this.rightMeter, 1);
-    this.channel.toDestination();
+    this.input.connect(this.output);
+    this.output.toDestination();
   }
 
   get fxFactory() {
@@ -90,23 +93,23 @@ export class Track {
   };
 
   setVolume = (value: number) => {
-    this.channel.set({ volume: Math.round(value) });
-    this.volume = Math.round(this.channel.volume.value);
+    this.input.set({ volume: Math.round(value) });
+    this.volume = Math.round(this.input.volume.value);
   };
 
   setPan = (value: number) => {
-    this.channel.set({ pan: value / 100 });
-    this.pan = this.channel.pan.value * 100;
+    this.output.set({ pan: value / 100 });
+    this.pan = this.output.pan.value * 100;
   };
 
   setMuted = (state: boolean) => {
-    this.channel.set({ mute: state });
-    this.muted = this.channel.mute;
+    this.input.set({ mute: state });
+    this.muted = this.input.mute;
   };
 
   setSolo = (state: boolean) => {
-    this.channel.solo = state;
-    this.solo = this.channel.solo;
+    this.input.solo = state;
+    this.solo = this.input.solo;
     if (this.solo && this.muted) {
       this.setMuted(false);
     }
@@ -155,7 +158,8 @@ export class Track {
   };
 
   addEffect = (effect: BaseEffectType) => {
-    this.channel.disconnect();
+    this.input.disconnect();
+    this.output.disconnect();
     this.effectsChain.forEach((effect, i) => {
       if (i < this.effectsChain.length - 1) {
         effect.output.disconnect(this.effectsChain[i + 1].input);
@@ -163,13 +167,13 @@ export class Track {
     });
 
     this.setEffectsChain([...this.effectsChain, effect]);
-    // this.channel.chain(...this.effectsChain, Tone.getDestination());
-    this.channel.connect(this.effectsChain[0].input);
-    // (this.effectsChain[0] as any).connect(Tone.getDestination());
+    this.input.connect(this.effectsChain[0].input);
+    this.effectsChain[this.effectsChain.length - 1].output.connect(this.output);
+    this.output.toDestination();
   };
 
   removeEffect = (id: string) => {
-    this.channel.disconnect(this.effectsChain[0].input);
+    this.input.disconnect(this.effectsChain[0].input);
     this.effectsChain.forEach((effect, i) => {
       if (i < this.effectsChain.length) {
         effect.output.disconnect(this.effectsChain[i + 1]?.input);
@@ -179,7 +183,7 @@ export class Track {
     const index = this.effectsChain.findIndex((effect) => effect.id === id);
     filteredFX.splice(index, 1);
     this.setEffectsChain(filteredFX);
-    this.channel.chain(
+    this.input.chain(
       ...this.effectsChain.map((effect) => effect.input),
       Tone.getDestination()
     );
@@ -227,11 +231,11 @@ export class Track {
   };
 
   mute = () => {
-    this.channel.mute = true;
+    this.input.mute = true;
   };
 
   unmute = () => {
-    this.channel.mute = false;
+    this.input.mute = false;
   };
 
   toggleMute = () => {
@@ -312,7 +316,7 @@ export class Track {
     const offlineChannel = new Tone.Channel().set({
       volume: this.volume || 0,
       pan: (this.pan || 0) / 100,
-      mute: this.channel.mute,
+      mute: this.input.mute,
     });
     const offlineFxFactory = new FXFactory();
     const offlineFxChain = this.effectsChain.map((effect) => {

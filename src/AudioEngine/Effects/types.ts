@@ -6,3 +6,7 @@ export interface BaseEffectType {
   input: Channel;
   output: Channel;
 }
+
+export enum EffectNames {
+  graphicEQ = "GRAPHIC-EQ",
+}

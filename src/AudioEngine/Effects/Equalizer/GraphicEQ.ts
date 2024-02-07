@@ -3,7 +3,7 @@ import { makeAutoObservable } from "mobx";
 import { v4 as uuid } from "uuid";
 import * as Tone from "tone";
 import { Band } from "./Band";
-import { BaseEffectType } from "../types";
+import { BaseEffectType, EffectNames } from "../types";
 
 @injectable()
 export class GraphicEQ implements BaseEffectType {
@@ -11,20 +11,20 @@ export class GraphicEQ implements BaseEffectType {
   bands: Band[] = [];
   input = new Tone.Channel();
   output = new Tone.Channel();
-  name: string = "graphicEQ";
+  name: EffectNames = EffectNames.graphicEQ;
 
   constructor() {
     makeAutoObservable(this);
     this.input.connect(this.output);
-    this.output.toDestination();
+    this.connect();
   }
 
   createBand = () => {
     const band = new Band();
     this.bands.push(band);
     this.input.disconnect();
-    this.output.disconnect();
-    this.connect(Tone.getDestination());
+
+    this.connect();
 
     return band.id;
   };
@@ -33,7 +33,7 @@ export class GraphicEQ implements BaseEffectType {
     this.bands = [...this.bands.filter((band) => band?.id !== key)];
   };
 
-  connect = (destination: Tone.ToneAudioNode) => {
+  connect = () => {
     const bandsLength = this.bands.length;
     if (bandsLength > 0) {
       this.input.connect(this.bands[0].filter);
@@ -44,8 +44,6 @@ export class GraphicEQ implements BaseEffectType {
 
       this.bands[bandsLength - 1].connect(this.output);
     }
-
-    this.output.connect(destination);
   };
 
   mute = () => this.output.set({ mute: true });

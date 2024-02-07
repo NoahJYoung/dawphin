@@ -12,12 +12,13 @@ import { observer } from "mobx-react-lite";
 import styles from "./EffectsModal.module.scss";
 import { PiTrash } from "react-icons/pi";
 import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer";
+import { EffectNames } from "src/AudioEngine/Effects";
 
 const getEffectInstances = (track: Track) => {
   if (track?.effectsChain?.length) {
     return track.effectsChain.map((effect) => {
       switch (effect.name) {
-        case "graphicEQ":
+        case EffectNames.graphicEQ:
           return (
             <GraphicEQView
               graphicEQ={effect as GraphicEQ}

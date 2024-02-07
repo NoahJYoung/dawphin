@@ -115,7 +115,7 @@ export class AudioEngine {
 
   deleteSelectedTracks = () => {
     this.getSelectedTracks();
-    this.selectedTracks.forEach((track) => track.channel.dispose());
+    this.selectedTracks.forEach((track) => track.input.dispose());
     const selectedTrackIds = this.selectedTracks.map((track) => track.id);
     this.tracks = this.tracks.filter(
       (track) => !selectedTrackIds.includes(track.id)

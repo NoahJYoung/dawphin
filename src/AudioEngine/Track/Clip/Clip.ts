@@ -26,7 +26,7 @@ export class Clip {
     makeAutoObservable(this);
     this.id = uuidv4();
     this.loadAudio();
-    this.player.connect(this.track.channel.output);
+    this.player.connect(this.track.input.output);
 
     this.setFadeIn(fadeIn);
     this.setFadeOut(fadeOut);
