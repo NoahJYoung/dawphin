@@ -5,6 +5,7 @@ export interface BaseEffectType {
   name: string;
   input: Channel;
   output: Channel;
+  offlineRender: () => Channel[];
 }
 
 export enum EffectNames {

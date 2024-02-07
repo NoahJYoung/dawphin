@@ -46,5 +46,28 @@ export class GraphicEQ implements BaseEffectType {
     }
   };
 
+  offlineRender = () => {
+    const offlineInput = new Tone.Channel();
+    const offlineOutput = new Tone.Channel();
+    const offlineBands = this.bands.map((band) => {
+      const offlineBand = new Band(band.hertz, band.gain, band.type, band.Q);
+      offlineBand.init();
+      return offlineBand;
+    });
+
+    if (this.bands.length > 0) {
+      offlineInput.connect(offlineBands[0].filter);
+      offlineBands.forEach((band, i) => {
+        if (i < offlineBands.length - 2) {
+          band.connect(offlineBands[i + 1].filter);
+        } else {
+          band.connect(offlineOutput);
+        }
+      });
+    }
+
+    return [offlineInput, offlineOutput];
+  };
+
   mute = () => this.output.set({ mute: true });
 }

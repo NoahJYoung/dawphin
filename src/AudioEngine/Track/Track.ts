@@ -313,21 +313,34 @@ export class Track {
   };
 
   offlineRender = (offlineCtx: Tone.OfflineContext) => {
-    const offlineChannel = new Tone.Channel().set({
+    const offlineInput = new Tone.Channel();
+
+    const offlineOutput = new Tone.Channel().set({
       volume: this.volume || 0,
       pan: (this.pan || 0) / 100,
       mute: this.input.mute,
     });
-    const offlineFxFactory = new FXFactory();
-    const offlineFxChain = this.effectsChain.map((effect) => {
-      return offlineFxFactory.createEffect(effect.name);
-    });
 
-    offlineChannel.chain(
-      ...offlineFxChain.map((effect) => effect!.input),
-      offlineCtx.destination
+    const offlineFxChain = this.effectsChain.map((effect) =>
+      effect.offlineRender()
     );
 
-    this.clips.forEach((clip) => clip.offlineRender(offlineChannel));
+    // offlineChannel.chain(
+    //   offlineFxChain,
+    //   offlineCtx.destination
+    // );
+
+    offlineInput.connect(offlineFxChain[0][0]);
+    offlineFxChain.forEach(([_, output], i) => {
+      if (i < offlineFxChain.length - 2) {
+        output.connect(offlineFxChain[i + 1][0]);
+      } else {
+        output.connect(offlineOutput);
+      }
+    });
+
+    this.clips.forEach((clip) => clip.offlineRender(offlineInput));
+
+    offlineOutput.connect(offlineCtx.destination);
   };
 }

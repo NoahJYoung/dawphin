@@ -18,8 +18,8 @@ export class Band {
   }
 
   init = () => {
-    this.setGain(0);
-    this.setFilterType("peaking");
+    const { hertz, gain, type, Q } = this;
+    this.filter.set({ frequency: hertz, gain, type, Q });
   };
 
   connect = (destination: Tone.ToneAudioNode) => {
