@@ -5,8 +5,8 @@ export const getCurvePoints = (bands: Band[]): Point[] => {
   const twoDArray = bands.map((band) => getBeforeAndAfterPoints(band));
 
   const zeroDbBaselinePoints: Point[] = [
-    { hertz: 20, gain: 0 },
-    { hertz: 20000, gain: 0 },
+    { hertz: 1, gain: 0 },
+    { hertz: 45000, gain: 0 },
   ];
 
   const pointsToMap = [...twoDArray];

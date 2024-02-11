@@ -43,10 +43,11 @@ export class Track {
     makeAutoObservable(this);
 
     this.setPan(0);
-    this.input.connect(this.splitter);
+
+    this.input.connect(this.output);
+    this.output.connect(this.splitter);
     this.splitter.connect(this.leftMeter, 0);
     this.splitter.connect(this.rightMeter, 1);
-    this.input.connect(this.output);
     this.output.toDestination();
   }
 
@@ -168,6 +169,7 @@ export class Track {
     this.setEffectsChain([...this.effectsChain, effect]);
     this.input.connect(this.effectsChain[0].input);
     this.effectsChain[this.effectsChain.length - 1].output.connect(this.output);
+    this.output.connect(this.splitter);
     this.output.toDestination();
   };
 
@@ -324,15 +326,19 @@ export class Track {
       effect.offlineRender()
     );
 
-    offlineInput.connect(offlineFxChain[0].input);
+    if (this.effectsChain.length > 0) {
+      offlineInput.connect(offlineFxChain[0].input);
 
-    offlineFxChain.forEach(({ output }, i) => {
-      if (i < offlineFxChain.length - 2) {
-        output.connect(offlineFxChain[i + 1].input);
-      } else {
-        output.connect(offlineOutput);
-      }
-    });
+      offlineFxChain.forEach(({ output }, i) => {
+        if (i < offlineFxChain.length - 2) {
+          output.connect(offlineFxChain[i + 1].input);
+        } else {
+          output.connect(offlineOutput);
+        }
+      });
+    } else {
+      offlineInput.connect(offlineOutput);
+    }
 
     this.clips.forEach((clip) => clip.offlineRender(offlineInput));
 

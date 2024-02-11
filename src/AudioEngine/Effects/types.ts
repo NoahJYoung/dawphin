@@ -2,7 +2,7 @@ import { Channel } from "tone";
 
 export interface BaseEffectType {
   id: string;
-  name: string;
+  name: EffectKeys;
   input: Channel;
   output: Channel;
   offlineRender: () => { input: Channel; output: Channel };

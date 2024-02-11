@@ -55,7 +55,7 @@ const getMenuItems = (
               alignItems: "center",
             }}
           >
-            <p>{effect.name}</p>
+            <p>{EffectNames[effect.name]}</p>
             <Button
               onClick={() => track.removeEffect(effect.id)}
               style={{

@@ -4,6 +4,7 @@ import * as d3 from "d3";
 
 interface CenterPointProps {
   band: Band;
+  range: number[];
   scaleX: d3.ScaleLogarithmic<number, number, never>;
   scaleY: d3.ScaleLinear<number, number, never>;
   className?: string;
@@ -11,6 +12,7 @@ interface CenterPointProps {
 
 export const CenterFrequency = ({
   band,
+  range,
   scaleX,
   scaleY,
   className,
@@ -19,6 +21,7 @@ export const CenterFrequency = ({
 
   useEffect(() => {
     if (circleRef.current) {
+      const [min, max] = range;
       const dragHandler = d3
         .drag<SVGCircleElement, unknown>()
         .on("start", function () {
@@ -28,16 +31,23 @@ export const CenterFrequency = ({
           const newX = scaleX.invert(event.x);
           const newY = scaleY.invert(event.y);
 
-          if (newY < 12 && newY > -12) {
+          if (newX >= min && newX <= max) {
+            band.setHertz(newX);
+          } else {
+            return;
+          }
+
+          if (newY <= 12 && newY >= -12) {
             d3.select(this).attr("cx", event.x).attr("cy", event.y);
             band.setGain(newY);
+          } else {
+            return;
           }
-          band.setHertz(newX);
         });
 
       d3.select(circleRef.current).call(dragHandler);
     }
-  }, [scaleX, scaleY, band]);
+  }, [scaleX, scaleY, band, range]);
 
   return (
     <circle

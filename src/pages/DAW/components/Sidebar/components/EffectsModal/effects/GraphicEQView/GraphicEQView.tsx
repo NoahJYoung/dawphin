@@ -15,6 +15,9 @@ interface EqualizerViewProps {
   graphicEQ: GraphicEQ;
 }
 
+const MIN_HERTZ = 20;
+const MAX_HERTZ = 20000;
+
 export const GraphicEQView = observer(
   ({ width, height, graphicEQ }: EqualizerViewProps) => {
     const [activeBandId, setActiveBandId] = useState<string>();
@@ -33,8 +36,8 @@ export const GraphicEQView = observer(
 
     const scaleX = d3
       .scaleLog()
-      .domain([20, 20000])
-      .range([30, width - 15]);
+      .domain([MIN_HERTZ, MAX_HERTZ])
+      .range([20, width - 10]);
 
     const lineGenerator = d3
       .line<Point>()
@@ -54,7 +57,7 @@ export const GraphicEQView = observer(
     };
 
     const bandTabs = graphicEQ.bands.map((band, i) => ({
-      label: `Band ${i + 1}`,
+      label: `${i + 1}`,
       key: band.id,
     }));
 
@@ -99,6 +102,7 @@ export const GraphicEQView = observer(
 
             {graphicEQ.bands.map((band, i) => (
               <CenterFrequency
+                range={[MIN_HERTZ, MAX_HERTZ]}
                 className={styles.bandPoint}
                 scaleX={scaleX}
                 scaleY={scaleY}
@@ -116,7 +120,6 @@ export const GraphicEQView = observer(
           type="editable-card"
           size="small"
           onEdit={onEdit}
-          style={{ fontSize: "0.7rem" }}
         />
 
         {activeBand && <BandTab key={activeBand.id} band={activeBand} />}

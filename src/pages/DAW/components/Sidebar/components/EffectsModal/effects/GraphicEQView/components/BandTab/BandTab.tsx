@@ -1,5 +1,5 @@
 import { Band } from "src/AudioEngine/Effects/Equalizer/Band";
-import { Knob } from "src/pages/DAW/UIKit";
+import { Slider } from "src/pages/DAW/UIKit";
 
 interface BandTabProps {
   band: Band;
@@ -10,39 +10,51 @@ export const BandTab = ({ band }: BandTabProps) => {
     <div
       style={{
         display: "flex",
-        gap: "20px",
+        width: "100%",
+        paddingLeft: 10,
       }}
     >
-      <Knob
-        min={20}
-        max={20000}
-        step={1}
-        size={60}
-        value={band.hertz}
-        suffix=" hz"
-        onChange={band.setHertz}
-        round
-      />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          marginBottom: 10,
+          width: "100%",
+          gap: "5px",
+        }}
+      >
+        <Slider
+          logarithmic
+          min={20}
+          max={20000}
+          value={band.hertz}
+          onChange={band.setHertz}
+          suffix="Hz"
+          showValue
+          label="Frequency"
+        />
 
-      <Knob
-        double
-        min={-12}
-        max={12}
-        step={0.025}
-        size={60}
-        value={band.gain}
-        suffix=" Db"
-        onChange={band.setGain}
-      />
+        <Slider
+          min={-12}
+          max={12}
+          step={0.1}
+          value={band.gain}
+          onChange={band.setGain}
+          suffix="Db"
+          showValue
+          label="Gain"
+        />
 
-      <Knob
-        min={0.2}
-        max={20}
-        step={0.1}
-        size={60}
-        value={band.Q}
-        onChange={band.setQ}
-      />
+        <Slider
+          logarithmic
+          min={0.1}
+          max={20}
+          value={band.Q}
+          onChange={band.setQ}
+          showValue
+          label="Q"
+        />
+      </div>
     </div>
   );
 };
