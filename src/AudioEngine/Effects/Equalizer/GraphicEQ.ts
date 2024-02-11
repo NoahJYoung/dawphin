@@ -3,7 +3,7 @@ import { makeAutoObservable } from "mobx";
 import { v4 as uuid } from "uuid";
 import * as Tone from "tone";
 import { Band } from "./Band";
-import { BaseEffectType, EffectNames } from "../types";
+import { BaseEffectType, EffectKeys } from "../types";
 
 @injectable()
 export class GraphicEQ implements BaseEffectType {
@@ -11,7 +11,7 @@ export class GraphicEQ implements BaseEffectType {
   bands: Band[] = [];
   input = new Tone.Channel();
   output = new Tone.Channel();
-  name: EffectNames = EffectNames.graphicEQ;
+  name: EffectKeys = EffectKeys.graphicEQ;
 
   constructor() {
     makeAutoObservable(this);
@@ -66,7 +66,7 @@ export class GraphicEQ implements BaseEffectType {
       });
     }
 
-    return [offlineInput, offlineOutput];
+    return { input: offlineInput, output: offlineOutput };
   };
 
   mute = () => this.output.set({ mute: true });

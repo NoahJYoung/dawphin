@@ -15,7 +15,7 @@ import * as Tone from "tone";
 import { FadeModal } from "../FadeModal";
 import { useAudioEngine } from "src/pages/DAW/hooks";
 import { PiWaveformBold } from "react-icons/pi";
-import { bufferToBlob } from "src/AudioEngine/helpers";
+import { bufferToWav } from "src/AudioEngine/helpers";
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems";
 
 interface TimelineContextMenuProps {
@@ -24,11 +24,11 @@ interface TimelineContextMenuProps {
 
 export const TimelineContextMenu = observer(
   ({ children }: TimelineContextMenuProps) => {
-    const [fadeModalOpen, setFadeModalOpen] = useState(false);
+    const [fadeModalOpen] = useState(false);
     const audioEngine = useAudioEngine();
 
-    const openFadeModal = () => setFadeModalOpen(true);
-    const closeFadeModal = () => setFadeModalOpen(false);
+    // const openFadeModal = () => setFadeModalOpen(true);
+    // const closeFadeModal = () => setFadeModalOpen(false);
 
     // const canCopy = useMemo(() => {
     //   if (audioEngine.selectedClips.length > 0) {
@@ -135,7 +135,7 @@ export const TimelineContextMenu = observer(
             onClick: async () => {
               const bufferWithFades =
                 await audioEngine.selectedClips[0].getBufferWithFades();
-              audioEngine.sampler.loadAudio(num, bufferToBlob(bufferWithFades));
+              audioEngine.sampler.loadAudio(num, bufferToWav(bufferWithFades));
             },
           })),
         icon: <PiWaveformBold />,

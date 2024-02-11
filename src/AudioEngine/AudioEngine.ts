@@ -428,6 +428,7 @@ export class AudioEngine {
     if (renderedBuffer) {
       const wav = audioBufferToWav(renderedBuffer.get()!);
       return new Blob([wav], { type: "audio/wav" });
+      // return await audioBufferToMp3(renderedBuffer.get()!);
     }
 
     return null;

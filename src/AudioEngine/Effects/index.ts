@@ -1,2 +1,2 @@
 export { FXFactory } from "./FXFactory";
-export { EffectNames, type BaseEffectType } from "./types";
+export { EffectKeys, type BaseEffectType } from "./types";

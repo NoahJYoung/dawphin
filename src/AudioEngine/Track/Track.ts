@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Clip } from "./Clip";
 import { makeAutoObservable, observable } from "mobx";
 import { AudioEngine } from "..";
 import * as Tone from "tone";
 import { injectable } from "inversify";
-import { blobToBuffer, bufferToBlob } from "../helpers";
-import { FXFactory } from "../Effects";
+import { blobToBuffer, bufferToWav } from "../helpers";
+import { v4 as uuidv4 } from "uuid";
 import { BaseEffectType } from "../Effects/types";
 
 @injectable()
@@ -18,7 +19,6 @@ export class Track {
   public splitter = new Tone.Split();
   public recorder = new Tone.Recorder();
   public placeholderClipStart: Tone.TimeClass | null = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public effectsChain: BaseEffectType[] = [];
   public inputMode: "mic" | "keyboard" | "sampler" = "mic";
 
@@ -31,14 +31,13 @@ export class Track {
       fadeIn: Tone.TimeClass,
       fadeOut: Tone.TimeClass
     ) => Clip,
-    public id: string,
+    public id: string = uuidv4(),
     public name: string,
     public clips: Clip[] = observable.array([]),
     public color: string = "rgb(125, 0, 250)",
     public selected: boolean = false,
     public input: Tone.Channel = new Tone.Channel(),
     public output: Tone.Channel = new Tone.Channel(),
-
     public muted = input.mute
   ) {
     makeAutoObservable(this);
@@ -282,7 +281,7 @@ export class Track {
 
   downloadTrackAudio = async () => {
     const buffer = await this.getCombinedTrackAudioBuffer();
-    const blob = bufferToBlob(buffer);
+    const blob = bufferToWav(buffer);
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.style.display = "none";
@@ -325,15 +324,11 @@ export class Track {
       effect.offlineRender()
     );
 
-    // offlineChannel.chain(
-    //   offlineFxChain,
-    //   offlineCtx.destination
-    // );
+    offlineInput.connect(offlineFxChain[0].input);
 
-    offlineInput.connect(offlineFxChain[0][0]);
-    offlineFxChain.forEach(([_, output], i) => {
+    offlineFxChain.forEach(({ output }, i) => {
       if (i < offlineFxChain.length - 2) {
-        output.connect(offlineFxChain[i + 1][0]);
+        output.connect(offlineFxChain[i + 1].input);
       } else {
         output.connect(offlineOutput);
       }

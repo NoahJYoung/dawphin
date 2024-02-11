@@ -4,11 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import { Track } from "../Track";
 
 export class Clip {
-  id: string;
   end: Tone.TimeClass | null = null;
   duration: Tone.TimeClass | null = null;
   samples: number = 0;
-  waveformData: any;
   normalized: boolean = false;
   public isSelected: boolean = false;
   public player = new Tone.Player();
@@ -21,10 +19,11 @@ export class Clip {
     public audioBuffer: Tone.ToneAudioBuffer,
     public start: Tone.TimeClass,
     public fadeIn: Tone.TimeClass = Tone.Time(0),
-    public fadeOut: Tone.TimeClass = Tone.Time(0)
+    public fadeOut: Tone.TimeClass = Tone.Time(0),
+    public id = uuidv4()
   ) {
     makeAutoObservable(this);
-    this.id = uuidv4();
+
     this.loadAudio();
     this.player.connect(this.track.input.output);
 
@@ -167,7 +166,7 @@ export class Clip {
     this.isSelected = value;
   };
 
-  setAudioBuffer = (data: any) => {
+  setAudioBuffer = (data: Tone.ToneAudioBuffer) => {
     this.audioBuffer = data;
   };
 

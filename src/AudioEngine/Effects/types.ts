@@ -5,9 +5,13 @@ export interface BaseEffectType {
   name: string;
   input: Channel;
   output: Channel;
-  offlineRender: () => Channel[];
+  offlineRender: () => { input: Channel; output: Channel };
 }
 
-export enum EffectNames {
+export enum EffectKeys {
   graphicEQ = "GRAPHIC-EQ",
 }
+
+export const EffectNames = {
+  [EffectKeys.graphicEQ]: "Graphic EQ",
+};

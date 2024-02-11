@@ -1,10 +1,10 @@
 import { injectable } from "inversify";
 import { makeObservable, observable } from "mobx";
 import { GraphicEQ } from "../Equalizer";
-import { BaseEffectType, EffectNames } from "../types";
+import { BaseEffectType, EffectKeys } from "../types";
 
 type EffectType = {
-  name: string;
+  name: EffectKeys;
   create: () => BaseEffectType;
 };
 
@@ -13,7 +13,7 @@ export class FXFactory {
   effectId: number = 0;
   public effects: EffectType[] = [
     {
-      name: EffectNames.graphicEQ,
+      name: EffectKeys.graphicEQ,
       create: () => new GraphicEQ(),
     },
     // { name: "EQ3", create: () => new Tone.EQ3() },
@@ -37,7 +37,7 @@ export class FXFactory {
     }
   };
 
-  getEffectNames = () => {
+  getEffectKeys = (): EffectKeys[] => {
     return this.effects.map((effect) => effect.name);
   };
 }

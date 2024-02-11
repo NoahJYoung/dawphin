@@ -12,13 +12,14 @@ import { observer } from "mobx-react-lite";
 import styles from "./EffectsModal.module.scss";
 import { PiTrash } from "react-icons/pi";
 import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer";
-import { EffectNames } from "src/AudioEngine/Effects";
+import { EffectKeys } from "src/AudioEngine/Effects";
+import { EffectNames } from "src/AudioEngine/Effects/types";
 
 const getEffectInstances = (track: Track) => {
   if (track?.effectsChain?.length) {
     return track.effectsChain.map((effect) => {
       switch (effect.name) {
-        case EffectNames.graphicEQ:
+        case EffectKeys.graphicEQ:
           return (
             <GraphicEQView
               graphicEQ={effect as GraphicEQ}
@@ -76,12 +77,12 @@ const getMenuItems = (
       key: "2",
       label: "Add FX",
       icon: <FiPlus style={{ fontSize: 18 }} />,
-      children: audioEngine.fxFactory.getEffectNames().map((name, i) => ({
-        label: name,
+      children: audioEngine.fxFactory.getEffectKeys().map((key, i) => ({
+        label: EffectNames[key],
         key: `2-${i + 1}`,
         onClick: () => {
           setView(i);
-          const newEffect = track.fxFactory.createEffect(name);
+          const newEffect = track.fxFactory.createEffect(key);
           if (newEffect) {
             track.addEffect(newEffect);
           }

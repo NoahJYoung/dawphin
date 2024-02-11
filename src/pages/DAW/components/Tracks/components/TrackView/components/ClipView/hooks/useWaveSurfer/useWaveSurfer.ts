@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AudioEngine } from "src/AudioEngine";
 import { Clip } from "src/AudioEngine/Track/Clip";
-import { bufferToBlob } from "src/AudioEngine/helpers";
+import { bufferToWav } from "src/AudioEngine/helpers";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import * as Tone from "tone";
 import WaveSurfer from "waveSurfer.js";
@@ -10,7 +10,7 @@ export const useWaveSurfer = (clip: Clip, audioEngine: AudioEngine) => {
   const [waveSurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
   const waveSurferRef = useRef(null);
   const audioURL = useMemo(
-    () => URL.createObjectURL(bufferToBlob(clip.audioBuffer)),
+    () => URL.createObjectURL(bufferToWav(clip.audioBuffer)),
     [clip.audioBuffer]
   );
 

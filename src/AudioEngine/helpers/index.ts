@@ -1,2 +1,3 @@
 export { blobToBuffer } from "./blobToBuffer";
-export { bufferToBlob } from "./bufferToBlob";
+export { bufferToWav } from "./bufferToWav";
+export { bufferToMp3 } from "./bufferToMp3";

@@ -1,7 +1,7 @@
 import audioBufferToWav from "audiobuffer-to-wav";
 import { ToneAudioBuffer } from "tone";
 
-export const bufferToBlob = (buffer: ToneAudioBuffer): Blob => {
+export const bufferToWav = (buffer: ToneAudioBuffer): Blob => {
   const rawBuffer = buffer.get();
   if (rawBuffer) {
     const blob = new Blob([audioBufferToWav(rawBuffer)], {

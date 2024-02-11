@@ -116,6 +116,7 @@ export const GraphicEQView = observer(
           type="editable-card"
           size="small"
           onEdit={onEdit}
+          style={{ fontSize: "0.7rem" }}
         />
 
         {activeBand && <BandTab key={activeBand.id} band={activeBand} />}
