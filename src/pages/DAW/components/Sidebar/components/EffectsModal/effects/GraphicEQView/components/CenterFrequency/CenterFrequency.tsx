@@ -8,6 +8,7 @@ interface CenterPointProps {
   scaleX: d3.ScaleLogarithmic<number, number, never>;
   scaleY: d3.ScaleLinear<number, number, never>;
   className?: string;
+  changeBandTab: (id: string) => void;
 }
 
 export const CenterFrequency = ({
@@ -16,6 +17,7 @@ export const CenterFrequency = ({
   scaleX,
   scaleY,
   className,
+  changeBandTab,
 }: CenterPointProps) => {
   const circleRef = useRef<SVGCircleElement>(null);
 
@@ -37,11 +39,13 @@ export const CenterFrequency = ({
             return;
           }
 
-          if (newY <= 12 && newY >= -12) {
-            d3.select(this).attr("cx", event.x).attr("cy", event.y);
-            band.setGain(newY);
-          } else {
-            return;
+          if (band.type !== "highpass") {
+            if (newY <= 12 && newY >= -12) {
+              d3.select(this).attr("cx", event.x).attr("cy", event.y);
+              band.setGain(newY);
+            } else {
+              return;
+            }
           }
         });
 
@@ -49,8 +53,13 @@ export const CenterFrequency = ({
     }
   }, [scaleX, scaleY, band, range]);
 
+  const handleClick = () => {
+    changeBandTab(band.id);
+  };
+
   return (
     <circle
+      onClick={handleClick}
       ref={circleRef}
       className={className}
       stroke="#888"

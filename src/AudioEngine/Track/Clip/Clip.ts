@@ -317,10 +317,12 @@ export class Clip {
   };
 
   offlineRender = (offlineTrackChannel: Tone.Channel) => {
-    const offlinePlayer = new Tone.Player();
+    const offlinePlayer = new Tone.Player().set({
+      fadeIn: this.fadeIn?.toSeconds(),
+      fadeOut: this.fadeOut?.toSeconds(),
+    });
     offlinePlayer.buffer = this.audioBuffer;
     if (offlinePlayer.loaded) {
-      offlinePlayer.loaded;
       offlinePlayer.connect(offlineTrackChannel);
       offlinePlayer.start(this.start.toSeconds());
       offlinePlayer.stop(

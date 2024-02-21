@@ -40,6 +40,14 @@
     border-radius: 4px;
   }
 
+  input[type="range"]:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
+  }
+
+  input[type="range"]:disabled {
+    opacity: 0.5;
+  }
+
   p {
     font-size: 0.8rem;
     text-wrap: nowrap;

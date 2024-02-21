@@ -5,6 +5,7 @@ interface LinearSliderProps {
   onChange: (value: number) => void;
   step?: number;
   decimalPlaces?: number;
+  disabled?: boolean;
 }
 export const LinearSlider = ({
   min,
@@ -12,6 +13,7 @@ export const LinearSlider = ({
   value,
   onChange,
   step = 1,
+  disabled,
 }: LinearSliderProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
@@ -25,6 +27,7 @@ export const LinearSlider = ({
       step={step}
       value={value}
       onChange={handleChange}
+      disabled={disabled}
     />
   );
 };

@@ -1,5 +1,6 @@
+import { Band } from "src/AudioEngine/Effects/Equalizer/Band";
 import { getBeforeAndAfterPoints, findLogarithmicIntersections } from ".";
-import { Band, Point } from "../types";
+import { Point } from "../types";
 
 export const getCurvePoints = (bands: Band[]): Point[] => {
   const twoDArray = bands.map((band) => getBeforeAndAfterPoints(band));
@@ -13,8 +14,10 @@ export const getCurvePoints = (bands: Band[]): Point[] => {
 
   const intersectingPoints = findLogarithmicIntersections(
     pointsToMap,
-    zeroDbBaselinePoints
+    zeroDbBaselinePoints,
+    bands[bands.length - 1].gain
   );
+
   const preparedBands = bands.map(({ gain, hertz }) => ({ gain, hertz }));
 
   const curves = [

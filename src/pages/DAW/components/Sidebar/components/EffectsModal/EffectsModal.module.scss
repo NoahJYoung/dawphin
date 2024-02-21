@@ -1,7 +1,7 @@
 @import "src/styles/variables.scss";
 
 .modal {
-  height: 500px;
+  height: 550px;
   width: 680px;
 
   .sidebar {
@@ -22,6 +22,7 @@
 
   .innerContainer {
     width: 100%;
+    height: 100%;
     display: flex;
     gap: 0.5rem;
     justify-content: space-evenly;
@@ -30,10 +31,10 @@
   .effectViewContainer {
     display: flex;
     justify-content: center;
-    background: #2d2d2d;
+    background: #222222;
     border-radius: 6px;
     padding: 5px;
-    max-height: 100%;
+    height: 100%;
     min-height: 400px;
     padding-left: 100px;
     min-width: 600px;

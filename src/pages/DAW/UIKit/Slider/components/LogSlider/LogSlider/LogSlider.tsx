@@ -5,9 +5,16 @@ interface LogSliderProps {
   max: number;
   value: number;
   onChange: (value: number) => void;
+  disabled?: boolean;
 }
 
-export const LogSlider = ({ min, max, value, onChange }: LogSliderProps) => {
+export const LogSlider = ({
+  min,
+  max,
+  value,
+  onChange,
+  disabled,
+}: LogSliderProps) => {
   const minLog = Math.log(min);
   const maxLog = Math.log(max);
   const scale = (maxLog - minLog) / 100;
@@ -44,6 +51,7 @@ export const LogSlider = ({ min, max, value, onChange }: LogSliderProps) => {
       max="100"
       value={sliderValue}
       onChange={handleSliderChange}
+      disabled={disabled}
     />
   );
 };

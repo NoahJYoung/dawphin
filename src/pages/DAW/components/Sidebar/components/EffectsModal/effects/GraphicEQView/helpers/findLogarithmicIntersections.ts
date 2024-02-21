@@ -2,7 +2,8 @@ import { Point } from "../types";
 
 export function findLogarithmicIntersections(
   inputCurves: Point[][],
-  baseline: Point[]
+  baseline: Point[],
+  highshelfGain: number
 ): Point[] {
   const curves = [...inputCurves, baseline];
 
@@ -13,21 +14,21 @@ export function findLogarithmicIntersections(
     p4: Point
   ): Point | null {
     // Convert hertz to logarithmic scale for calculations
-    let p1LogHz = Math.log(p1.hertz);
-    let p2LogHz = Math.log(p2.hertz);
-    let p3LogHz = Math.log(p3.hertz);
-    let p4LogHz = Math.log(p4.hertz);
+    const p1LogHz = Math.log(p1.hertz);
+    const p2LogHz = Math.log(p2.hertz);
+    const p3LogHz = Math.log(p3.hertz);
+    const p4LogHz = Math.log(p4.hertz);
 
-    let denominator =
+    const denominator =
       (p4LogHz - p3LogHz) * (p2.gain - p1.gain) -
       (p2LogHz - p1LogHz) * (p4.gain - p3.gain);
-    if (denominator === 0) return null; // Lines are parallel or coincident
 
-    let ua =
+    if (denominator === 0) return null; // Lines are parallel or coincident
+    const ua =
       ((p4.gain - p3.gain) * (p1LogHz - p3LogHz) +
         (p3LogHz - p4LogHz) * (p1.gain - p3.gain)) /
       denominator;
-    let ub =
+    const ub =
       ((p2.gain - p1.gain) * (p1LogHz - p3LogHz) +
         (p1LogHz - p2LogHz) * (p1.gain - p3.gain)) /
       denominator;
@@ -36,9 +37,9 @@ export function findLogarithmicIntersections(
     if (ua < 0 || ua > 1 || ub < 0 || ub > 1) return null;
 
     // Calculate the intersection point in log scale and convert back
-    let intersectionLogHz = p1LogHz + ua * (p2LogHz - p1LogHz);
-    let intersectionHz = Math.exp(intersectionLogHz);
-    let intersectionGain = p1.gain + ua * (p2.gain - p1.gain);
+    const intersectionLogHz = p1LogHz + ua * (p2LogHz - p1LogHz);
+    const intersectionHz = Math.exp(intersectionLogHz);
+    const intersectionGain = p1.gain + ua * (p2.gain - p1.gain);
 
     return {
       hertz: Math.round(intersectionHz),
@@ -46,8 +47,8 @@ export function findLogarithmicIntersections(
     };
   }
 
-  let intersections: Point[] = [];
-  let intersectedSegments: Set<string> = new Set(); // To keep track of segments that have intersected
+  const intersections: Point[] = [];
+  const intersectedSegments: Set<string> = new Set(); // To keep track of segments that have intersected
 
   // Helper function to generate a unique key for a curve segment
   function segmentKey(curveIndex: number, segmentIndex: number): string {
@@ -62,8 +63,8 @@ export function findLogarithmicIntersections(
   // Iterate over all pairs of curves
   for (let i = 0; i < curves.length - 1; i++) {
     for (let j = i + 1; j < curves.length; j++) {
-      let curve1 = curves[i];
-      let curve2 = curves[j];
+      const curve1 = curves[i];
+      const curve2 = curves[j];
 
       // Iterate over all pairs of line segments
       for (let k = 0; k < curve1.length - 1; k++) {
@@ -78,7 +79,7 @@ export function findLogarithmicIntersections(
             continue;
           }
 
-          let intersection = findIntersection(
+          const intersection = findIntersection(
             curve1[k],
             curve1[k + 1],
             curve2[l],
@@ -100,5 +101,10 @@ export function findLogarithmicIntersections(
     }
   }
 
-  return intersections.sort((a, b) => a.hertz - b.hertz);
+  const highpass = { gain: -24, hertz: 6 };
+  const highshelf = { gain: highshelfGain, hertz: 45000 };
+
+  return [highpass, ...intersections, highshelf].sort(
+    (a, b) => a.hertz - b.hertz
+  );
 }

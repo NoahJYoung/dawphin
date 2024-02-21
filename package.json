@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@breezystack/lamejs": "^1.2.7",
-    "antd": "^5.8.4",
+    "antd": "^5.14.1",
     "audiobuffer-to-wav": "^1.0.0",
     "d3": "^7.8.5",
     "dto-library-example": "^1.0.3",

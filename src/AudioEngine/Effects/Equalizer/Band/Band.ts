@@ -26,6 +26,10 @@ export class Band {
     this.filter.connect(destination);
   };
 
+  disconnect = () => {
+    this.filter.disconnect();
+  };
+
   setHertz = (frequency: number) => {
     const roundedValue = Math.round(frequency);
     this.filter.set({ frequency: roundedValue });
@@ -33,6 +37,9 @@ export class Band {
   };
 
   setGain = (gain: number) => {
+    if (this.type === "highpass") {
+      return;
+    }
     if (gain < 12 && gain > -12) {
       const roundedValue = Math.round(gain * 100) / 100;
       this.filter.gain.linearRampTo(roundedValue, 0.1);
@@ -41,6 +48,9 @@ export class Band {
   };
 
   setQ = (Q: number) => {
+    if (this.type !== "peaking") {
+      return;
+    }
     this.filter.set({ Q });
     this.Q = Q;
   };
