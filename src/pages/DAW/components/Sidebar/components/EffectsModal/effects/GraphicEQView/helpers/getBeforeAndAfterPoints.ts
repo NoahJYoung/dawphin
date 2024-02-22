@@ -6,18 +6,23 @@ export const getBeforeAndAfterPoints = (band: Band): Point[] => {
 
   switch (band.type) {
     case "highpass": {
-      const before = { hertz: 2, gain: -12 };
-      const main = { hertz, gain: 0.5 };
-      const after = { hertz: hertz + 10, gain: 0 };
+      const before = { hertz: 1, gain: 0, id: band.id };
+      const main = { type: "center", hertz: 10, gain: -24, id: band.id };
+      const after = { type: "center", hertz, gain: 0, id: band.id };
       return [before, main, after];
     }
     case "highshelf": {
       const octaveFraction = 1 / Q;
       const lowerFrequencyFactor = Math.pow(2, -octaveFraction);
-      const before = { hertz: hertz * lowerFrequencyFactor, gain: 0 };
-      const main = { hertz, gain };
-      const after = { hertz: 45000, gain };
-      return [before, main, after];
+      const before = {
+        type: "before",
+        hertz: hertz * lowerFrequencyFactor,
+        gain: 0,
+        id: band.id,
+      };
+      const main = { type: "center", hertz, gain, id: band.id };
+      const after = { hertz: 45000, gain, id: band.id };
+      return [before, main];
     }
     default:
     case "peaking": {
@@ -26,15 +31,19 @@ export const getBeforeAndAfterPoints = (band: Band): Point[] => {
       const upperFrequencyFactor = Math.pow(2, octaveFraction);
 
       const before = {
+        type: "before",
         hertz: hertz * lowerFrequencyFactor,
         gain: 0,
+        id: band.id,
       };
 
-      const main = { hertz, gain };
+      const main = { type: "center", hertz, gain, id: band.id };
 
       const after = {
+        type: "after",
         hertz: Math.round(hertz * upperFrequencyFactor),
         gain: 0,
+        id: band.id,
       };
 
       return [before, main, after];

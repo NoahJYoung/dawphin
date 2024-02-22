@@ -8,14 +8,39 @@ import { Tabs } from "antd";
 import { useRef, useState } from "react";
 import { getCorrectedCurvePoints } from "./helpers/getCorrectedCurvePoints";
 
-import styles from "./GraphicEQView.module.scss";
 import { Band } from "src/AudioEngine/Effects/Equalizer/Band";
+import {
+  HighPassFilterIcon,
+  HighShelfFilterIcon,
+  PeakingFilterIcon,
+} from "src/pages/DAW/icons";
 
-const getBandLabel = (band: Band, index: number) => {
-  const typeToLabelMap: Record<BiquadFilterType, string> = {
-    peaking: `${index}`,
-    highpass: "HP",
-    highshelf: "HS",
+import styles from "./GraphicEQView.module.scss";
+
+const getBandIcon = (band: Band, index: number, selectedBandId: string) => {
+  const selected = band.id === selectedBandId;
+  const neutralColor = "#888";
+  const selectedColor = "rgba(125, 0, 250)";
+  const typeToLabelMap: Record<BiquadFilterType, unknown> = {
+    peaking: (
+      <PeakingFilterIcon
+        color={selected ? selectedColor : neutralColor}
+        number={index}
+        size={28}
+      />
+    ),
+    highpass: (
+      <HighPassFilterIcon
+        color={selected ? selectedColor : neutralColor}
+        size={28}
+      />
+    ),
+    highshelf: (
+      <HighShelfFilterIcon
+        color={selected ? selectedColor : neutralColor}
+        size={28}
+      />
+    ),
     bandpass: "BP",
     allpass: "AP",
     lowpass: "LP",
@@ -75,7 +100,9 @@ export const GraphicEQView = observer(
       .y((band) => scaleY(band.gain))
       .curve(d3.curveBumpX);
 
-    const combinedCurvePath = lineGenerator(curvePoints);
+    // const combinedCurvePath = lineGenerator(curvePoints);
+
+    const lines = curvePoints.map((array: any) => lineGenerator(array));
 
     const createBand = () => {
       setActiveBandId(graphicEQ.createBand());
@@ -89,7 +116,7 @@ export const GraphicEQView = observer(
     };
 
     const bandTabs = allBands.map((band, i) => ({
-      label: getBandLabel(band, i),
+      icon: getBandIcon(band, i, activeBandId),
       key: band.id,
       closable: band.type === "peaking",
     }));
@@ -129,13 +156,21 @@ export const GraphicEQView = observer(
               height={height}
             />
 
-            {combinedCurvePath && (
+            {/* {combinedCurvePath && (
               <path
                 d={combinedCurvePath}
                 fill="rgba(125, 0, 250, 0.5)"
                 stroke="rgb(125, 0, 250)"
               />
-            )}
+            )} */}
+
+            {lines.map((line: any) => (
+              <path
+                d={line}
+                fill="rgba(125, 0, 250, 0.5)"
+                stroke="rgb(125, 0, 250)"
+              />
+            ))}
 
             {allBands.map((band, i) => (
               <CenterFrequency

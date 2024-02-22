@@ -26,6 +26,7 @@ export const YLines = ({ lines, width, scaleY }: YLinesProps) => {
             x={10}
             y={Math.round(scaleY(line.value)) - 5}
             fontSize={"0.7rem"}
+            style={{ userSelect: "none" }}
           >
             {line.displayValue}
           </text>

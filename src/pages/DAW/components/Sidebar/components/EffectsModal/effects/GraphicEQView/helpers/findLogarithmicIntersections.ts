@@ -101,8 +101,8 @@ export function findLogarithmicIntersections(
     }
   }
 
-  const highpass = { gain: -24, hertz: 6 };
-  const highshelf = { gain: highshelfGain, hertz: 45000 };
+  const highpass = { type: "baseline", hertz: 6, gain: -24 };
+  const highshelf = { type: "baseline", hertz: 45000, gain: highshelfGain };
 
   return [highpass, ...intersections, highshelf].sort(
     (a, b) => a.hertz - b.hertz

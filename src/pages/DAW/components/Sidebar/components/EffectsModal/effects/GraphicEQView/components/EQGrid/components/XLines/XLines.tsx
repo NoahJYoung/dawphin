@@ -26,6 +26,7 @@ export const XLines = ({ lines, height, scaleX }: XLinesProps) => {
             x={Math.round(scaleX(line.value))}
             y={height - 5}
             fontSize={"0.7rem"}
+            style={{ userSelect: "none" }}
           >
             {line.displayValue}
           </text>

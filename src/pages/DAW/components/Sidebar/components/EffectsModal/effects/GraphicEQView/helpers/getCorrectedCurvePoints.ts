@@ -7,20 +7,31 @@ export const getCorrectedCurvePoints = (
 ) => {
   const zeroDbCurveIndices = [0, 2, 4, curves.length - 1];
 
-  const correctedCurves = curves.map((curvePoint, i) => {
-    if (zeroDbCurveIndices.includes(i) && curvePoint.gain !== 0) {
-      return prevCurves[i];
-    } else if (
-      curves.length >= 3 &&
-      prevCurves.length > 3 &&
-      i == 2 &&
-      curvePoint.gain === 0
-    ) {
-      return prevCurves[i];
-    } else {
-      return curvePoint;
-    }
-  });
+  // const correctedCurves = curves.map((curvePoint, i) => {
+  //   if (zeroDbCurveIndices.includes(i) && curvePoint.gain !== 0) {
+  //     return prevCurves[i];
+  //   } else if (
+  //     curves.length >= 3 &&
+  //     prevCurves.length > 3 &&
+  //     i == 2 &&
+  //     curvePoint.gain === 0
+  //   ) {
+  //     return prevCurves[i];
+  //   } else {
+  //     return curvePoint;
+  //   }
+  // });
 
-  return correctedCurves.sort((a, b) => a.hertz - b.hertz);
+  // return correctedCurves.sort((a, b) => a.hertz - b.hertz);
+
+  const newCurvePoints = curves
+    .map((point, i) => {
+      if (i < curves.length - 1 && curves[i + 1].hertz <= point.hertz) {
+        return prevCurves[i];
+      }
+      return point;
+    })
+    .filter((point) => !!point);
+
+  return curves;
 };
