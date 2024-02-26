@@ -5,8 +5,7 @@ import { getCurvePoints } from "./helpers";
 import { observer } from "mobx-react-lite";
 import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer/GraphicEQ";
 import { Tabs } from "antd";
-import { useRef, useState } from "react";
-import { getCorrectedCurvePoints } from "./helpers/getCorrectedCurvePoints";
+import { useState } from "react";
 
 import { Band } from "src/AudioEngine/Effects/Equalizer/Band";
 import {
@@ -73,15 +72,16 @@ export const GraphicEQView = observer(
     ];
 
     const curvePoints = getCurvePoints(
-      [...allBands].sort((a, b) => a.hertz - b.hertz)
+      // [...allBands].sort((a, b) => a.hertz - b.hertz)
+      [...allBands]
     );
-    const prevCurvePoints = useRef(curvePoints);
+    // const prevCurvePoints = useRef(curvePoints);
 
-    const correctedPoints = getCorrectedCurvePoints(
-      prevCurvePoints.current,
-      curvePoints
-    );
-    prevCurvePoints.current = correctedPoints;
+    // const correctedPoints = getCorrectedCurvePoints(
+    //   prevCurvePoints.current,
+    //   curvePoints
+    // );
+    // prevCurvePoints.current = correctedPoints;
 
     const activeBand = allBands.find((band) => band.id === activeBandId);
     const scaleY = d3
@@ -100,9 +100,9 @@ export const GraphicEQView = observer(
       .y((band) => scaleY(band.gain))
       .curve(d3.curveBumpX);
 
-    // const combinedCurvePath = lineGenerator(curvePoints);
+    const combinedCurvePath = lineGenerator(curvePoints);
 
-    const lines = curvePoints.map((array: any) => lineGenerator(array));
+    // const lines = curvePoints.map((array: any) => lineGenerator(array));
 
     const createBand = () => {
       setActiveBandId(graphicEQ.createBand());
@@ -156,21 +156,13 @@ export const GraphicEQView = observer(
               height={height}
             />
 
-            {/* {combinedCurvePath && (
+            {combinedCurvePath && (
               <path
                 d={combinedCurvePath}
-                fill="rgba(125, 0, 250, 0.5)"
-                stroke="rgb(125, 0, 250)"
+                fill="rgba(125, 0, 250, 0.4)"
+                stroke="rgba(125, 0, 250, 0.1)"
               />
-            )} */}
-
-            {lines.map((line: any) => (
-              <path
-                d={line}
-                fill="rgba(125, 0, 250, 0.5)"
-                stroke="rgb(125, 0, 250)"
-              />
-            ))}
+            )}
 
             {allBands.map((band, i) => (
               <CenterFrequency

@@ -18,7 +18,7 @@ export const HighPassFilterIcon = ({
     <polyline
       points="5,70 30,35 95,35"
       stroke={color}
-      stroke-width={stroke}
+      strokeWidth={stroke}
       fill="none"
     />
   </svg>

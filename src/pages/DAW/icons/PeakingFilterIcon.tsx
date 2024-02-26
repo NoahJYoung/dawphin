@@ -23,10 +23,10 @@ export const PeakingFilterIcon = ({
     <polyline
       points="5,70 15,70 30,35 70,35 85,70 95,70"
       stroke={color}
-      stroke-width={stroke}
+      strokeWidth={stroke}
       fill="none"
     />
-    {number && (
+    {/* {number && (
       <text
         fill={color}
         x={35}
@@ -36,6 +36,6 @@ export const PeakingFilterIcon = ({
       >
         {number}
       </text>
-    )}
+    )} */}
   </svg>
 );

@@ -18,7 +18,7 @@ export const HighShelfFilterIcon = ({
     <polyline
       points="5,70 30,70 50,35 95,35"
       stroke={color}
-      stroke-width={stroke}
+      strokeWidth={stroke}
       fill="none"
     />
   </svg>

@@ -6,23 +6,29 @@ export const getBeforeAndAfterPoints = (band: Band): Point[] => {
 
   switch (band.type) {
     case "highpass": {
-      const before = { hertz: 1, gain: 0, id: band.id };
-      const main = { type: "center", hertz: 10, gain: -24, id: band.id };
-      const after = { type: "center", hertz, gain: 0, id: band.id };
+      const before = { type: "marker", hertz: 1, gain: 0, id: band.id };
+      const main = { type: "marker", hertz: 10, gain: -24, id: band.id };
+      const after = { type: "highpass", hertz, gain: 0, id: band.id };
       return [before, main, after];
     }
     case "highshelf": {
       const octaveFraction = 1 / Q;
       const lowerFrequencyFactor = Math.pow(2, -octaveFraction);
       const before = {
-        type: "before",
-        hertz: hertz * lowerFrequencyFactor,
+        type: "marker",
+        hertz: hertz * 0.9 * lowerFrequencyFactor,
         gain: 0,
         id: band.id,
       };
-      const main = { type: "center", hertz, gain, id: band.id };
-      const after = { hertz: 45000, gain, id: band.id };
-      return [before, main];
+      const main = { type: "highshelf", hertz, gain, id: band.id };
+      const after = {
+        type: "marker",
+        hertz: 45000,
+        gain: gain,
+        id: band.id,
+      };
+      const end = { type: "marker", hertz: 45001, gain: 0 };
+      return [before, main, after, end];
     }
     default:
     case "peaking": {
@@ -31,16 +37,16 @@ export const getBeforeAndAfterPoints = (band: Band): Point[] => {
       const upperFrequencyFactor = Math.pow(2, octaveFraction);
 
       const before = {
-        type: "before",
+        type: "marker",
         hertz: hertz * lowerFrequencyFactor,
         gain: 0,
         id: band.id,
       };
 
-      const main = { type: "center", hertz, gain, id: band.id };
+      const main = { type: "peaking", hertz, gain, id: band.id };
 
       const after = {
-        type: "after",
+        type: "marker",
         hertz: Math.round(hertz * upperFrequencyFactor),
         gain: 0,
         id: band.id,

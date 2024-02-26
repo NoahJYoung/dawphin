@@ -12,6 +12,8 @@ export interface Band {
 export interface Point {
   hertz: number;
   gain: number;
+  type?: "marker" | "baseline" | "highpass" | "highshelf" | "peaking";
+  id?: string;
 }
 
 export const xLines: LineData[] = [
