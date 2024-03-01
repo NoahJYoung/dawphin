@@ -3,17 +3,10 @@ export interface LineData {
   displayValue: string;
 }
 
-export interface Band {
-  hertz: number;
-  gain: number;
-  Q: number;
-}
-
 export interface Point {
   hertz: number;
   gain: number;
-  type?: "marker" | "baseline" | "highpass" | "highshelf" | "peaking";
-  id?: string;
+  type: "marker" | "baseline" | "highpass" | "highshelf" | "peaking";
 }
 
 export const xLines: LineData[] = [

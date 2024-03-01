@@ -61,7 +61,7 @@ const applyHighPassAdjustment = (
   }
 };
 
-const getAdjustedCurvePoints = (points: Point[]) => {
+const adjustCurvePoints = (points: Point[]) => {
   return points.map((point, i) => {
     if (point.type === "highpass") {
       applyHighPassAdjustment(points, point, i);
@@ -77,5 +77,5 @@ export const getCurvePoints = (bands: Band[]) => {
     { hertz: 45000, gain: 0, type: "marker" },
   ];
 
-  return getAdjustedCurvePoints([...twoDArray, ...centerLine].flat());
+  return adjustCurvePoints([...twoDArray, ...centerLine].flat());
 };

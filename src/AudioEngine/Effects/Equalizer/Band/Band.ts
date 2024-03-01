@@ -48,9 +48,6 @@ export class Band {
   };
 
   setQ = (Q: number) => {
-    if (this.type !== "peaking") {
-      return;
-    }
     this.filter.set({ Q });
     this.Q = Q;
   };

@@ -1,54 +1,13 @@
 import { BandTab, CenterFrequency, EQGrid } from "./components";
 import { Point } from "./types";
 import * as d3 from "d3";
-import { getCurvePoints } from "./helpers";
+import { getBandIcon, getCurvePoints } from "./helpers";
 import { observer } from "mobx-react-lite";
 import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer/GraphicEQ";
 import { Tabs } from "antd";
 import { useState } from "react";
 
-import { Band } from "src/AudioEngine/Effects/Equalizer/Band";
-import {
-  HighPassFilterIcon,
-  HighShelfFilterIcon,
-  PeakingFilterIcon,
-} from "src/pages/DAW/icons";
-
 import styles from "./GraphicEQView.module.scss";
-
-const getBandIcon = (band: Band, index: number, selectedBandId: string) => {
-  const selected = band.id === selectedBandId;
-  const neutralColor = "#888";
-  const selectedColor = "rgba(125, 0, 250)";
-  const typeToLabelMap: Record<BiquadFilterType, unknown> = {
-    peaking: (
-      <PeakingFilterIcon
-        color={selected ? selectedColor : neutralColor}
-        number={index}
-        size={28}
-      />
-    ),
-    highpass: (
-      <HighPassFilterIcon
-        color={selected ? selectedColor : neutralColor}
-        size={28}
-      />
-    ),
-    highshelf: (
-      <HighShelfFilterIcon
-        color={selected ? selectedColor : neutralColor}
-        size={28}
-      />
-    ),
-    bandpass: "BP",
-    allpass: "AP",
-    lowpass: "LP",
-    lowshelf: "LS",
-    notch: "N",
-  };
-
-  return typeToLabelMap[band.type];
-};
 
 interface EqualizerViewProps {
   width: number;
@@ -71,17 +30,7 @@ export const GraphicEQView = observer(
       graphicEQ.highshelf,
     ];
 
-    const curvePoints = getCurvePoints(
-      // [...allBands].sort((a, b) => a.hertz - b.hertz)
-      [...allBands]
-    );
-    // const prevCurvePoints = useRef(curvePoints);
-
-    // const correctedPoints = getCorrectedCurvePoints(
-    //   prevCurvePoints.current,
-    //   curvePoints
-    // );
-    // prevCurvePoints.current = correctedPoints;
+    const curvePoints = getCurvePoints(allBands);
 
     const activeBand = allBands.find((band) => band.id === activeBandId);
     const scaleY = d3
@@ -102,8 +51,6 @@ export const GraphicEQView = observer(
 
     const combinedCurvePath = lineGenerator(curvePoints);
 
-    // const lines = curvePoints.map((array: any) => lineGenerator(array));
-
     const createBand = () => {
       setActiveBandId(graphicEQ.createBand());
     };
@@ -116,6 +63,7 @@ export const GraphicEQView = observer(
     };
 
     const bandTabs = allBands.map((band, i) => ({
+      label: null,
       icon: getBandIcon(band, i, activeBandId),
       key: band.id,
       closable: band.type === "peaking",
