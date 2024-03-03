@@ -12,13 +12,15 @@ export class GraphicEQ implements BaseEffectType {
   bands: Band[] = [];
   input = new Tone.Channel();
   output = new Tone.Channel();
+  fft = new Tone.Analyser("fft", 2048);
   highpass: Band;
   highshelf: Band;
 
   constructor() {
     makeAutoObservable(this);
-    this.highpass = new Band(30, 0, "highpass");
-    this.highshelf = new Band(15000, 0, "highshelf", 1);
+    this.highpass = new Band(30, 0, "highpass", 0.2);
+    this.highshelf = new Band(15000, 0, "highshelf", 2);
+    this.fft.set({ smoothing: 0.85 });
 
     this.input.connect(this.highpass.filter);
     this.highpass.connect(this.highshelf.filter);
@@ -61,6 +63,7 @@ export class GraphicEQ implements BaseEffectType {
     } else {
       this.highpass.connect(this.highshelf.filter);
     }
+    this.highshelf.connect(this.fft);
     this.highshelf.connect(this.output);
   };
 

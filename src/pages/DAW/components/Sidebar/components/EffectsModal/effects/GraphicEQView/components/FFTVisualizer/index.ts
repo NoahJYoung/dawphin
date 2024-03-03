@@ -1,0 +1,1 @@
+export { FFTVisualizer } from "./FFTVisualizer";

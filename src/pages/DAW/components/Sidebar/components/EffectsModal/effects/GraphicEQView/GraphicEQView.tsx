@@ -1,4 +1,4 @@
-import { BandTab, CenterFrequency, EQGrid } from "./components";
+import { BandTab, CenterFrequency, EQGrid, FFTVisualizer } from "./components";
 import { Point } from "./types";
 import * as d3 from "d3";
 import { getBandIcon, getCurvePoints } from "./helpers";
@@ -96,6 +96,13 @@ export const GraphicEQView = observer(
           className={styles.container}
           style={{ height, width, borderRadius: "6px" }}
         >
+          <FFTVisualizer
+            scaleX={scaleX}
+            scaleY={scaleY}
+            width={width - 10}
+            height={height - 20}
+            graphicEQ={graphicEQ}
+          />
           <svg width={width} height={height} style={{ borderRadius: "6px" }}>
             <EQGrid
               scaleY={scaleY}

@@ -54,6 +54,7 @@ export const BandTab = ({ band }: BandTabProps) => {
           onChange={band.setQ}
           showValue
           label="Q"
+          disabled={band.type !== "peaking"}
         />
       </div>
     </div>

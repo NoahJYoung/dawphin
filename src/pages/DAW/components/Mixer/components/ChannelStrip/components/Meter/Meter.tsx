@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
 import { Track } from "src/AudioEngine/Track";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface MeterProps {
   track: Track;
@@ -12,8 +13,11 @@ export const Meter = observer(
   ({ track, canvasHeight, canvasWidth }: MeterProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const animationFrameId = useRef<number | null>(null);
+    const audioEngine = useAudioEngine();
 
     useEffect(() => {
+      const shouldRun =
+        audioEngine.state !== "stopped" && audioEngine.state !== "paused";
       const drawMeter = () => {
         const canvas = canvasRef.current;
         const context = canvas?.getContext("2d");
@@ -62,17 +66,18 @@ export const Meter = observer(
           rightMeterValue
         );
 
-        animationFrameId.current = requestAnimationFrame(drawMeter);
+        if (shouldRun)
+          animationFrameId.current = requestAnimationFrame(drawMeter);
       };
 
-      drawMeter();
+      if (shouldRun) drawMeter();
 
       return () => {
         if (animationFrameId.current) {
           cancelAnimationFrame(animationFrameId.current);
         }
       };
-    }, [track, canvasHeight, canvasWidth]);
+    }, [track, canvasHeight, canvasWidth, audioEngine.state]);
 
     return (
       <div
