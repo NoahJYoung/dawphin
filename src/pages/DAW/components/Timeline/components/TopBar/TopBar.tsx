@@ -58,7 +58,7 @@ export const TopBar = observer(
                   y1="0"
                   x2={x}
                   y2={topBarHeight - 1}
-                  strokeWidth={2}
+                  strokeWidth={1}
                   stroke="#444"
                 />
               )}
@@ -80,7 +80,7 @@ export const TopBar = observer(
                   y1={topBarHeight * 0.25}
                   x2={x}
                   y2={topBarHeight - 1}
-                  strokeWidth={2}
+                  strokeWidth={1}
                   stroke="#444"
                 />
               )}

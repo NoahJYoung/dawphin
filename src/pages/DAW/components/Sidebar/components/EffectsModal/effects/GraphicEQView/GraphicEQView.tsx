@@ -97,8 +97,6 @@ export const GraphicEQView = observer(
           style={{ height, width, borderRadius: "6px" }}
         >
           <FFTVisualizer
-            scaleX={scaleX}
-            scaleY={scaleY}
             width={width - 10}
             height={height - 20}
             graphicEQ={graphicEQ}

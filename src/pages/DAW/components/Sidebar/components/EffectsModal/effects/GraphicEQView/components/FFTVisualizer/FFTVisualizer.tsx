@@ -8,8 +8,6 @@ interface FFTVisualizerProps {
   graphicEQ: GraphicEQ;
   width: number;
   height: number;
-  scaleY?: (value: number) => number;
-  scaleX?: (value: number) => number;
 }
 
 export const FFTVisualizer = observer(
@@ -38,7 +36,8 @@ export const FFTVisualizer = observer(
 
           for (let i = 0; i < fftValues.length; i++) {
             const value = fftValues[i];
-            const x = Math.round(scaleX(i * 2)) + i * 0.35;
+            const offset = i * 0.24;
+            const x = Math.round(scaleX(i * 2)) + offset;
             const y = Math.round(scaleY(value as number));
 
             if (i === 0) {

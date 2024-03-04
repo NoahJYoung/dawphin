@@ -41,7 +41,7 @@ const applyHighPassAdjustment = (
             points[j].hertz
           );
           if (nextRealPoint.hertz < points[nextRealPointIndex + 1].hertz) {
-            nextRealPoint.hertz += (currentPoint.hertz - points[j].hertz) * 0.6;
+            nextRealPoint.hertz += currentPoint.hertz - points[j].hertz;
           }
 
           if (nextRealPointInitialGain > 0 && nextRealPoint.gain < 0) {
@@ -54,6 +54,18 @@ const applyHighPassAdjustment = (
 
           if (nextRealPoint.hertz < currentPoint.hertz) {
             nextRealPoint.hertz = currentPoint.hertz;
+          }
+
+          if (nextRealPoint.hertz > points[nextRealPointIndex + 1].hertz) {
+            nextRealPoint.hertz = points[nextRealPointIndex + 1].hertz;
+          }
+
+          if (
+            points[nextRealPointIndex - 1].hertz >=
+            points[nextRealPointIndex + 1].hertz
+          ) {
+            points[nextRealPointIndex + 1].gain = 0;
+            nextRealPoint.gain = 0;
           }
         }
       }

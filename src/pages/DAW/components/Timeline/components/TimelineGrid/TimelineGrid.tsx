@@ -59,7 +59,7 @@ export const TimelineGrid = observer(
               x2={gridWidth}
               y2={trackY}
               stroke="#555"
-              strokeWidth={0.5}
+              strokeWidth={0.2}
             />
           );
         })}
@@ -85,7 +85,7 @@ export const TimelineGrid = observer(
                 x2={x}
                 y2={gridHeight}
                 stroke="#444"
-                strokeWidth={2}
+                strokeWidth={1}
               />
 
               {eighthNotes && (
