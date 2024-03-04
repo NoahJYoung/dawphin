@@ -1,8 +1,8 @@
 import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
-import { Button, ColorPicker, InputRef } from "antd";
-import { Input } from "antd";
+import { Button, ColorPicker, InputRef, Input } from "antd";
 import { CLIP_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "src/pages/DAW/constants";
+import { RiArrowUpSFill, RiArrowDownSFill } from "react-icons/ri";
 import { RecordIcon } from "src/pages/DAW/icons";
 import { TrackPanelMenu } from "./components";
 import { useRef } from "react";
@@ -94,6 +94,11 @@ export const TrackPanel = observer(
     const activeInnerRgb = "rgb(250, 100, 100)";
     const inactiveInnerRgb = "rgb(200, 100, 100)";
 
+    const handleSort = (index: number) => {
+      track.setSortIndex(index);
+      audioEngine.sortTracks();
+    };
+
     return (
       <div
         style={{
@@ -106,13 +111,14 @@ export const TrackPanel = observer(
           height: CLIP_HEIGHT,
           background: "#333",
           opacity: track.muted ? 0.5 : 1,
+          position: "relative",
         }}
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
       >
         <div
           style={{
-            width: "0.75rem",
+            width: "1rem",
             background: track.color,
             borderTopLeftRadius: "6px",
             borderBottomLeftRadius: "6px",
@@ -120,6 +126,44 @@ export const TrackPanel = observer(
             justifyContent: "center",
           }}
         />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            position: "absolute",
+            justifyContent: "space-between",
+            height: "100%",
+          }}
+        >
+          <Button
+            type="text"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "1rem",
+              height: "1rem",
+              fontSize: "20px",
+            }}
+            onClick={() => handleSort(track.sortIndex - 1)}
+            icon={<RiArrowUpSFill />}
+          />
+
+          <Button
+            type="text"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "1rem",
+              height: "1rem",
+              fontSize: "20px",
+            }}
+            onClick={() => handleSort(track.sortIndex + 1)}
+            icon={<RiArrowDownSFill />}
+          />
+        </div>
+
         <div
           style={{
             display: "flex",

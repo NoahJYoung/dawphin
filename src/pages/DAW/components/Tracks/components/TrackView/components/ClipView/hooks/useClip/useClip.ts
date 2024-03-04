@@ -20,6 +20,6 @@ export const useClip = (clip: Clip) => {
 
       d3.select(waveSurferRef.current).call(dragHandler);
     }
-  }, [clip]);
+  }, [audioEngine, clip, waveSurferRef]);
   return { audioEngine, waveSurferRef, clipWidth };
 };

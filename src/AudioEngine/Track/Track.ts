@@ -38,7 +38,8 @@ export class Track {
     public selected: boolean = false,
     public input: Tone.Channel = new Tone.Channel(),
     public output: Tone.Channel = new Tone.Channel(),
-    public muted = input.mute
+    public muted = input.mute,
+    public sortIndex = audioEngine.tracks.length
   ) {
     makeAutoObservable(this);
 
@@ -76,6 +77,13 @@ export class Track {
 
   setPlaceholderClipStart = (time: Tone.TimeClass | null) => {
     this.placeholderClipStart = time;
+  };
+
+  setSortIndex = (index: number) => {
+    if (this.audioEngine.tracks[index]) {
+      this.audioEngine.tracks[index].sortIndex = this.sortIndex;
+    }
+    this.sortIndex = index;
   };
 
   record = async () => {

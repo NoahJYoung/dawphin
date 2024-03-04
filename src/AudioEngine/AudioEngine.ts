@@ -98,6 +98,10 @@ export class AudioEngine {
     this.tracks.push(newTrack);
   };
 
+  sortTracks = () => {
+    this.tracks.sort((a, b) => a.sortIndex - b.sortIndex);
+  };
+
   getSelectedTracks = () => {
     this.selectedTracks = observable.array(
       [...this.tracks].filter((track) => track.selected)
