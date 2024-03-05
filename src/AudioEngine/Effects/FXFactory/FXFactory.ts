@@ -16,9 +16,6 @@ export class FXFactory {
       name: EffectKeys.graphicEQ,
       create: () => new GraphicEQ(),
     },
-    // { name: "EQ3", create: () => new Tone.EQ3() },
-    // { name: "Compressor", create: () => new Tone.Compressor() },
-    // { name: "Reverb", create: () => new Tone.Reverb() },
   ];
 
   constructor() {

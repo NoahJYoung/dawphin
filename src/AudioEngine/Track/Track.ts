@@ -43,7 +43,6 @@ export class Track {
     public sortIndex = audioEngine.tracks.length
   ) {
     makeAutoObservable(this);
-
     this.setPan(0);
 
     this.input.connect(this.output);
@@ -87,6 +86,26 @@ export class Track {
     this.sortIndex = index;
   };
 
+  // TODO: REPLACE WITH LATENCY MANAGER CLASS
+  adjustLatency = (
+    buffer: Tone.ToneAudioBuffer,
+    startSeconds: number,
+    inputMode: "mic" | "keyboard" | "sampler"
+  ) => {
+    const lookAhead = Tone.getContext().lookAhead;
+    const latencyMap: Record<string, number> = {
+      mic: 0.23,
+      keyboard: lookAhead,
+      sampler: lookAhead,
+    };
+
+    const start = Tone.Time(latencyMap[inputMode], "s");
+
+    const adjustedbuffer = buffer.slice(start as unknown as number);
+
+    return { buffer: adjustedbuffer, seconds: startSeconds };
+  };
+
   record = async () => {
     const transport = Tone.getTransport();
     const startSeconds = transport.seconds;
@@ -97,7 +116,14 @@ export class Track {
       const blob = await this.recorder.stop();
       const toneBuffer = await blobToBuffer(blob);
       this.setPlaceholderClipStart(null);
-      this.addClip(toneBuffer, startSeconds);
+
+      const { buffer, seconds } = this.adjustLatency(
+        toneBuffer,
+        startSeconds,
+        this.inputMode
+      );
+
+      this.addClip(buffer, seconds);
     });
   };
 

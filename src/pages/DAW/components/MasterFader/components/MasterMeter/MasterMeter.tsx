@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
 import { MasterControl } from "src/AudioEngine/MasterControl";
+import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface MasterMeterProps {
   master: MasterControl;
@@ -12,8 +13,11 @@ export const MasterMeter = observer(
   ({ master, canvasHeight, canvasWidth }: MasterMeterProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const animationFrameId = useRef<number | null>(null);
+    const audioEngine = useAudioEngine();
 
     useEffect(() => {
+      const shouldRun =
+        audioEngine.state !== "stopped" && audioEngine.state !== "paused";
       const drawMeter = () => {
         const canvas = canvasRef.current;
         const context = canvas?.getContext("2d");
@@ -62,17 +66,18 @@ export const MasterMeter = observer(
           rightMeterValue
         );
 
-        animationFrameId.current = requestAnimationFrame(drawMeter);
+        if (shouldRun)
+          animationFrameId.current = requestAnimationFrame(drawMeter);
       };
 
-      drawMeter();
+      if (shouldRun) drawMeter();
 
       return () => {
         if (animationFrameId.current) {
           cancelAnimationFrame(animationFrameId.current);
         }
       };
-    }, [master, canvasHeight, canvasWidth]);
+    }, [master, canvasHeight, canvasWidth, audioEngine.state]);
 
     return (
       <div

@@ -90,7 +90,9 @@ export class Keyboard {
 
   public triggerAttack = (note: Frequency | Frequency[], time?: Time) => {
     if (this.mode === "synth") {
-      this.synths.forEach((synth) => synth.triggerAttack(note, time));
+      this.synths.forEach((synth) =>
+        synth.triggerAttack(note, Tone.context.currentTime)
+      );
       return;
     }
     this.sampler.triggerAttack(note, time);
