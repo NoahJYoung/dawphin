@@ -20,6 +20,7 @@ export class Clip {
     public start: Tone.TimeClass,
     public fadeIn: Tone.TimeClass = Tone.Time(0),
     public fadeOut: Tone.TimeClass = Tone.Time(0),
+    public peaksData: number[][] = [],
     public id = uuidv4()
   ) {
     makeAutoObservable(this);
@@ -125,6 +126,10 @@ export class Clip {
 
   setDuration = (time: Tone.TimeClass) => {
     this.duration = time;
+  };
+
+  setPeaksData = (peaks: number[][]) => {
+    this.peaksData = peaks;
   };
 
   setFadeIn = (time: Tone.TimeClass) => {
@@ -262,6 +267,7 @@ export class Clip {
       start: this.start,
       fadeInSamples,
       fadeOutSamples,
+      peaksData: this.peaksData,
     };
   };
 

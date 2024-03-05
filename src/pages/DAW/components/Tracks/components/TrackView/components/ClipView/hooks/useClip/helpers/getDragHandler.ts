@@ -70,7 +70,8 @@ export const getDragHandler = ({ audioEngine, clip }: GetDragHandler) => {
                   selectedClip.audioBuffer,
                   selectedClip.start.toSeconds(),
                   selectedClip.fadeIn.toSamples(),
-                  selectedClip.fadeOut.toSamples()
+                  selectedClip.fadeOut.toSamples(),
+                  selectedClip.peaksData
                 )
                 .setSelect(true);
               selectedClip.deleteClip();
@@ -85,7 +86,8 @@ export const getDragHandler = ({ audioEngine, clip }: GetDragHandler) => {
                   selectedClip.audioBuffer,
                   selectedClip.start.toSeconds(),
                   selectedClip.fadeIn.toSamples(),
-                  selectedClip.fadeOut.toSamples()
+                  selectedClip.fadeOut.toSamples(),
+                  selectedClip.peaksData
                 )
                 .setSelect(true);
               selectedClip.deleteClip();

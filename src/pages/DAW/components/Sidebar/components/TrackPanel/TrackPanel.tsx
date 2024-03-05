@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { Track } from "src/AudioEngine/Track";
 import { Button, ColorPicker, InputRef, Input } from "antd";
 import { CLIP_HEIGHT, TRACK_PANEL_FULL_WIDTH } from "src/pages/DAW/constants";
-import { RiArrowUpSFill, RiArrowDownSFill } from "react-icons/ri";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { RecordIcon } from "src/pages/DAW/icons";
 import { TrackPanelMenu } from "./components";
 import { useRef } from "react";
@@ -144,9 +144,10 @@ export const TrackPanel = observer(
               width: "1rem",
               height: "1rem",
               fontSize: "20px",
+              color: "#191919",
             }}
             onClick={() => handleSort(track.sortIndex - 1)}
-            icon={<RiArrowUpSFill />}
+            icon={<MdKeyboardArrowUp />}
           />
 
           <Button
@@ -158,9 +159,10 @@ export const TrackPanel = observer(
               width: "1rem",
               height: "1rem",
               fontSize: "20px",
+              color: "#191919",
             }}
             onClick={() => handleSort(track.sortIndex + 1)}
-            icon={<RiArrowDownSFill />}
+            icon={<MdKeyboardArrowDown />}
           />
         </div>
 

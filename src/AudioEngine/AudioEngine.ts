@@ -17,6 +17,7 @@ interface ClipboardItem {
   start: Tone.TimeClass;
   fadeInSamples: number;
   fadeOutSamples: number;
+  peaksData: number[][];
 }
 
 @injectable()
@@ -243,12 +244,15 @@ export class AudioEngine {
   };
 
   copyClips = () => {
-    this.clipboard = this.selectedClips.map((clip) => ({
-      ...clip.getClipData(),
-      data: new Blob([audioBufferToWav(clip.getClipData().data)], {
-        type: "audio/wav",
-      }),
-    }));
+    this.clipboard = this.selectedClips.map((clip) => {
+      const clipData = clip.getClipData();
+      return {
+        ...clipData,
+        data: new Blob([audioBufferToWav(clipData.data)], {
+          type: "audio/wav",
+        }),
+      };
+    });
   };
 
   setNormalized = (value: boolean) => {
@@ -272,7 +276,8 @@ export class AudioEngine {
                 buffer,
                 adjustedStart,
                 item.fadeInSamples,
-                item.fadeOutSamples
+                item.fadeOutSamples,
+                item.peaksData
               );
             });
           } else {

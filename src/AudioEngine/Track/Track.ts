@@ -29,7 +29,8 @@ export class Track {
       audioBuffer: Tone.ToneAudioBuffer,
       start: Tone.TimeClass,
       fadeIn: Tone.TimeClass,
-      fadeOut: Tone.TimeClass
+      fadeOut: Tone.TimeClass,
+      peaksData: number[][]
     ) => Clip,
     public id: string = uuidv4(),
     public name: string,
@@ -255,14 +256,16 @@ export class Track {
     buffer: Tone.ToneAudioBuffer,
     startSeconds: number,
     fadeInSamples?: number,
-    fadeOutSamples?: number
+    fadeOutSamples?: number,
+    peaks?: number[][]
   ) => {
     const clip = this.getNewClip(
       this,
       buffer,
       Tone.Time(startSeconds, "s"),
       Tone.Time(fadeInSamples || 0, "samples"),
-      Tone.Time(fadeOutSamples || 0, "samples")
+      Tone.Time(fadeOutSamples || 0, "samples"),
+      peaks ?? []
     );
 
     this.clips.push(clip);

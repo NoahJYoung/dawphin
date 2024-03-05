@@ -25,14 +25,15 @@ container
   .bind<interfaces.Factory<Clip>>(constants.CLIP_FACTORY)
   .toFactory<Clip>(() => {
     return (...args: unknown[]) => {
-      const [track, audioBuffer, start, fadeIn, fadeOut] = args as [
+      const [track, audioBuffer, start, fadeIn, fadeOut, peaksData] = args as [
         Track,
         Tone.ToneAudioBuffer,
         Tone.TimeClass,
         Tone.TimeClass,
-        Tone.TimeClass
+        Tone.TimeClass,
+        number[][]
       ];
-      return new Clip(track, audioBuffer, start, fadeIn, fadeOut);
+      return new Clip(track, audioBuffer, start, fadeIn, fadeOut, peaksData);
     };
   });
 

@@ -58,7 +58,6 @@ export const ClipView = observer(({ clip, color }: ClipViewProps) => {
       onClick={handleClick}
     >
       <p
-        onDragOver={(e) => e.preventDefault()}
         style={{
           margin: 0,
           marginLeft: 12,
@@ -69,6 +68,9 @@ export const ClipView = observer(({ clip, color }: ClipViewProps) => {
           zIndex: -1,
           userSelect: "none",
           flexWrap: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
         }}
       >
         {`${clip.track.name} | ${clip.start.toBarsBeatsSixteenths()}`}

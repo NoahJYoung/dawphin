@@ -28,6 +28,7 @@ export const useWaveSurfer = (clip: Clip, audioEngine: AudioEngine) => {
         height: "auto",
         minPxPerSec: pixelsPerSecond,
         hideScrollbar: true,
+        peaks: clip?.peaksData.length ? clip.peaksData : undefined,
         cursorWidth: 0,
         normalize: false,
       });
@@ -66,7 +67,17 @@ export const useWaveSurfer = (clip: Clip, audioEngine: AudioEngine) => {
         }
       }
     }
-  }, [waveSurferRef.current]);
+  }, [waveSurferRef.current, clip.id]);
+
+  useEffect(() => {
+    if (waveSurfer && !clip.peaksData.length) {
+      waveSurfer.on("ready", () =>
+        clip.setPeaksData(
+          waveSurfer.exportPeaks({ channels: 1, maxLength: 156000 })
+        )
+      );
+    }
+  }, [clip, waveSurfer]);
 
   return waveSurferRef;
 };
