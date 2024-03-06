@@ -21,7 +21,9 @@ export class Clip {
     public fadeIn: Tone.TimeClass = Tone.Time(0),
     public fadeOut: Tone.TimeClass = Tone.Time(0),
     public peaksData: number[][] = [],
-    public id = uuidv4()
+    public id = uuidv4(),
+    public loopEndSamples: number = 0,
+    public loopExtension: Tone.ToneAudioBuffer | null = null
   ) {
     makeAutoObservable(this);
 
@@ -86,8 +88,65 @@ export class Clip {
     this.player.stop();
   };
 
+  setLoopExtension = (samples: number) => {
+    if (this.loopEndSamples + samples > 0) {
+      this.loopEndSamples += samples;
+      const bufferLength = this.audioBuffer.length;
+
+      let additionalSamples = this.loopEndSamples - bufferLength;
+      while (additionalSamples < 0) additionalSamples += bufferLength;
+
+      const newLoopExtensionSamples = new Float32Array(this.loopEndSamples);
+      newLoopExtensionSamples.set(
+        this.audioBuffer
+          .getChannelData(0)
+          .subarray(0, Math.min(this.loopEndSamples, bufferLength))
+      );
+
+      if (additionalSamples > 0) {
+        let remainingSamples = additionalSamples;
+        while (remainingSamples > 0) {
+          const samplesToCopy = Math.min(remainingSamples, bufferLength);
+          newLoopExtensionSamples.set(
+            this.audioBuffer.getChannelData(0).subarray(0, samplesToCopy),
+            this.loopEndSamples - remainingSamples
+          );
+          remainingSamples -= samplesToCopy;
+        }
+      }
+
+      this.loopExtension = new Tone.Buffer(
+        new AudioBuffer({
+          length: newLoopExtensionSamples.length,
+          numberOfChannels: 1,
+          sampleRate: this.audioBuffer.sampleRate,
+        })
+      );
+      this.loopExtension.get()!.copyToChannel(newLoopExtensionSamples, 0, 0);
+    } else {
+      this.loopEndSamples = 0;
+      this.loopExtension = null;
+    }
+  };
+
+  loadCombinedBuffer = () => {
+    if (this.loopExtension) {
+      const combinedBuffer = Clip.concatenateBuffers([
+        this.audioBuffer,
+        this.loopExtension,
+      ]);
+      this.player.buffer = combinedBuffer;
+      this.setEnd(
+        Tone.Time(this.start.toSeconds() + this.player.buffer.duration, "s")
+      );
+      this.schedule();
+    } else {
+      this.player.buffer = this.audioBuffer;
+    }
+  };
+
   loadAudio = async () => {
-    this.player.buffer = this.audioBuffer;
+    this.loadCombinedBuffer();
     this.setDuration(Tone.Time(this.player.buffer.duration, "s"));
     this.setEnd(
       Tone.Time(this.start.toSeconds() + this.player.buffer.duration, "s")
@@ -327,12 +386,12 @@ export class Clip {
       fadeIn: this.fadeIn?.toSeconds(),
       fadeOut: this.fadeOut?.toSeconds(),
     });
-    offlinePlayer.buffer = this.audioBuffer;
+    offlinePlayer.buffer = this.player.buffer;
     if (offlinePlayer.loaded) {
       offlinePlayer.connect(offlineTrackChannel);
       offlinePlayer.start(this.start.toSeconds());
       offlinePlayer.stop(
-        this.start.toSeconds() + (this.duration?.toSeconds() || 0)
+        this.start.toSeconds() + (this.player.buffer.duration || 0)
       );
     }
   };

@@ -51,7 +51,7 @@ export class AudioEngine {
     this.metronome = new Tone.PluckSynth().toDestination();
     this.setupMetronome();
     this.timeline.linkAudioEngine(this);
-    Tone.getContext().lookAhead = 0.05;
+    Tone.getContext().lookAhead = 0.075;
   }
 
   setState(

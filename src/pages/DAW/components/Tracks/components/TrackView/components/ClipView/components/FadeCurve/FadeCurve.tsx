@@ -72,7 +72,7 @@ export const FadeCurve = observer(
 
         d3.select(fadeOutRef.current).call(fadeOutdragHandler);
       }
-    }, [audioEngine, fadeInRef, fadeOutRef]);
+    }, [audioEngine, clip, fadeInRef, fadeOutRef]);
 
     const fadeInControlX = fadeInWidth / 4;
     const fadeInControlY = height / 4;

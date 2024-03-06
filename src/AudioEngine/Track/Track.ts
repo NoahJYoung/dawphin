@@ -342,11 +342,13 @@ export class Track {
           (b.start.toSeconds() + (b.duration?.toSeconds() || 0))
       );
 
-      return lastClip.start.toSeconds() + (lastClip.duration?.toSeconds() || 0);
+      return (
+        lastClip.start.toSeconds() + (lastClip.player.buffer.duration || 0)
+      );
     }
     return this.clips.length === 1
       ? this.clips[0].start.toSeconds() +
-          (this.clips[0].duration?.toSeconds() || 0)
+          (this.clips[0].player.buffer.duration || 0)
       : 0;
   };
 

@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useState } from "react";
 import { Clip } from "src/AudioEngine/Track/Clip";
 import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import { calculateClipPosition } from "./helpers";
-import { FadeCurve } from "./components";
+import { FadeCurve, LoopExtension } from "./components";
 import { useClip } from "./hooks";
 
 interface ClipViewProps {
@@ -16,6 +16,7 @@ interface ClipViewProps {
 
 export const ClipView = observer(({ clip, color }: ClipViewProps) => {
   const { waveSurferRef, audioEngine, clipWidth } = useClip(clip);
+  const [showLoopControl, setShowLoopControl] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
     const initialState = clip.isSelected;
@@ -40,50 +41,66 @@ export const ClipView = observer(({ clip, color }: ClipViewProps) => {
 
   return (
     <div
-      id={`wave-container${clip.id}`}
-      style={{
-        left,
-        top: top + clip.yOffset,
-        position: "absolute",
-        background: convertRgbToRgba(color, backgroundAlpha),
-        opacity: clip.isSelected ? 0.9 : 0.8,
-        width: clipWidth >= 1 ? clipWidth : 1,
-        height: "80px",
-        borderRadius: "6px",
-        color: "blue",
-        zIndex: 3,
-        overflow: "hidden",
-      }}
-      ref={waveSurferRef}
-      onClick={handleClick}
+      onMouseEnter={() => setShowLoopControl(true)}
+      onMouseLeave={() => setShowLoopControl(false)}
     >
-      <p
+      <div
+        id={`wave-container${clip.id}`}
         style={{
-          margin: 0,
-          marginLeft: 12,
-          color: convertRgbToRgba("rgb(0, 0, 0)", 0.6),
+          left,
+          top: top + clip.yOffset,
           position: "absolute",
-          fontWeight: "bold",
-          fontSize: "0.75rem",
-          zIndex: -1,
-          userSelect: "none",
-          flexWrap: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {`${clip.track.name} | ${clip.start.toBarsBeatsSixteenths()}`}
-      </p>
+          background: convertRgbToRgba(color, backgroundAlpha),
+          opacity: clip.isSelected ? 0.9 : 0.8,
+          width: clipWidth >= 1 ? clipWidth : 1,
+          height: "80px",
+          borderRadius: "6px",
 
-      <FadeCurve
-        key={"fadeIn"}
+          color: "blue",
+          zIndex: 3,
+          overflow: "hidden",
+        }}
+        ref={waveSurferRef}
+        onClick={handleClick}
+      >
+        <p
+          style={{
+            margin: 0,
+            marginLeft: 12,
+            color: convertRgbToRgba("rgb(0, 0, 0)", 0.6),
+            position: "absolute",
+            fontWeight: "bold",
+            fontSize: "0.75rem",
+            zIndex: -1,
+            userSelect: "none",
+            flexWrap: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {`${clip.track.name} | ${clip.start.toBarsBeatsSixteenths()}`}
+        </p>
+
+        <FadeCurve
+          key={"fadeIn"}
+          clip={clip}
+          fadeInLengthInSamples={clip.fadeIn.toSamples()}
+          fadeOutLengthInSamples={clip.fadeOut.toSamples()}
+          height={CLIP_HEIGHT}
+          color={color}
+          clipDurationInSamples={clip.duration?.toSamples() || 0}
+        />
+      </div>
+
+      <LoopExtension
         clip={clip}
-        fadeInLengthInSamples={clip.fadeIn.toSamples()}
-        fadeOutLengthInSamples={clip.fadeOut.toSamples()}
-        height={CLIP_HEIGHT}
+        clipHeight={CLIP_HEIGHT}
+        left={left + clipWidth}
+        top={top + clip.yOffset}
         color={color}
-        clipDurationInSamples={clip.duration?.toSamples() || 0}
+        onClick={handleClick}
+        showLoopControl={showLoopControl}
       />
     </div>
   );
