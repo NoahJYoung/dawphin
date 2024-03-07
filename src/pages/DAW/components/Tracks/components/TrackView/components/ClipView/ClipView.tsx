@@ -4,8 +4,9 @@ import { Clip } from "src/AudioEngine/Track/Clip";
 import { CLIP_HEIGHT, CLIP_TOP_PADDING } from "src/pages/DAW/constants";
 import { convertRgbToRgba } from "src/pages/DAW/helpers";
 import { calculateClipPosition } from "./helpers";
-import { FadeCurve, LoopExtension } from "./components";
+import { FadeCurve, LoopExtension, LoopTrigger } from "./components";
 import { useClip } from "./hooks";
+import * as Tone from "tone";
 
 interface ClipViewProps {
   clip: Clip;
@@ -38,6 +39,12 @@ export const ClipView = observer(({ clip, color }: ClipViewProps) => {
   );
 
   const backgroundAlpha = clip.isSelected ? 0.7 : 0.4;
+
+  const loopSampleLength = Tone.Time(clip.loopExtension?.duration).toSamples();
+
+  const loopWidth = clip.loopExtension
+    ? audioEngine.timeline.samplesToPixels(loopSampleLength)
+    : 0;
 
   return (
     <div
@@ -100,8 +107,18 @@ export const ClipView = observer(({ clip, color }: ClipViewProps) => {
         top={top + clip.yOffset}
         color={color}
         onClick={handleClick}
-        showLoopControl={showLoopControl}
       />
+
+      {showLoopControl && (
+        <LoopTrigger
+          clip={clip}
+          clipHeight={CLIP_HEIGHT}
+          clipWidth={clipWidth + loopWidth - 24}
+          color={color}
+          top={top + clip.yOffset}
+          left={left}
+        />
+      )}
     </div>
   );
 });

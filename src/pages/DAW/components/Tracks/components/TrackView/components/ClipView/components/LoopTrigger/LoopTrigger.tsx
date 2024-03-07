@@ -9,6 +9,8 @@ interface LoopTriggerProps {
   clipWidth: number;
   clip: Clip;
   color: string;
+  top: number;
+  left: number;
 }
 
 export const LoopTrigger = ({
@@ -16,14 +18,16 @@ export const LoopTrigger = ({
   clipWidth,
   clip,
   color,
+  top,
+  left,
 }: LoopTriggerProps) => {
-  const loopTriggerRef = useRef<any>(null);
+  const loopTriggerRef = useRef<HTMLSpanElement>(null);
   const audioEngine = useAudioEngine();
 
   useEffect(() => {
     if (loopTriggerRef.current) {
       const fadeInDragHandler = d3
-        .drag<any, unknown>()
+        .drag<HTMLSpanElement, unknown>()
         .on("start", function () {
           d3.select(this).raise();
         })
@@ -32,6 +36,9 @@ export const LoopTrigger = ({
         })
         .on("end", function () {
           clip.loadCombinedBuffer();
+          if (audioEngine.timeline.snap) {
+            clip.quantizeLoopEnd();
+          }
         });
 
       d3.select(loopTriggerRef.current).call(fadeInDragHandler);
@@ -46,16 +53,17 @@ export const LoopTrigger = ({
         alignItems: "center",
         background: color,
         justifyContent: "center",
-        border: `1px solid ${color}`,
+        border: `1px solid #191919`,
         borderRadius: "6px",
         color: "#191919",
         zIndex: 1000,
         height: 24,
         width: 24,
         position: "absolute",
-        left: clipWidth,
-        top: clipHeight - 24,
+        left: left + clipWidth,
+        top: top + clipHeight - 24,
         cursor: "pointer",
+        opacity: clip.isSelected ? 1 : 0.5,
       }}
     >
       <ImLoop />

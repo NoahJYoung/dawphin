@@ -88,9 +88,14 @@ export class Clip {
     this.player.stop();
   };
 
-  setLoopExtension = (samples: number) => {
+  setLoopExtension = (samples: number, config?: { replace: boolean }) => {
     if (this.loopEndSamples + samples > 0) {
-      this.loopEndSamples += samples;
+      if (config?.replace) {
+        this.loopEndSamples = samples;
+      } else {
+        this.loopEndSamples += samples;
+      }
+
       const bufferLength = this.audioBuffer.length;
 
       let additionalSamples = this.loopEndSamples - bufferLength;
@@ -145,6 +150,24 @@ export class Clip {
     }
   };
 
+  //TODO: Figure out why sometimes this does not behave as expected
+  quantizeLoopEnd = () => {
+    const timeline = this.track.audioEngine.timeline;
+    const quantizationValue = timeline.quantizationValues[timeline.zoomIndex];
+
+    const quantizedEndSamples = Tone.Time(
+      Tone.Time(this.loopEndSamples, "samples").quantize(quantizationValue)
+    ).toSamples();
+
+    const quantizedClipLength = Tone.Time(
+      Tone.Time(this.audioBuffer.length, "samples").quantize(quantizationValue)
+    ).toSamples();
+
+    const difference = this.audioBuffer.length - quantizedClipLength;
+
+    this.setLoopExtension(quantizedEndSamples - difference, { replace: true });
+  };
+
   loadAudio = async () => {
     this.loadCombinedBuffer();
     this.setDuration(Tone.Time(this.player.buffer.duration, "s"));
@@ -162,6 +185,7 @@ export class Clip {
     if (this.duration && this.end) {
       if (samples > 0) {
         this.setStart(Tone.Time(samples, "samples"));
+
         this.setEnd(
           Tone.Time(this.start.toSeconds() + this.duration.toSeconds(), "s")
         );
@@ -251,13 +275,16 @@ export class Clip {
     const cursorIsOverClip =
       transportSeconds > this.start.toSeconds() &&
       transportSeconds < (this.end?.toSeconds() || 0);
+
     if (cursorIsOverClip && this.isSelected) {
       const clipRelativeTransportseconds =
         transportSeconds - this.start.toSeconds();
+
       const clipOneBuffer = this.audioBuffer.slice(
         0,
         clipRelativeTransportseconds
       );
+
       const clipTwoBuffer = this.audioBuffer.slice(
         clipRelativeTransportseconds,
         this.duration?.toSeconds()
