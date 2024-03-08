@@ -46,7 +46,7 @@ export const LoopExtension = observer(
               justifyContent: "center",
               height: clipHeight,
               background: color,
-              opacity: clip.isSelected ? 0.3 : 0.2,
+              opacity: clip.isSelected ? 0.4 : 0.2,
               left: left + sectionWidth * i + 1,
               width: sectionWidth,
               position: "absolute",
@@ -54,7 +54,7 @@ export const LoopExtension = observer(
               borderRadius: "6px",
             }}
           >
-            <ImLoop style={{ fontSize: 56, opacity: 0.3 }} />
+            <ImLoop style={{ fontSize: 56, opacity: 0.2 }} />
           </div>
         ))}
         {!!remainder && (
@@ -64,7 +64,7 @@ export const LoopExtension = observer(
               alignItems: "center",
               height: clipHeight,
               background: color,
-              opacity: clip.isSelected ? 0.3 : 0.2,
+              opacity: clip.isSelected ? 0.4 : 0.2,
               left:
                 clipStartOffset +
                 sectionWidth +
@@ -80,7 +80,7 @@ export const LoopExtension = observer(
             <ImLoop
               style={{
                 fontSize: 56,
-                opacity: 0.3,
+                opacity: 0.2,
                 position: "absolute",
                 left: sectionWidth / 2 - 28,
               }}
