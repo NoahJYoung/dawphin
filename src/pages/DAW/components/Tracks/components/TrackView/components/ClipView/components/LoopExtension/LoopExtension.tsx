@@ -1,6 +1,6 @@
-import * as Tone from "tone";
 import { observer } from "mobx-react-lite";
 import { Clip } from "src/AudioEngine/Track/Clip";
+import { ImLoop } from "react-icons/im";
 import { useAudioEngine } from "src/pages/DAW/hooks";
 
 interface LoopExtensionProps {
@@ -15,17 +15,15 @@ interface LoopExtensionProps {
 export const LoopExtension = observer(
   ({ clip, clipHeight, color, left, top, onClick }: LoopExtensionProps) => {
     const audioEngine = useAudioEngine();
-    const loopSampleLength = Tone.Time(
-      clip.loopExtension?.duration
-    ).toSamples();
-
-    const loopWidth = clip.loopExtension
-      ? audioEngine.timeline.samplesToPixels(loopSampleLength)
-      : 0;
 
     const numberOfLoops = Math.floor(
       (clip.loopExtension?.length || 0) / clip.audioBuffer.length
     );
+
+    const remainder =
+      (clip.loopExtension?.length || 0) % clip.audioBuffer.length;
+
+    const remainderWidth = audioEngine.timeline.samplesToPixels(remainder);
 
     const loopSectionArray = Array(numberOfLoops).fill({});
 
@@ -34,36 +32,54 @@ export const LoopExtension = observer(
     );
 
     return (
-      <div
-        onClick={onClick}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          height: clipHeight,
-          background: color,
-          opacity: clip.isSelected ? 0.3 : 0.2,
-          left,
-          width: loopWidth,
-          position: "absolute",
-          top,
-          borderRadius: "6px",
-        }}
-      >
+      <>
         {loopSectionArray.map((_, i) => (
           <div
-            key={`${clip.id}${i}`}
+            onClick={onClick}
             style={{
-              position: "absolute",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               height: clipHeight,
+              background: color,
+              opacity: clip.isSelected ? 0.3 : 0.2,
+              left: left + sectionWidth * i + 1,
               width: sectionWidth,
-              background: "transparent",
-              borderRight: `3px dotted #191919`,
-              left: sectionWidth * i,
+              position: "absolute",
+              top,
+              borderRadius: "6px",
             }}
-          />
+          >
+            <ImLoop style={{ fontSize: 56, opacity: 0.3 }} />
+          </div>
         ))}
-        <hr style={{ width: "100%", border: "2px dotted #191919" }} />
-      </div>
+        {!!remainder && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              height: clipHeight,
+              background: color,
+              opacity: clip.isSelected ? 0.3 : 0.2,
+              left: sectionWidth + sectionWidth * numberOfLoops + 1,
+              width: remainderWidth,
+              position: "absolute",
+              overflow: "hidden",
+              top,
+              borderRadius: "6px",
+            }}
+          >
+            <ImLoop
+              style={{
+                fontSize: 56,
+                opacity: 0.3,
+                position: "absolute",
+                left: sectionWidth / 2 - 28,
+              }}
+            />
+          </div>
+        )}
+      </>
     );
   }
 );
