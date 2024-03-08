@@ -22,6 +22,17 @@ export const LoopExtension = observer(
     const loopWidth = clip.loopExtension
       ? audioEngine.timeline.samplesToPixels(loopSampleLength)
       : 0;
+
+    const numberOfLoops = Math.floor(
+      (clip.loopExtension?.length || 0) / clip.audioBuffer.length
+    );
+
+    const loopSectionArray = Array(numberOfLoops).fill({});
+
+    const sectionWidth = audioEngine.timeline.samplesToPixels(
+      clip.audioBuffer.length
+    );
+
     return (
       <div
         onClick={onClick}
@@ -38,7 +49,20 @@ export const LoopExtension = observer(
           borderRadius: "6px",
         }}
       >
-        <hr style={{ width: "100%", border: `2px dotted #191919` }} />
+        {loopSectionArray.map((_, i) => (
+          <div
+            key={`${clip.id}${i}`}
+            style={{
+              position: "absolute",
+              height: clipHeight,
+              width: sectionWidth,
+              background: "transparent",
+              borderRight: `3px dotted #191919`,
+              left: sectionWidth * i,
+            }}
+          />
+        ))}
+        <hr style={{ width: "100%", border: "2px dotted #191919" }} />
       </div>
     );
   }
