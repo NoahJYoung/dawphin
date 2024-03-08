@@ -31,6 +31,10 @@ export const LoopExtension = observer(
       clip.audioBuffer.length
     );
 
+    const clipStartOffset = audioEngine.timeline.samplesToPixels(
+      clip.start.toSamples()
+    );
+
     return (
       <>
         {loopSectionArray.map((_, i) => (
@@ -61,7 +65,11 @@ export const LoopExtension = observer(
               height: clipHeight,
               background: color,
               opacity: clip.isSelected ? 0.3 : 0.2,
-              left: sectionWidth + sectionWidth * numberOfLoops + 1,
+              left:
+                clipStartOffset +
+                sectionWidth +
+                sectionWidth * numberOfLoops +
+                1,
               width: remainderWidth,
               position: "absolute",
               overflow: "hidden",
