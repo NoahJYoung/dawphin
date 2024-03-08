@@ -38,7 +38,7 @@ export const LoopExtension = observer(
           borderRadius: "6px",
         }}
       >
-        <hr style={{ width: "100%", border: `1px dotted #191919` }} />
+        <hr style={{ width: "100%", border: `2px dotted #191919` }} />
       </div>
     );
   }

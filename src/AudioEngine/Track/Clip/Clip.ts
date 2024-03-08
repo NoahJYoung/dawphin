@@ -150,16 +150,15 @@ export class Clip {
     }
   };
 
-  //TODO: Fix this for clips without quantized clip ends
   quantizeLoopEnd = () => {
     const timeline = this.track.audioEngine.timeline;
     const quantizationValue = timeline.quantizationValues[timeline.zoomIndex];
 
-    const quantizedEndSamples = Tone.Time(
-      Tone.Time(this.loopEndSamples, "samples").quantize(quantizationValue)
-    ).toSamples();
+    const quantizedEnd = Tone.Time(this.end?.quantize(quantizationValue));
 
-    this.setLoopExtension(quantizedEndSamples, { replace: true });
+    const diff = quantizedEnd.toSamples() - this.end!.toSamples();
+
+    this.setLoopExtension(this.loopEndSamples + diff, { replace: true });
   };
 
   loadAudio = async () => {
