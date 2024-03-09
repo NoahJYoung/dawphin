@@ -39,6 +39,7 @@ export const LoopExtension = observer(
       <>
         {loopSectionArray.map((_, i) => (
           <div
+            key={`${clip.id}-loop-${i}`}
             onClick={onClick}
             style={{
               display: "flex",
