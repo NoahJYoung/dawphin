@@ -144,20 +144,17 @@ export class Clip {
       this.setEnd(
         Tone.Time(this.start.toSeconds() + this.player.buffer.duration, "s")
       );
-      this.schedule();
     } else {
       this.player.buffer = this.audioBuffer;
     }
+    this.schedule();
   };
 
   quantizeLoopEnd = () => {
     const timeline = this.track.audioEngine.timeline;
     const quantizationValue = timeline.quantizationValues[timeline.zoomIndex];
-
     const quantizedEnd = Tone.Time(this.end?.quantize(quantizationValue));
-
     const diff = quantizedEnd.toSamples() - this.end!.toSamples();
-
     this.setLoopExtension(this.loopEndSamples + diff, { replace: true });
   };
 
@@ -188,6 +185,19 @@ export class Clip {
           Tone.Time(this.start.toSeconds() + this.duration.toSeconds(), "s")
         );
       }
+
+      if (this.loopExtension) {
+        this.setLoopExtension(this.loopEndSamples, { replace: true });
+        this.setEnd(
+          Tone.Time(
+            this.start.toSamples() +
+              this.duration.toSamples() +
+              this.loopEndSamples,
+            "samples"
+          )
+        );
+      }
+
       this.schedule();
     }
   };
