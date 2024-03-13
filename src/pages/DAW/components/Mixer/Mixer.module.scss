@@ -1,6 +1,5 @@
 .mixer {
   display: flex;
-  height: 100%;
   max-width: 100%;
   overflow-x: auto;
   padding-right: 5px;
@@ -11,6 +10,8 @@
     max-width: 100%;
     overflow-x: auto;
     display: flex;
+    margin-bottom: 2px;
+    overflow-y: hidden;
     align-items: flex-start;
     gap: 4px;
     padding: 5px;

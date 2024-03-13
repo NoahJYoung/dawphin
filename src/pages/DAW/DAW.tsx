@@ -107,7 +107,7 @@ export const DAW = () => {
           }
           bottom={
             <div
-              style={{ height: "100%", maxHeight: "300px" }}
+              style={{ height: "100%", maxHeight: "300px", minHeight: "250px" }}
               className={`${styles.bottomPanelInner} styled-scrollbar`}
             >
               {(() => {

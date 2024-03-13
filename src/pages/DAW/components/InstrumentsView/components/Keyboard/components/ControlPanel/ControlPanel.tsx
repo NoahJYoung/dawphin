@@ -17,11 +17,11 @@ export const ControlPanel = observer(() => {
         flexDirection: "column",
         justifyContent: "space-evenly",
         gap: 5,
-        minWidth: 200,
+        minWidth: 250,
         width: 250,
         paddingRight: 10,
+        minHeight: 250,
         height: "100%",
-        minHeight: "200px",
       }}
     >
       <div

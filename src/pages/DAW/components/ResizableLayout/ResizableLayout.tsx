@@ -16,6 +16,7 @@ export const ResizableLayout = ({
   const [topHeightPercentage, setTopHeightPercentage] = useState(60);
 
   const layoutRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const handleDrag = (e: MouseEvent) => {
     if (layoutRef.current) {
@@ -57,8 +58,12 @@ export const ResizableLayout = ({
         {middle}
       </div>
       <div
+        ref={bottomRef}
         className="styled-scrollbar"
-        style={{ height: bottomHeight, overflow: "auto" }}
+        style={{
+          height: bottomHeight,
+          overflow: "auto",
+        }}
       >
         {bottom}
       </div>
