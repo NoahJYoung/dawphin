@@ -15,9 +15,13 @@ export const ControlPanel = observer(() => {
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: 10,
+        justifyContent: "space-evenly",
+        gap: 5,
+        minWidth: 200,
         width: 250,
-        height: 290,
+        paddingRight: 10,
+        height: "100%",
+        minHeight: "200px",
       }}
     >
       <div

@@ -6,6 +6,7 @@ import {
   Sidebar,
   TransportView,
   SamplerView,
+  ResizableLayout,
 } from "./components";
 import { Button } from "antd";
 import { InstrumentsView } from "./components/InstrumentsView";
@@ -30,69 +31,85 @@ export const DAW = () => {
   return (
     <AudioEngineProvider>
       <LinkedScrollProvider>
-        <div className={`${styles.wrapper} styled-scrollbar`}>
-          <div className={styles.topPanel}>
-            <Sidebar containerRef={containerRef} timelineRect={timelineRect} />
-            <TimelineView
-              setTimelineRect={setTimelineRect}
-              containerRef={containerRef}
-            >
-              <Tracks containerRef={containerRef} timelineRect={timelineRect} />
-            </TimelineView>
-          </div>
-
-          <div className={styles.bottomPanelOuter}>
-            <div className={styles.bottomPanelMiddle}>
-              <TransportView containerRef={containerRef} />
-
-              <div className={styles.viewButtonContainer}>
-                <Button
-                  type="text"
-                  onClick={() => setBottomPanelView(BottomPanelView.MIXER)}
-                  className={styles.viewButton}
-                  icon={
-                    <RiSoundModuleLine
-                      className={`${styles.btnIcon} ${
-                        bottomPanelView === BottomPanelView.MIXER
-                          ? styles.active
-                          : ""
-                      }`}
-                    />
-                  }
+        <ResizableLayout
+          className={`${styles.wrapper} styled-scrollbar`}
+          top={
+            <div className={`${styles.topPanel} styled-scrollbar`}>
+              <Sidebar
+                containerRef={containerRef}
+                timelineRect={timelineRect}
+              />
+              <TimelineView
+                setTimelineRect={setTimelineRect}
+                containerRef={containerRef}
+              >
+                <Tracks
+                  containerRef={containerRef}
+                  timelineRect={timelineRect}
                 />
-                <Button
-                  type="text"
-                  className={styles.viewButton}
-                  onClick={() => setBottomPanelView(BottomPanelView.KEYBOARD)}
-                  icon={
-                    <PiPianoKeysFill
-                      className={`${styles.btnIcon} ${
-                        bottomPanelView === BottomPanelView.KEYBOARD
-                          ? styles.active
-                          : ""
-                      }`}
-                    />
-                  }
-                />
+              </TimelineView>
+            </div>
+          }
+          middle={
+            <div className={styles.bottomPanelOuter}>
+              <div className={styles.bottomPanelMiddle}>
+                <TransportView containerRef={containerRef} />
 
-                <Button
-                  type="text"
-                  className={styles.viewButton}
-                  onClick={() => setBottomPanelView(BottomPanelView.SAMPLE_PAD)}
-                  icon={
-                    <PiWaveformBold
-                      className={`${styles.btnIcon} ${
-                        bottomPanelView === BottomPanelView.SAMPLE_PAD
-                          ? styles.active
-                          : ""
-                      }`}
-                    />
-                  }
-                />
+                <div className={styles.viewButtonContainer}>
+                  <Button
+                    type="text"
+                    onClick={() => setBottomPanelView(BottomPanelView.MIXER)}
+                    className={styles.viewButton}
+                    icon={
+                      <RiSoundModuleLine
+                        className={`${styles.btnIcon} ${
+                          bottomPanelView === BottomPanelView.MIXER
+                            ? styles.active
+                            : ""
+                        }`}
+                      />
+                    }
+                  />
+                  <Button
+                    type="text"
+                    className={styles.viewButton}
+                    onClick={() => setBottomPanelView(BottomPanelView.KEYBOARD)}
+                    icon={
+                      <PiPianoKeysFill
+                        className={`${styles.btnIcon} ${
+                          bottomPanelView === BottomPanelView.KEYBOARD
+                            ? styles.active
+                            : ""
+                        }`}
+                      />
+                    }
+                  />
+
+                  <Button
+                    type="text"
+                    className={styles.viewButton}
+                    onClick={() =>
+                      setBottomPanelView(BottomPanelView.SAMPLE_PAD)
+                    }
+                    icon={
+                      <PiWaveformBold
+                        className={`${styles.btnIcon} ${
+                          bottomPanelView === BottomPanelView.SAMPLE_PAD
+                            ? styles.active
+                            : ""
+                        }`}
+                      />
+                    }
+                  />
+                </div>
               </div>
             </div>
-
-            <div className={`${styles.bottomPanelInner} styled-scrollbar`}>
+          }
+          bottom={
+            <div
+              style={{ height: "100%", maxHeight: "300px" }}
+              className={`${styles.bottomPanelInner} styled-scrollbar`}
+            >
               {(() => {
                 switch (bottomPanelView) {
                   case BottomPanelView.KEYBOARD:
@@ -107,8 +124,8 @@ export const DAW = () => {
                 }
               })()}
             </div>
-          </div>
-        </div>
+          }
+        />
       </LinkedScrollProvider>
     </AudioEngineProvider>
   );

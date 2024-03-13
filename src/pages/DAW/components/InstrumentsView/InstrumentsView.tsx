@@ -6,10 +6,10 @@ export const InstrumentsView = () => {
       style={{
         display: "flex",
         width: "100%",
-        height: "fit-content",
         alignItems: "center",
-        gap: 48,
-        // justifyContent: "space-evenly", TODO: Put this in media query for large screens when refactoring inline styles here
+        justifyContent: "space-evenly",
+        height: "100%",
+        gap: 10,
       }}
     >
       <KeyboardView />

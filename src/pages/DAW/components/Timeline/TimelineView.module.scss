@@ -4,6 +4,7 @@
   position: relative;
   padding-right: 1px;
   overflow: auto;
+  height: 100%;
 
   .gridContainer {
     z-index: -1;
@@ -31,12 +32,12 @@
 
 @media (max-width: 480px) {
   .timelineView {
-    height: 50vh;
+    // height: 50vh;
   }
 }
 
 @media (min-width: 481px) {
   .timelineView {
-    height: 55vh;
+    // height: 55vh;
   }
 }

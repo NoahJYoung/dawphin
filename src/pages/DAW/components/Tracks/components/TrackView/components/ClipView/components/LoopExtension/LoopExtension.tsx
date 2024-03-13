@@ -55,7 +55,7 @@ export const LoopExtension = observer(
               borderRadius: "6px",
             }}
           >
-            <ImLoop style={{ fontSize: 56, opacity: 0.2 }} />
+            <ImLoop style={{ fontSize: 56, opacity: 0.2, color: "#191919" }} />
           </div>
         ))}
         {!!remainder && (
@@ -80,6 +80,7 @@ export const LoopExtension = observer(
           >
             <ImLoop
               style={{
+                color: "#191919",
                 fontSize: 56,
                 opacity: 0.2,
                 position: "absolute",

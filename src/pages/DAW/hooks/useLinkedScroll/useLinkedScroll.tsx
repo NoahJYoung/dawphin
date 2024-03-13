@@ -39,7 +39,7 @@ export const LinkedScrollProvider = ({
   }, []);
 
   const tracksHeight = audioEngine.tracks.length * 84 + (84 + TOPBAR_HEIGHT);
-  const minHeight = innerHeight / 2 + 60;
+  const minHeight = innerHeight + 60;
   const sectionHeight = tracksHeight > minHeight ? tracksHeight : minHeight;
 
   return (

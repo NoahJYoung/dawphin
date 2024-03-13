@@ -136,8 +136,8 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
           <Button
             icon={
               <RecordIcon
-                width={35}
-                height={35}
+                width={30}
+                height={30}
                 color={track.active ? activeOuterRgb : inactiveOuterRgb}
                 innerColor={track.active ? activeInnerRgb : inactiveInnerRgb}
               />
@@ -245,7 +245,7 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
               icon={
                 <PiPianoKeysFill
                   style={{
-                    fontSize: "1.5rem",
+                    fontSize: "1.4rem",
                     color:
                       track.inputMode === "keyboard" ? track.color : "#aaa",
                   }}
@@ -273,7 +273,7 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
               icon={
                 <PiWaveformBold
                   style={{
-                    fontSize: "1.5rem",
+                    fontSize: "1.25rem",
                     color: track.inputMode === "sampler" ? track.color : "#aaa",
                   }}
                 />
@@ -334,7 +334,7 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
               icon={
                 <GoMute
                   style={{
-                    fontSize: "1.25rem",
+                    fontSize: "1.4rem",
                     color: track.muted ? "red" : "#aaa",
                   }}
                 />
@@ -352,7 +352,7 @@ export const ChannelStrip = observer(({ track }: ChannelStripProps) => {
               icon={
                 <FaHeadphonesAlt
                   style={{
-                    fontSize: "1.25rem",
+                    fontSize: "1.4rem",
                     color: track.solo ? "yellow" : "#aaa",
                   }}
                 />

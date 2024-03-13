@@ -5,11 +5,9 @@ import { token } from "./styles/token";
 
 const App: React.FC = () => {
   return (
-    <>
-      <ConfigProvider theme={token}>
-        <DAW />
-      </ConfigProvider>
-    </>
+    <ConfigProvider theme={token}>
+      <DAW />
+    </ConfigProvider>
   );
 };
 

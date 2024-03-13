@@ -6,6 +6,7 @@
   padding-right: $track-panel-x-padding;
   padding-left: $track-panel-x-padding;
   max-width: 64px;
+  min-height: 100%;
   transition: max-width 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 
   .trackPanelsWrapper {
