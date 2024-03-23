@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AudioEngine } from "src/AudioEngine";
 import { Clip } from "src/AudioEngine/Track/Clip";
 import * as d3 from "d3";
