@@ -1,4 +1,4 @@
-import { Band } from "src/AudioEngine/Effects/Equalizer/Band";
+import { Band } from "src/AudioEngine/Effects/GraphicEQ/Band";
 import { Slider } from "src/pages/DAW/UIKit";
 
 interface BandTabProps {

@@ -10,8 +10,10 @@ export interface BaseEffectType {
 
 export enum EffectKeys {
   graphicEQ = "GRAPHIC-EQ",
+  reverb = "REVERB",
 }
 
 export const EffectNames = {
   [EffectKeys.graphicEQ]: "Graphic EQ",
+  [EffectKeys.reverb]: "Reverb",
 };

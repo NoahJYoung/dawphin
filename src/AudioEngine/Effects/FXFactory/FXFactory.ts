@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 import { makeObservable, observable } from "mobx";
-import { GraphicEQ } from "../Equalizer";
+import { GraphicEQ } from "../GraphicEQ";
+import { Reverb } from "../Reverb";
 import { BaseEffectType, EffectKeys } from "../types";
 
 type EffectType = {
@@ -15,6 +16,10 @@ export class FXFactory {
     {
       name: EffectKeys.graphicEQ,
       create: () => new GraphicEQ(),
+    },
+    {
+      name: EffectKeys.reverb,
+      create: () => new Reverb(),
     },
   ];
 

@@ -3,7 +3,7 @@ import { Point } from "./types";
 import * as d3 from "d3";
 import { getBandIcon, getCurvePoints } from "./helpers";
 import { observer } from "mobx-react-lite";
-import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer/GraphicEQ";
+import { GraphicEQ } from "src/AudioEngine/Effects/GraphicEQ";
 import { Tabs } from "antd";
 import { useState } from "react";
 

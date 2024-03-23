@@ -1,4 +1,4 @@
-import { Band } from "src/AudioEngine/Effects/Equalizer/Band";
+import { Band } from "src/AudioEngine/Effects/GraphicEQ/Band";
 import { Point } from "../types";
 
 export const getBeforeAndAfterPoints = (band: Band): Point[] => {

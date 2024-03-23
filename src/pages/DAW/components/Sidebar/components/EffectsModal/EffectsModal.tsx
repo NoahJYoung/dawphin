@@ -11,7 +11,7 @@ import Sider from "antd/es/layout/Sider";
 import { observer } from "mobx-react-lite";
 import styles from "./EffectsModal.module.scss";
 import { PiTrash } from "react-icons/pi";
-import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer";
+import { GraphicEQ } from "src/AudioEngine/Effects/GraphicEQ";
 import { EffectKeys } from "src/AudioEngine/Effects";
 import { EffectNames } from "src/AudioEngine/Effects/types";
 

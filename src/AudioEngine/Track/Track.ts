@@ -221,7 +221,7 @@ export class Track {
     this.setEffectsChain(filteredFX);
     this.input.chain(
       ...this.effectsChain.map((effect) => effect.input),
-      Tone.getDestination()
+      this.output
     );
   };
 

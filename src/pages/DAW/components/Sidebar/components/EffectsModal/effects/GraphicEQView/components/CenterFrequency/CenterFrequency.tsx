@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Band } from "src/AudioEngine/Effects/Equalizer/Band";
+import { Band } from "src/AudioEngine/Effects/GraphicEQ/Band";
 import * as d3 from "d3";
 
 interface CenterPointProps {

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
-import { GraphicEQ } from "src/AudioEngine/Effects/Equalizer";
+import { GraphicEQ } from "src/AudioEngine/Effects/GraphicEQ";
 import { useAudioEngine } from "src/pages/DAW/hooks";
 import * as d3 from "d3";
 
