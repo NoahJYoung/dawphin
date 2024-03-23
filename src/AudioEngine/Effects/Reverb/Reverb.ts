@@ -30,8 +30,13 @@ export class Reverb implements BaseEffectType {
     this.init();
   }
 
+  // TODO: Figure out why lowering the wet signal raises the volume so much
   init = () => {
     this.reverb = new Tone.Reverb(this.decay);
+    this.set({
+      wet: this.reverb.wet.value,
+      preDelay: this.reverb.preDelay.valueOf() as number,
+    });
     this.connect();
   };
 
@@ -48,7 +53,7 @@ export class Reverb implements BaseEffectType {
         if (key in this.reverb! && key in this) {
           const paramValue = params[key];
           if (typeof paramValue === "number") {
-            this.reverb![key as ValidReverbKeys] = paramValue as any;
+            this.reverb?.set({ [key]: paramValue });
             this[key] = paramValue;
           }
         }

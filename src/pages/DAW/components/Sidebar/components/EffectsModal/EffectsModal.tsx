@@ -11,28 +11,8 @@ import Sider from "antd/es/layout/Sider";
 import { observer } from "mobx-react-lite";
 import styles from "./EffectsModal.module.scss";
 import { PiTrash } from "react-icons/pi";
-import { GraphicEQ } from "src/AudioEngine/Effects/GraphicEQ";
-import { EffectKeys } from "src/AudioEngine/Effects";
 import { EffectNames } from "src/AudioEngine/Effects/types";
-
-const getEffectInstances = (track: Track) => {
-  if (track?.effectsChain?.length) {
-    return track.effectsChain.map((effect) => {
-      switch (effect.name) {
-        case EffectKeys.graphicEQ:
-          return (
-            <GraphicEQView
-              graphicEQ={effect as GraphicEQ}
-              key={effect.id}
-              height={250}
-              width={540}
-            />
-          );
-      }
-    });
-  }
-  return [];
-};
+import { getEffectInstances } from "./helpers";
 
 const getMenuItems = (
   track: Track,

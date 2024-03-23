@@ -1,1 +1,0 @@
-export { EQVisualizer } from "./EQVisualizer";

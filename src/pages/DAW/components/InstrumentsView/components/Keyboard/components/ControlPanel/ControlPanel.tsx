@@ -109,7 +109,6 @@ export const ControlPanel = observer(() => {
             gap: 24,
           }}
         >
-          <IoMusicalNoteSharp style={{ fontSize: 30 }} />
           <Select
             value={keyboard.baseUrl}
             onChange={keyboard.setSamplerBaseUrl}
