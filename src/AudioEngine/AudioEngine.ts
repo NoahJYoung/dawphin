@@ -122,8 +122,24 @@ export class AudioEngine {
   };
 
   deleteSelectedTracks = () => {
+    const removedIds: string[] = [];
+    this.auxSendManager.sends.forEach((send) => {
+      if (
+        this.selectedTracks.some(
+          (track) => track.id === send.from.id || track.id === send.to.id
+        )
+      ) {
+        removedIds.push(send.id);
+        send.destroy();
+      }
+    });
+
+    this.auxSendManager.sends = this.auxSendManager.sends.filter(
+      (send) => !removedIds.includes(send.id)
+    );
+
     this.getSelectedTracks();
-    this.selectedTracks.forEach((track) => track.input.dispose());
+    this.selectedTracks.forEach((track) => track.destroy());
     const selectedTrackIds = this.selectedTracks.map((track) => track.id);
     this.tracks = this.tracks.filter(
       (track) => !selectedTrackIds.includes(track.id)

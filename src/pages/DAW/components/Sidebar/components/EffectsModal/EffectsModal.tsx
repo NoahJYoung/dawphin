@@ -15,6 +15,8 @@ import { EffectNames } from "src/AudioEngine/Effects/types";
 import { getEffectInstances } from "./helpers";
 import { AuxSendView } from "./components";
 
+// TODO: figure out why I cant switch back to effects after switching to Aux Routes
+
 const getMenuItems = (
   track: Track,
   audioEngine: AudioEngine,

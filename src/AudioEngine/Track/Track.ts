@@ -362,7 +362,7 @@ export class Track {
 
     const effects = effectsMap.map(([, data]) => {
       if (typeof data !== "string") {
-        const fxChainInput = new Tone.Channel(data.volume);
+        const fxChainInput = new Tone.Channel(data.volume.valueOf());
         const offlineFx = data.effects.map((effect) => effect.offlineRender());
         if (offlineFx.length > 0) {
           fxChainInput.connect(offlineFx[0].input);
@@ -382,7 +382,7 @@ export class Track {
     return effects.filter((item) => !!item);
   };
 
-  offlineRender = (offlineCtx: Tone.OfflineContext) => {
+  offlineRender = async (offlineCtx: Tone.OfflineContext) => {
     const offlineInput = new Tone.Channel();
     const offlineOutput = new Tone.Channel().set({
       volume: this.volume || 0,
@@ -411,5 +411,17 @@ export class Track {
     offlineOutput.fan(...(offlineEffectSends as any));
     offlineOutput.connect(offlineCtx.destination);
     this.clips.forEach((clip) => clip.offlineRender(offlineInput));
+  };
+
+  destroy = () => {
+    this.input.disconnect();
+    this.output.disconnect();
+    this.auxIn.disconnect();
+    this.auxOut.disconnect();
+
+    this.input.dispose();
+    this.output.dispose();
+    this.auxIn.dispose();
+    this.auxOut.dispose();
   };
 }
