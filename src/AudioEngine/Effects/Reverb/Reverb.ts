@@ -65,8 +65,6 @@ export class Reverb implements BaseEffectType {
   offlineRender = () => {
     const input = new Tone.Channel();
     const output = new Tone.Channel(20);
-    console.log("bypass: ", this.bypass.volume.value);
-    console.log("convolverOutput: ", this.convolverOutput.volume.value);
 
     const bypass = new Tone.Channel(this.bypass.volume.value);
     const convolverOutput = new Tone.Channel(this.convolverOutput.volume.value);

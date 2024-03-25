@@ -11,6 +11,7 @@ import { inject, injectable } from "inversify";
 import { constants } from "./constants";
 import { Sampler } from "./Sampler";
 import { blobToBuffer } from "./helpers";
+import { AuxSendManager } from "./AuxSendManager";
 
 interface ClipboardItem {
   data: Blob;
@@ -38,6 +39,7 @@ export class AudioEngine {
 
   constructor(
     @inject(MasterControl) public masterControl: MasterControl,
+    @inject(AuxSendManager) public auxSendManager: AuxSendManager,
     @inject(FXFactory) public fxFactory: FXFactory,
     @inject(Timeline) public timeline: Timeline,
     @inject(constants.TRACK_FACTORY)
@@ -426,13 +428,15 @@ export class AudioEngine {
   };
 
   async getOfflineBounce() {
-    const trackLengths = this.tracks.map((track) =>
-      track.getLastClipEndpointInSeconds()
-    );
+    const trackLengths = this.tracks
+      .map((track) => track.getLastClipEndpointInSeconds())
+      .sort((a, b) => a - b);
     const endSeconds = trackLengths[trackLengths.length - 1];
 
     const renderedBuffer = await Tone.Offline(async (offlineCtx) => {
-      this.tracks.forEach((track) => track.offlineRender(offlineCtx));
+      this.tracks.forEach((track) => {
+        track.offlineRender(offlineCtx);
+      });
     }, endSeconds);
 
     if (renderedBuffer) {

@@ -1,29 +1,30 @@
 import { useState } from "react";
 import { Dialog } from "src/pages/DAW/UIKit";
 import { Track } from "src/AudioEngine/Track";
-import { GraphicEQView } from "./effects";
 import { MdRoute } from "react-icons/md";
 import { FiPlus } from "react-icons/fi";
 import { Button, Menu } from "antd";
 import { AudioEngine } from "src/AudioEngine";
 import { useAudioEngine } from "src/pages/DAW/hooks";
+import { SlLink } from "react-icons/sl";
 import Sider from "antd/es/layout/Sider";
 import { observer } from "mobx-react-lite";
 import styles from "./EffectsModal.module.scss";
 import { PiTrash } from "react-icons/pi";
 import { EffectNames } from "src/AudioEngine/Effects/types";
 import { getEffectInstances } from "./helpers";
+import { AuxSendView } from "./components";
 
 const getMenuItems = (
   track: Track,
   audioEngine: AudioEngine,
-  setView: (index: number) => void
+  setView: (index: number, config?: { replace: boolean }) => void
 ) => {
   return [
     {
       key: "1",
-      label: "Track FX",
-      icon: <MdRoute style={{ fontSize: 18 }} />,
+      label: "FX Chain",
+      icon: <SlLink style={{ fontSize: 18 }} />,
       children: track.effectsChain.map((effect, i) => ({
         key: `1-${i + 1}`,
         label: (
@@ -69,6 +70,12 @@ const getMenuItems = (
         },
       })),
     },
+    {
+      key: "3",
+      label: "Aux Sends",
+      onClick: () => setView(3, { replace: true }),
+      icon: <MdRoute style={{ fontSize: 18 }} />,
+    },
   ];
 };
 
@@ -84,6 +91,7 @@ export const EffectsModal = observer(
     const audioEngine = useAudioEngine();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+    const [isAuxSendView, setIsAuxSendView] = useState(false);
 
     const handleMouseEnter = () => {
       setIsSidebarOpen(true);
@@ -93,10 +101,15 @@ export const EffectsModal = observer(
       setIsSidebarOpen(false);
     };
 
-    const handleViewChange = (index: number) => {
-      setEffectViewIndex(index);
-      const selectedKeys = [`1-${index + 1}`];
-      setSelectedKeys(selectedKeys);
+    const handleViewChange = (index: number, config?: { replace: boolean }) => {
+      if (!config?.replace) {
+        setEffectViewIndex(index);
+        const selectedKeys = [`1-${index + 1}`];
+        setSelectedKeys(selectedKeys);
+      } else {
+        setSelectedKeys([index.toString()]);
+        setIsAuxSendView(true);
+      }
     };
 
     const items = getMenuItems(track as Track, audioEngine, handleViewChange);
@@ -132,8 +145,18 @@ export const EffectsModal = observer(
             />
           </Sider>
 
-          <div className={styles.effectViewContainer}>
+          <div
+            style={{ display: isAuxSendView ? "none" : "flex" }}
+            className={styles.effectViewContainer}
+          >
             {getEffectInstances(track)[effectViewIndex]}
+          </div>
+
+          <div
+            style={{ display: isAuxSendView ? "flex" : "none" }}
+            className={styles.effectViewContainer}
+          >
+            <AuxSendView track={track} />
           </div>
         </>
       </Dialog>

@@ -37,18 +37,21 @@ export class Track {
     public clips: Clip[] = observable.array([]),
     public color: string = "rgb(125, 0, 250)",
     public selected: boolean = false,
-    public input: Tone.Channel = new Tone.Channel(),
-    public output: Tone.Channel = new Tone.Channel(),
+    public input = new Tone.Channel(),
+    public output = new Tone.Channel(),
+    public auxIn = new Tone.Channel(),
+    public auxOut = new Tone.Channel(),
     public muted = input.mute,
     public sortIndex = audioEngine.tracks.length
   ) {
     makeAutoObservable(this);
     this.setPan(0);
-
+    this.auxIn.connect(this.input);
     this.input.connect(this.output);
     this.output.connect(this.splitter);
     this.splitter.connect(this.leftMeter, 0);
     this.splitter.connect(this.rightMeter, 1);
+    this.output.connect(this.auxOut);
     this.output.toDestination();
   }
 
@@ -352,9 +355,35 @@ export class Track {
       : 0;
   };
 
+  recreateEffectSends = (offlineCtx: Tone.OfflineContext) => {
+    const effectsMap = this.audioEngine.auxSendManager
+      .getOfflineEffects()
+      .filter(([key]) => key === this.id);
+
+    const effects = effectsMap.map(([, data]) => {
+      if (typeof data !== "string") {
+        const fxChainInput = new Tone.Channel(data.volume);
+        const offlineFx = data.effects.map((effect) => effect.offlineRender());
+        if (offlineFx.length > 0) {
+          fxChainInput.connect(offlineFx[0].input);
+        }
+        offlineFx.forEach((effect, i) => {
+          if (i < offlineFx.length - 2) {
+            effect.output.connect(offlineFx[i + 1].input);
+          } else {
+            effect.output.connect(offlineCtx.destination);
+          }
+        });
+
+        return fxChainInput;
+      }
+    });
+
+    return effects.filter((item) => !!item);
+  };
+
   offlineRender = (offlineCtx: Tone.OfflineContext) => {
     const offlineInput = new Tone.Channel();
-
     const offlineOutput = new Tone.Channel().set({
       volume: this.volume || 0,
       pan: (this.pan || 0) / 100,
@@ -367,7 +396,6 @@ export class Track {
 
     if (this.effectsChain.length > 0) {
       offlineInput.connect(offlineFxChain[0].input);
-
       offlineFxChain.forEach(({ output }, i) => {
         if (i < offlineFxChain.length - 2) {
           output.connect(offlineFxChain[i + 1].input);
@@ -379,8 +407,9 @@ export class Track {
       offlineInput.connect(offlineOutput);
     }
 
-    this.clips.forEach((clip) => clip.offlineRender(offlineInput));
-
+    const offlineEffectSends = this.recreateEffectSends(offlineCtx);
+    offlineOutput.fan(...(offlineEffectSends as any));
     offlineOutput.connect(offlineCtx.destination);
+    this.clips.forEach((clip) => clip.offlineRender(offlineInput));
   };
 }

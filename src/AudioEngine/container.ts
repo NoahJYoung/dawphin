@@ -10,16 +10,21 @@ import { Container, interfaces } from "inversify";
 import { v4 as uuid } from "uuid";
 import { constants } from "./constants";
 import * as Tone from "tone";
+import { AuxSend, AuxSendManager } from "./AuxSendManager";
 
 const container = new Container();
-
-container.bind(AudioEngine).toSelf().inSingletonScope();
 
 container.bind(FXFactory).toSelf().inSingletonScope();
 
 container.bind(Timeline).toSelf().inSingletonScope();
 
 container.bind(MasterControl).toSelf().inSingletonScope();
+
+container.bind(Keyboard).toSelf().inSingletonScope();
+
+container.bind(Sampler).toSelf().inSingletonScope();
+
+container.bind(AuxSendManager).toSelf().inSingletonScope();
 
 container
   .bind<interfaces.Factory<Clip>>(constants.CLIP_FACTORY)
@@ -49,9 +54,15 @@ container
       );
     };
   });
+container
+  .bind<interfaces.Factory<AuxSend>>(constants.SEND_FACTORY)
+  .toFactory<AuxSend>(() => {
+    return (...args: unknown[]) => {
+      const [from, to, volume, id] = args as [Track, Track, number, string];
+      return new AuxSend(from, to, volume, id);
+    };
+  });
 
-container.bind(Keyboard).toSelf().inSingletonScope();
-
-container.bind(Sampler).toSelf().inSingletonScope();
+container.bind(AudioEngine).toSelf().inSingletonScope();
 
 export const audioEngineInstance = container.get(AudioEngine);

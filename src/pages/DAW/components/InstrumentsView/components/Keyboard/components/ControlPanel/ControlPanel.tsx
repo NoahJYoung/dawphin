@@ -1,8 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Button, Select, Slider } from "antd";
 import { IoMdVolumeHigh } from "react-icons/io";
-import { IoMusicalNoteSharp } from "react-icons/io5";
-
 import { useAudioEngine } from "src/pages/DAW/hooks";
 import { KeyboardSynthControls } from "./components";
 import { FaMinus, FaPlus } from "react-icons/fa";
