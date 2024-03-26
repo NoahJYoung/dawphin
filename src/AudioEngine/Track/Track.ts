@@ -208,6 +208,7 @@ export class Track {
     this.input.connect(this.effectsChain[0].input);
     this.effectsChain[this.effectsChain.length - 1].output.connect(this.output);
     this.output.connect(this.splitter);
+    this.output.connect(this.auxOut);
     this.output.toDestination();
   };
 
@@ -394,6 +395,8 @@ export class Track {
       effect.offlineRender()
     );
 
+    const offlineEffectSends = this.recreateEffectSends(offlineCtx);
+
     if (this.effectsChain.length > 0) {
       offlineInput.connect(offlineFxChain[0].input);
       offlineFxChain.forEach(({ output }, i) => {
@@ -401,14 +404,18 @@ export class Track {
           output.connect(offlineFxChain[i + 1].input);
         } else {
           output.connect(offlineOutput);
+          if (offlineEffectSends.length > 0) {
+            output.fan(...(offlineEffectSends as any));
+          }
         }
       });
     } else {
       offlineInput.connect(offlineOutput);
+      if (offlineEffectSends.length > 0) {
+        offlineInput.fan(...(offlineEffectSends as any));
+      }
     }
 
-    const offlineEffectSends = this.recreateEffectSends(offlineCtx);
-    offlineOutput.fan(...(offlineEffectSends as any));
     offlineOutput.connect(offlineCtx.destination);
     this.clips.forEach((clip) => clip.offlineRender(offlineInput));
   };

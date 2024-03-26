@@ -11,7 +11,7 @@ export class GraphicEQ implements BaseEffectType {
   name: EffectKeys = EffectKeys.graphicEQ;
   bands: Band[] = [];
   input = new Tone.Channel(0);
-  output = new Tone.Channel(20);
+  output = new Tone.Channel();
   fft = new Tone.Analyser("fft", 2048);
   highpass: Band;
   highshelf: Band;
@@ -69,7 +69,7 @@ export class GraphicEQ implements BaseEffectType {
 
   offlineRender = () => {
     const offlineInput = new Tone.Channel();
-    const offlineOutput = new Tone.Channel(20);
+    const offlineOutput = new Tone.Channel(0);
     const offlineHighpass = new Band(
       this.highpass.hertz,
       this.highpass.gain,
